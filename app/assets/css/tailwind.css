@@ -1,17 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  /* token warna produk — samakan dengan design system figmake */
-  --c-bg: #f8fafc;
-  --c-surface: #ffffff;
-  --c-ink: #0f172a;
-  --c-muted: #64748b;
-  --c-accent: #4338ca;
-  --c-border: #e2e8f0;
+/* Token desain — selaras dengan design system figmake.
+   Di Tailwind v4, variabel di @theme otomatis jadi utility:
+   --color-accent  →  bg-accent / text-accent / border-accent, dst. */
+@theme {
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-accent: #4338ca;
+  --color-accent-strong: #3730a3;
+  --color-border: #e2e8f0;
+
+  --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* safe-area untuk mobile native */
-.pt-safe { padding-top: env(safe-area-inset-top); }
-.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+/* Utility kustom untuk mobile native (Capacitor) */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

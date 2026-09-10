@@ -26,7 +26,7 @@ sipenta/
 │   ├── nuxt.config.ts            #    ssr: false (SPA) — satu build untuk web & Capacitor
 │   ├── capacitor.config.ts       #    id, appName, webDir: '.output/public'
 │   ├── app.vue
-│   ├── assets/css/tailwind.css
+│   ├── assets/css/tailwind.css   #    @import "tailwindcss" + @theme (token) — Tailwind v4, tanpa config.js
 │   ├── components/
 │   │   ├── ui/                   #    design system: Button, Badge, Card, Modal, Stepper, DataTable…
 │   │   ├── layout/               #    AppSidebar, AppTopbar, MobileNav

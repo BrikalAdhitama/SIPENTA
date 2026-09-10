@@ -1,0 +1,12 @@
+{
+  // Tailwind v4 pakai @theme, @utility, @apply, @import "tailwindcss" —
+  // validator CSS bawaan VS Code tidak kenal, jadi matikan warning-nya.
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore",
+
+  // Rekomendasi: install extension "Tailwind CSS IntelliSense" (bradlc.vscode-tailwindcss)
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}

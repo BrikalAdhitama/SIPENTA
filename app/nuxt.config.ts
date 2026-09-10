@@ -1,13 +1,20 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-01-01",
 
   // SPA — satu build untuk web hosting & Capacitor (tidak butuh server Node)
   ssr: false,
 
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "@nuxtjs/supabase"],
+  modules: ["@pinia/nuxt", "@nuxtjs/supabase"],
 
+  // Tailwind CSS v4 lewat plugin resmi Vite (sama seperti prototype figmake).
+  // Tidak ada tailwind.config.js — konfigurasi ada di assets/css/tailwind.css (@theme).
   css: ["~/assets/css/tailwind.css"],
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
   supabase: {
     redirectOptions: {

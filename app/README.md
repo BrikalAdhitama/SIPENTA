@@ -3,7 +3,7 @@
 Owner: 2 FE. **Satu codebase** — Capacitor membungkus build web yang sama jadi Android/iOS. Tidak ada project mobile terpisah. Pembagian FE-Web / FE-Mobile: lihat [`../docs/STRUCTURE.md`](../docs/STRUCTURE.md).
 
 ## Stack
-Nuxt 3 (`ssr: false` → SPA) · Vue 3 · TS · Tailwind (`@nuxtjs/tailwindcss`) · Pinia · `@nuxtjs/supabase` · Capacitor (app, status-bar, splash-screen, keyboard, haptics, preferences, filesystem, share, browser).
+Nuxt 3 (`ssr: false` → SPA) · Vue 3 · TS · **Tailwind CSS v4** (plugin `@tailwindcss/vite`, tanpa `tailwind.config.js` — konfigurasi di `assets/css/tailwind.css` lewat `@theme`, sama seperti prototype figmake) · Pinia · `@nuxtjs/supabase` · Capacitor (app, status-bar, splash-screen, keyboard, haptics, preferences, filesystem, share, browser).
 
 ## Struktur
 ```

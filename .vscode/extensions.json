@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "Vue.volar",
+    "denoland.vscode-deno",
+    "ms-python.python",
+    "charliermarsh.ruff"
+  ]
+}

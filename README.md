@@ -36,6 +36,8 @@ Detail pembagian folder & kepemilikan: [`docs/STRUCTURE.md`](docs/STRUCTURE.md)
 | [`docs/database-erd.md`](docs/database-erd.md) | Skema database & relasi |
 | [`docs/ga-design.md`](docs/ga-design.md) | Desain algoritma genetika (kromosom, fitness, constraint) |
 | [`docs/prd-ai-scheduling.md`](docs/prd-ai-scheduling.md) | PRD khusus komponen AI |
+| [`docs/deploy-ai-service.md`](docs/deploy-ai-service.md) | Cara deploy `ai-service` ke Render (langkah demi langkah) |
+| [`docs/database.dbml`](docs/database.dbml) | Skema DB untuk dbdiagram.io |
 
 ## Mulai kerja
 

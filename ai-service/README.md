@@ -60,4 +60,7 @@ AI_SERVICE_KEY=            # shared secret, dicek terhadap header X-AI-Key
 ```
 
 ## Deploy
-Container (`Dockerfile`) ke Railway / Render / Fly.io. Set `AI_SERVICE_KEY`. URL & key dipasang di env Supabase Edge Function.
+
+Panduan langkah demi langkah (ramah pemula, tanpa nulis Docker): **[`../docs/deploy-ai-service.md`](../docs/deploy-ai-service.md)**.
+
+Ringkas: baru perlu di Sprint S3. Sebelum itu `uvicorn` di laptop (atau `ngrok http 8000` buat BE test). Deploy final: Render → New Web Service → Root `ai-service` → env `AI_SERVICE_KEY` → dapat URL → serahkan URL + key ke BE (`supabase secrets set`). Cold start Render Free diatasi dengan ping `/health` tiap 10 menit via cron-job.org.

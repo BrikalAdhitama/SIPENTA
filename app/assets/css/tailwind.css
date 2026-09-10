@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* token warna produk — samakan dengan design system figmake */
+  --c-bg: #f8fafc;
+  --c-surface: #ffffff;
+  --c-ink: #0f172a;
+  --c-muted: #64748b;
+  --c-accent: #4338ca;
+  --c-border: #e2e8f0;
+}
+
+/* safe-area untuk mobile native */
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }

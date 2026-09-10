@@ -1,0 +1,10 @@
+{
+  "description": "Automates academic seminar scheduling for lecturers by generating optimized timetables from uploaded data, ensuring conflict-free, efficient planning.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

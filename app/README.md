@@ -17,19 +17,27 @@ pages/{login,index,admin,dosen,mahasiswa}/   stores/   types/   utils/
 
 ## Perintah
 ```bash
-pnpm install && pnpm dev        # web :3000 — sambung ke Supabase cloud (isi .env)
-pnpm gen:types                   # hanya DB owner; anggota lain git pull database.types.ts
-pnpm build                       # → .output/public (web hosting & Capacitor)
-pnpm cap:sync                     # nuxi generate + cap sync
-pnpm cap:android / cap:ios        # buka IDE native
+npm install
+cp .env.example .env             # lalu isi nilainya (lihat di bawah)
+npm run dev                       # web :3000
+
+npm run gen:types                 # hanya DB owner; anggota lain git pull database.types.ts
+npm run build                     # → .output/public (web hosting & Capacitor)
+npm run cap:sync                  # nuxi generate + cap sync
+npm run cap:android / npm run cap:ios   # buka IDE native
 ```
 
 ## Env (`.env`, lihat `.env.example`)
 ```
-NUXT_PUBLIC_SUPABASE_URL=
-NUXT_PUBLIC_SUPABASE_KEY=      # anon key, dijaga RLS
+NUXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co    # Settings → API → Project URL
+NUXT_PUBLIC_SUPABASE_KEY=eyJhbGci...                  # Settings → API → anon public key
 NUXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+> **`npm run dev` akan 500 kalau `.env` kosong** — module `@nuxtjs/supabase` butuh URL + key saat start.
+> Kalau project Supabase tim belum dibuat dan mau kerja UI dulu, pilih salah satu:
+> (a) buat project Supabase gratis sendiri (±3 menit), atau
+> (b) comment sementara `"@nuxtjs/supabase"` di `nuxt.config.ts` (`modules` + blok `supabase:`).
 
 ## Catatan mobile
 Deep link `sipenta://` · sesi Supabase → `@capacitor/preferences` (bukan localStorage) · ekspor file native pakai `Filesystem` + `Share` · back-button Android via `@capacitor/app`.

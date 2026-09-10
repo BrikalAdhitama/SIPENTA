@@ -1,0 +1,228 @@
+// ============================================================================
+// SIPENTA — Skema database
+// Sumber kebenaran: supabase/migrations/0001_core_schema.sql
+// Visualisasi: buka https://dbdiagram.io/d → tempel isi file ini di editor
+// ============================================================================
+
+Project SIPENTA {
+  database_type: 'PostgreSQL'
+  Note: '''
+    Penjadwalan Seminar Proposal & Sidang TA (Sempro/Semhas) berbasis Algoritma Genetika.
+    3 role: admin, dosen, mahasiswa (fungsi kaprodi = akun admin).
+    Jadwal jadi "final" hanya setelah SETIAP slot di-ACC 4 dosennya (2 pembimbing + 2 penguji).
+  '''
+}
+
+// ── Enum ────────────────────────────────────────────────────────────────────
+Enum role_pengguna     { admin dosen mahasiswa }
+Enum jenis_seminar     { sempro semhas }
+Enum peran_dosen       { pembimbing_utama pembimbing_pendamping penguji_1 penguji_2 }
+Enum validasi_seminar  { valid invalid duplikat }
+Enum status_gelombang  { draft siap_generate dijadwalkan }
+Enum status_run        { draft tersimpan final dibatalkan }
+Enum status_approval   { pending approved declined }
+Enum status_aktif      { aktif nonaktif }
+Enum hari_kerja        { senin selasa rabu kamis jumat sabtu }
+
+// ── Identitas & akses ──────────────────────────────────────────────────────
+Table dosen {
+  id         bigint       [pk, increment]
+  nip        text         [unique]
+  nama       text         [not null]
+  gelar      text
+  email      text
+  bidang     text
+  status     status_aktif [not null, default: 'aktif']
+  created_at timestamptz  [not null, default: `now()`]
+}
+
+Table mahasiswa {
+  id         bigint      [pk, increment]
+  nim        text        [unique, not null]
+  nama       text        [not null]
+  angkatan   text
+  created_at timestamptz [not null, default: `now()`]
+  Note: 'Dibuat otomatis oleh Edge Function parse-sps dari sheet pendaftaran.'
+}
+
+Table profiles {
+  id            uuid          [pk, note: 'FK ke auth.users(id) — Supabase Auth']
+  role          role_pengguna [not null]
+  nama          text          [not null]
+  dosen_id      bigint        [ref: > dosen.id, note: 'wajib bila role = dosen']
+  mahasiswa_id  bigint        [ref: > mahasiswa.id, note: 'wajib bila role = mahasiswa']
+  onboarding_at timestamptz   [note: 'null = akses terkunci sampai jadwal diisi + tekan Selesai']
+  created_at    timestamptz   [not null, default: `now()`]
+}
+
+// ── Data constraint — di-input dosen & mahasiswa (bahan mentah GA) ──────────
+Table ruangan {
+  id        bigint       [pk, increment]
+  kode      text         [unique, not null]
+  nama      text         [not null]
+  kapasitas int
+  lantai    int
+  is_online boolean      [not null, default: false, note: 'true = venue daring, GA lewati bentrok ruangan (H1)']
+  status    status_aktif [not null, default: 'aktif']
+}
+
+Table jadwal_mengajar {
+  id           bigint     [pk, increment]
+  dosen_id     bigint     [not null, ref: > dosen.id]
+  matkul       text       [not null]
+  kelas        text
+  hari         hari_kerja [not null]
+  jam_mulai    time       [not null]
+  jam_selesai  time       [not null]
+  ruangan_kode text
+  semester     text       [not null]
+  indexes { dosen_id }
+  Note: 'Hard constraint H3. Bisa berasal dari sistem Sesi 1-4 (Edge Function ekspansi ke jam).'
+}
+
+Table blokir_waktu {
+  id          bigint     [pk, increment]
+  dosen_id    bigint     [not null, ref: > dosen.id]
+  hari        hari_kerja [note: 'isi salah satu: hari (berulang) ATAU tanggal (sekali)']
+  tanggal     date
+  jam_mulai   time       [not null]
+  jam_selesai time       [not null]
+  keterangan  text
+  indexes { dosen_id }
+  Note: 'Hard constraint H4 — waktu dosen tidak tersedia.'
+}
+
+Table jadwal_kuliah {
+  id           bigint     [pk, increment]
+  mahasiswa_id bigint     [not null, ref: > mahasiswa.id]
+  matkul       text       [not null]
+  kelas        text
+  hari         hari_kerja [not null]
+  jam_mulai    time       [not null]
+  jam_selesai  time       [not null]
+  ruangan_kode text
+  dosen_nama   text
+  indexes { mahasiswa_id }
+  Note: 'Hard constraint H5 — jadwal kuliah mahasiswa peserta seminar.'
+}
+
+// ── Penjadwalan — 1 gelombang = 1 batch bulanan, maks 15 seminar ───────────
+Table gelombang {
+  id                      bigint            [pk, increment]
+  nama                    text              [not null]
+  jenis                   jenis_seminar     [not null]
+  periode_label           text
+  tanggal_mulai           date              [note: 'pelaksanaan (prodi: mulai tgl 15)']
+  tanggal_selesai         date
+  hari_aktif              "hari_kerja[]"    [not null]
+  jam_operasional_mulai   time              [not null, default: `'08:00'`]
+  jam_operasional_selesai time              [not null, default: `'17:00'`]
+  jeda_menit              int               [not null, default: 15]
+  durasi_menit            int               [note: 'null = default jenis: sempro 60, semhas 105']
+  kuota_maks              int               [not null, default: 15, note: 'maks mahasiswa/bulan']
+  ruangan_aktif           "text[]"          [not null]
+  sps_file_path           text
+  status                  status_gelombang  [not null, default: 'draft']
+  created_by              uuid              [ref: > profiles.id]
+  created_at              timestamptz       [not null, default: `now()`]
+}
+
+Table seminar {
+  id                       bigint            [pk, increment]
+  gelombang_id             bigint            [not null, ref: > gelombang.id]
+  mahasiswa_id             bigint            [not null, ref: > mahasiswa.id]
+  jenis                    jenis_seminar     [not null]
+  jenis_ta                 text              [note: 'skripsi | proyek | prototipe']
+  judul                    text
+  pembimbing_utama_id      bigint            [ref: > dosen.id]
+  pembimbing_pendamping_id bigint            [ref: > dosen.id]
+  penguji1_id              bigint            [ref: > dosen.id, note: 'dipilih admin setelah pendaftaran ditutup']
+  penguji2_id              bigint            [ref: > dosen.id, note: 'dipilih admin setelah pendaftaran ditutup']
+  is_online                boolean           [not null, default: false, note: 'ditetapkan admin']
+  urutan_daftar            int               [note: 'urutan waktu pendaftaran (untuk kuota)']
+  dijadwalkan              boolean           [not null, default: true, note: 'false = melebihi kuota, ditunda']
+  validasi                 validasi_seminar  [not null, default: 'invalid']
+  catatan                  text
+  indexes {
+    (gelombang_id, mahasiswa_id) [unique]
+    gelombang_id
+  }
+  Note: '4 FK ke dosen: pembimbing utama, pembimbing pendamping, penguji 1, penguji 2.'
+}
+
+// ── Hasil penjadwalan & persetujuan ───────────────────────────────────────
+Table schedule_run {
+  id                bigint         [pk, increment]
+  gelombang_id      bigint         [not null, ref: > gelombang.id]
+  nama              text
+  fitness_score     "numeric(5,2)"
+  conflict_count    int            [not null, default: 0, note: 'H1+H2 — wajib 0']
+  generations_run   int
+  exec_ms           int
+  stats             jsonb          [not null, default: `'{}'`, note: 'kepadatan dosen dll']
+  unscheduled       jsonb          [not null, default: `'[]'`, note: 'seminar gagal terjadwal + alasan']
+  status            status_run     [not null, default: 'draft']
+  finalized_at      timestamptz
+  finalized_by      uuid           [ref: > profiles.id]
+  pembatalan_alasan text
+  created_by        uuid           [ref: > profiles.id]
+  created_at        timestamptz    [not null, default: `now()`]
+  indexes { gelombang_id }
+  Note: '1 gelombang bisa punya banyak run (generate ulang); hanya 1 yang jadi "final".'
+}
+
+Table schedule_slot {
+  id           bigint  [pk, increment]
+  run_id       bigint  [not null, ref: > schedule_run.id]
+  seminar_id   bigint  [not null, ref: > seminar.id]
+  tanggal      date    [not null]
+  jam_mulai    time    [not null]
+  jam_selesai  time    [not null]
+  ruangan_kode text    [not null]
+  is_online    boolean [not null, default: false]
+  indexes { run_id }
+}
+
+Table approval {
+  id         bigint          [pk, increment]
+  slot_id    bigint          [not null, ref: > schedule_slot.id]
+  run_id     bigint          [not null, ref: > schedule_run.id, note: 'denormalisasi utk RLS & realtime filter']
+  dosen_id   bigint          [not null, ref: > dosen.id]
+  peran      peran_dosen     [not null]
+  status     status_approval [not null, default: 'pending']
+  alasan     text            [note: 'wajib bila status = declined']
+  updated_at timestamptz     [not null, default: `now()`]
+  indexes {
+    (slot_id, peran) [unique]
+    (dosen_id, status)
+    run_id
+  }
+  Note: '4 baris per slot. Run jadi "final" saat semua approval-nya "approved".'
+}
+
+// ── Sistem ────────────────────────────────────────────────────────────────
+Table notification {
+  id         bigint      [pk, increment]
+  user_id    uuid        [not null, ref: > profiles.id]
+  judul      text        [not null]
+  pesan      text
+  tipe       text
+  dibaca     boolean     [not null, default: false]
+  ref_run_id bigint      [ref: > schedule_run.id]
+  created_at timestamptz [not null, default: `now()`]
+  indexes { (user_id, dibaca) }
+  Note: 'Dikirim in-app (tabel ini + Realtime) DAN email (Resend).'
+}
+
+Table app_config {
+  key   text  [pk]
+  value jsonb [not null]
+  Note: 'ga_defaults (parameter GA) · jadwal_kampus (mapping Sesi 1-4 + blackout sholat, Jumat beda) · finalisasi'
+}
+
+// ── Grup tabel (tampilan dbdiagram) ───────────────────────────────────────
+TableGroup identitas   { dosen mahasiswa profiles }
+TableGroup constraint  { ruangan jadwal_mengajar blokir_waktu jadwal_kuliah }
+TableGroup penjadwalan { gelombang seminar }
+TableGroup hasil       { schedule_run schedule_slot approval }
+TableGroup sistem      { notification app_config }

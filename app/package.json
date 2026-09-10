@@ -2,6 +2,10 @@
   "name": "sipenta-app",
   "private": true,
   "type": "module",
+  "packageManager": "npm@10.8.0",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",

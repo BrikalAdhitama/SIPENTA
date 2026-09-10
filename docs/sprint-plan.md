@@ -13,7 +13,7 @@ S0 Fondasi & Kontrak ──┬── BE: skema + RLS + types  ──────
                        ├── FE: UI kit + auth shell   (pakai seed DB)
                        └── AI: fixtures + /solve stub (independen — tak nunggu siapa pun)
 
-S1 Master data + Onboarding   FE↔BE (CRUD lokal)          AI: slots.py + reduksi domain
+S1 Master data + Onboarding   FE↔BE (CRUD ke Supabase cloud)          AI: slots.py + reduksi domain
 S2 Wizard (upload→preview→config)  BE: parse-sps          AI: fitness.py + Context (lock interface)
 S3 GA TERINTEGRASI  ◄── titik temu AI↔BE ──►  AI: engine + deploy /solve · BE: generate-schedule
 S4 Approval & Finalisasi  ◄── titik temu FE↔BE realtime ──►  AI: benchmark
@@ -27,12 +27,12 @@ S6 Stabilisasi + Dokumen Capstone
 
 ## S0 — Fondasi & Kontrak
 
-Tujuan: setiap orang bisa `login` di lingkungan lokal, kontrak dibekukan, tiga kerangka jalan.
+Tujuan: setiap orang bisa `login` (dev sambung ke Supabase cloud), kontrak dibekukan, tiga kerangka jalan.
 
 | Area | Tugas |
 |---|---|
 | **BE** | Buat **project Supabase cloud** (`sipenta-dev`) · `supabase link` · migrasi `0001_core_schema.sql` (dari repo) + `0002_rls_policies.sql` + `0003_rpc_approval.sql` (stub) → `supabase db push` · jalankan `seed.sql` sekali (3 user/role, 5 dosen, 4 ruangan, 1 gelombang) · generate `app/types/database.types.ts` (`gen types --project-id`) · tentukan **DB owner** (satu-satunya yang `db push`) · CI: lint + typecheck |
-| **FE** | Scaffold Nuxt (`app/` sudah ada confignya) · pasang `@nuxtjs/supabase`, `@pinia/nuxt`, `@nuxtjs/tailwindcss` · `composables/useAuth` + `middleware/auth.global.ts` + `role.ts` + `onboarding.global.ts` · `layouts/` (default authed shell, auth) · `components/ui/`: Button, Badge, Card, Modal, Stepper, DataTable, EmptyState, FormField · halaman `login.vue` + `index.vue` (redirect per role) · shell: sidebar desktop / bottom-nav mobile |
+| **FE** | Scaffold Nuxt (`app/` sudah ada confignya) · `npm install` (deps sudah di `package.json`: `@nuxtjs/supabase`, `@pinia/nuxt`, `tailwindcss@4` + `@tailwindcss/vite`) · `composables/useAuth` + `middleware/auth.global.ts` + `role.ts` + `onboarding.global.ts` · `layouts/` (default authed shell, auth) · `components/ui/`: Button, Badge, Card, Modal, Stepper, DataTable, EmptyState, FormField · halaman `login.vue` + `index.vue` (redirect per role) · shell: sidebar desktop / bottom-nav mobile |
 | **AI** | Scaffold FastAPI (`ai-service/` sudah ada) · `app/models/`: `SolveRequest`/`SolveResponse` **lengkap persis** [`api-contract.md`](api-contract.md) §E (termasuk `blackout_windows`, `seminars[].is_online`) · `/health` + `/solve` (return placeholder) · `scripts/build_fixture.py`: baca 3 Excel → anonimkan → `tests/fixtures/genap_2526_{sempro,semhas}_<bulan>.json`, **pecah per bulan pendaftaran jadi batch ≤ 15** · `Dockerfile` build & run |
 | **PM** | Bekukan `api-contract.md` v1 (tandai "FROZEN — perubahan lewat mini-RFC") · board (kolom: Backlog / Sprint / Review / Done) · isi tanggal semua sprint · buat template PR (checklist: area, contract-impact, test) |
 
@@ -41,7 +41,7 @@ Tujuan: setiap orang bisa `login` di lingkungan lokal, kontrak dibekukan, tiga k
 - AI → fixtures ter-commit.
 - FE → UI kit + alur login jalan.
 
-**Checkpoint**: semua anggota bisa `pnpm dev` (sambung ke Supabase cloud) / `uvicorn` dan login sebagai admin/dosen/mahasiswa dengan user seed. `POST /solve` mengembalikan placeholder dari salah satu fixture.
+**Checkpoint**: semua anggota bisa `npm run dev` (sambung ke Supabase cloud) / `uvicorn` dan login sebagai admin/dosen/mahasiswa dengan user seed. `POST /solve` mengembalikan placeholder dari salah satu fixture.
 
 ---
 
@@ -55,7 +55,7 @@ Tujuan: semua data mentah non-seminar bisa diisi; gate onboarding aktif.
 | **FE** | Admin: layar **Data Dosen**, **Ruangan**, **Jadwal Dosen** (CRUD, pakai DataTable) · Dosen: **Onboarding — Isi Jadwal Mengajar** (+ checkbox "tidak mengajar") + **Blokir Waktu** · Mahasiswa: **Onboarding — Isi Jadwal Kuliah** (+ checkbox "tidak ada kuliah") + **Jadwal Kuliah** · aktifkan `onboarding.global.ts` (redirect paksa sampai `onboarding_at` terisi) | S0 semua |
 | **AI** | `app/ga/slots.py`: `build_candidate_slots(req)` — iterasi tanggal × hari_aktif × ruangan (termasuk online) × grid `(durasi + jeda)`, **buang irisan `blackout_windows`** (hormati field `hari`, Jumat beda) · `reduce_domains(req, slots)` — `domain[i]` = slot lolos H3/H4/H5; domain kosong → `unscheduled` + alasan · util `time_overlap()`, `tanggal_ke_hari()` · unit test slots + reduksi · **laporan: ukuran `domain[i]` per fixture** (bukti reduksi bekerja) | S0-AI (fixtures) |
 
-**Handoff**: FE↔BE — master data & onboarding end-to-end di lokal. AI — dokumen ukuran domain (masuk bab laporan).
+**Handoff**: FE↔BE — master data & onboarding jalan end-to-end (dev → Supabase cloud). AI — dokumen ukuran domain (masuk bab laporan).
 
 **Checkpoint**: dosen baru login → dipaksa isi jadwal mengajar → tekan Selesai → menu terbuka. Idem mahasiswa. Admin bisa CRUD semua master data.
 
@@ -152,4 +152,4 @@ Tujuan: aplikasi native jalan di device, ekspor jalan, GA di-tuning.
 - **Standup async harian** (channel): kemarin / hari ini / blocker.
 - **Sync mingguan** (akhir sprint): demo per area + tentukan handoff sprint berikutnya + PM update board.
 - **Review PR**: minimal 1 approve dari area yang sama; PR lintas-area butuh approve tiap area.
-- **Definition of Done** (semua task): kode + test lolos CI + dokumen relevan diperbarui + demoable di lokal.
+- **Definition of Done** (semua task): kode + test lolos CI + dokumen relevan diperbarui + demoable di lingkungan dev masing-masing.

@@ -43,7 +43,7 @@ Backend = **1 project Supabase cloud** yang di-share (tanpa Docker). Isi `.env` 
 
 ```bash
 # Frontend — sambung ke Supabase cloud
-cd app && pnpm install && pnpm dev
+cd app && npm install && npm run dev
 
 # Backend — Supabase CLI saja (tanpa Docker Desktop)
 npm i -g supabase && supabase login

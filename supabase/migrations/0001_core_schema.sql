@@ -41,12 +41,15 @@ create table mahasiswa (
 
 -- ── profiles: jembatan auth.users → role ───────────────────────────────────
 create table profiles (
-  id           uuid primary key references auth.users (id) on delete cascade,
-  role         role_pengguna not null,
-  nama         text not null,
-  dosen_id     bigint references dosen (id),
-  mahasiswa_id bigint references mahasiswa (id),
-  created_at   timestamptz not null default now(),
+  id            uuid primary key references auth.users (id) on delete cascade,
+  role          role_pengguna not null,
+  nama          text not null,
+  dosen_id      bigint references dosen (id),
+  mahasiswa_id  bigint references mahasiswa (id),
+  -- gate onboarding: dosen wajib isi jadwal mengajar, mahasiswa wajib isi jadwal kuliah,
+  -- baru diisi (now()) saat mereka menekan "Selesai" di layar onboarding. null = belum → akses dikunci.
+  onboarding_at timestamptz,
+  created_at    timestamptz not null default now(),
   constraint chk_profile_link check (
     (role = 'dosen'     and dosen_id is not null) or
     (role = 'mahasiswa' and mahasiswa_id is not null) or
@@ -64,6 +67,10 @@ $$;
 create or replace function auth.mahasiswa_id() returns bigint language sql stable as $$
   select mahasiswa_id from public.profiles where id = auth.uid()
 $$;
+create or replace function auth.onboarded() returns boolean language sql stable as $$
+  select onboarding_at is not null from public.profiles where id = auth.uid()
+$$;
+-- RPC selesai_onboarding() didefinisikan di bawah, setelah tabel jadwal_mengajar & jadwal_kuliah.
 
 -- ── Ruangan ────────────────────────────────────────────────────────────────
 create table ruangan (
@@ -118,18 +125,48 @@ create table jadwal_kuliah (
 );
 create index idx_jk_mhs on jadwal_kuliah (mahasiswa_id);
 
+-- RPC dipanggil client saat user menekan "Selesai" di layar onboarding.
+-- p_tidak_ada = true bila user menyatakan tidak mengajar / tidak ada kuliah semester ini.
+create or replace function selesai_onboarding(p_tidak_ada boolean default false)
+returns timestamptz
+language plpgsql security definer set search_path = public as $$
+declare
+  v_role  role_pengguna;
+  v_dosen bigint;
+  v_mhs   bigint;
+  v_ts    timestamptz;
+  n       int := 0;
+begin
+  select role, dosen_id, mahasiswa_id into v_role, v_dosen, v_mhs
+    from profiles where id = auth.uid();
+
+  if v_role = 'dosen' and not p_tidak_ada then
+    select count(*) into n from jadwal_mengajar where dosen_id = v_dosen;
+    if n = 0 then raise exception 'jadwal mengajar belum diisi' using errcode = 'check_violation'; end if;
+  elsif v_role = 'mahasiswa' and not p_tidak_ada then
+    select count(*) into n from jadwal_kuliah where mahasiswa_id = v_mhs;
+    if n = 0 then raise exception 'jadwal kuliah belum diisi' using errcode = 'check_violation'; end if;
+  end if;
+
+  update profiles set onboarding_at = now() where id = auth.uid()
+    returning onboarding_at into v_ts;
+  return v_ts;
+end $$;
+
 -- ── Gelombang & Seminar ────────────────────────────────────────────────────
 create table gelombang (
   id                      bigint generated always as identity primary key,
   nama                    text not null,
   jenis                   jenis_seminar not null,
   periode_label           text,
-  tanggal_mulai           date,
+  tanggal_mulai           date,   -- pelaksanaan (prodi: mulai tanggal 15 bulan berjalan)
   tanggal_selesai         date,
   hari_aktif              hari_kerja[] not null default '{senin,selasa,rabu,kamis,jumat}',
   jam_operasional_mulai   time not null default '08:00',
   jam_operasional_selesai time not null default '17:00',
   jeda_menit              int  not null default 15,
+  durasi_menit            int,   -- null = ikut default jenis (sempro 60, semhas 105); isi utk override
+  kuota_maks              int  not null default 15,   -- prodi: maks 15 mahasiswa per bulan; sisanya ditunda
   ruangan_aktif           text[] not null default '{}',
   sps_file_path           text,
   status                  status_gelombang not null default 'draft',
@@ -150,6 +187,8 @@ create table seminar (
   penguji1_id               bigint references dosen (id),
   penguji2_id               bigint references dosen (id),
   is_online                 boolean not null default false,   -- ditetapkan admin; GA menjadwalkan waktunya, venue = online
+  urutan_daftar             int,                              -- urutan waktu pendaftaran dari sheet (utk aturan kuota)
+  dijadwalkan               boolean not null default true,    -- false = melebihi kuota_maks, ditunda ke gelombang bulan berikutnya
   validasi                  validasi_seminar not null default 'invalid',
   catatan                   text,
   unique (gelombang_id, mahasiswa_id)
@@ -234,6 +273,29 @@ create table app_config (
 );
 insert into app_config (key, value) values
   ('ga_defaults', '{"population_size":100,"generations":500,"crossover_rate":0.8,"mutation_rate":0.1,"elitism_count":2,"soft_weights":{"s0_menguji_lebih_dari_1_per_hari":10,"s1_total_peran_lebih_dari_1_per_hari":5}}'),
+  -- mapping Sesi kuliah kampus → rentang jam (dipakai Edge Function saat ekspansi jadwal mengajar/kuliah)
+  -- + jendela blackout (waktu sholat) yang dilarang untuk seminar. Jumat berbeda.
+  ('jadwal_kampus', '{
+    "sesi": {
+      "reguler": {
+        "1": {"mulai": "07:30", "selesai": "10:00"},
+        "2": {"mulai": "10:20", "selesai": "12:00"},
+        "3": {"mulai": "13:00", "selesai": "15:30"},
+        "4": {"mulai": "15:50", "selesai": "17:30"}
+      },
+      "jumat": {
+        "1": {"mulai": "07:30", "selesai": "09:10"},
+        "2": {"mulai": "09:20", "selesai": "11:00"},
+        "3": {"mulai": "13:00", "selesai": "15:30"},
+        "4": {"mulai": "16:00", "selesai": "17:40"}
+      }
+    },
+    "blackout": [
+      {"mulai": "12:00", "selesai": "13:00", "label": "Sholat Dzuhur", "hari": ["senin","selasa","rabu","kamis"]},
+      {"mulai": "11:00", "selesai": "13:00", "label": "Sholat Jumat",  "hari": ["jumat"]},
+      {"mulai": "15:00", "selesai": "16:00", "label": "Sholat Ashar"}
+    ]
+  }'),
   -- jadwal hanya bisa di-finalisasi bila SETIAP slot sudah di-ACC 4 dari 4 dosen (2 pembimbing + 2 penguji)
   ('finalisasi', '{"wajib_semua_dosen_acc": true}');
 

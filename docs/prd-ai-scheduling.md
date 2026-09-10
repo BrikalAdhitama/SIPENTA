@@ -81,8 +81,9 @@ Bobot 100/hard-violation memastikan 1 bentrok selalu lebih buruk dari seluruh so
 ## 8. Evaluasi
 
 - Unit test per constraint (bentrok sengaja → terdeteksi; kasus bersih → lolos; H3–H5 → slot tersingkir dari domain).
-- Benchmark vs jadwal manual Genap 25/26 (fixture anonim): fokus S0 (target < 14/18) & S1 (target < 41).
+- **Skala nyata: 1 gelombang = ≤ 15 seminar** (kuota prodi maks 15 mahasiswa/bulan). Benchmark = pecah data manual Genap 25/26 per bulan jadi fixture ≤15, jalankan GA per gelombang, agregasi. Fokus S0 & S1 vs baseline manual per periode.
 - Uji ketahanan: gelombang padat tetap konvergen ke V_hard=0; domain kosong → `unscheduled` bukan crash; konsistensi antar-run dengan seed tetap.
+- Durasi: Sempro 60 mnt, Semhas 105 mnt (1 jam 45 menit) — dikonfirmasi; bisa di-override per gelombang.
 
 ## 9. Risiko
 

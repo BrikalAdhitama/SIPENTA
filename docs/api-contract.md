@@ -44,11 +44,12 @@ const { data, error } = await supabase.auth.signInWithPassword({ email, password
 ```ts
 const { data: { user } } = await supabase.auth.getUser()
 const { data: profile } = await supabase
-  .from('profiles').select('id, role, nama, dosen_id, mahasiswa_id').eq('id', user.id).single()
+  .from('profiles').select('id, role, nama, dosen_id, mahasiswa_id, onboarding_at').eq('id', user.id).single()
 ```
 Response `profile`:
 ```json
-{ "id": "uuid", "role": "dosen", "nama": "Dr. Sari Dewi", "dosen_id": 12, "mahasiswa_id": null }
+{ "id": "uuid", "role": "dosen", "nama": "Dr. Sari Dewi", "dosen_id": 12, "mahasiswa_id": null,
+  "onboarding_at": null }
 ```
 
 ### AC-3 Logout · AC-4 Reset password
@@ -56,6 +57,20 @@ Response `profile`:
 await supabase.auth.signOut()
 await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${appUrl}/reset` })
 ```
+
+### AC-5 Gate onboarding
+`profiles.onboarding_at` (null = belum). Setelah AC-2, client cek:
+- `role === 'dosen'` & `onboarding_at === null` → paksa ke `/dosen/onboarding` (isi/konfirmasi jadwal mengajar). Semua rute lain diblok (middleware) sampai selesai.
+- `role === 'mahasiswa'` & `onboarding_at === null` → paksa ke `/mahasiswa/onboarding` (isi jadwal kuliah).
+- `role === 'admin'` → tanpa gate.
+
+User mengisi baris `jadwal_mengajar` / `jadwal_kuliah` (Table, RLS pemilik), lalu:
+```ts
+// tombol "Selesai" — RPC memvalidasi minimal 1 baris, lalu set onboarding_at
+await supabase.rpc('selesai_onboarding', { p_tidak_ada: false })
+// p_tidak_ada: true bila user menyatakan "tidak mengajar / tidak ada kuliah semester ini"
+```
+Response: `"2026-09-11T02:00:00Z"` (nilai `onboarding_at`). Error `check_violation` bila `p_tidak_ada=false` tapi belum ada baris.
 
 ---
 
@@ -65,7 +80,8 @@ Ringkasan kebijakan RLS (detail SQL di `supabase/migrations/0002_rls_policies.sq
 
 | Tabel | SELECT | INSERT / UPDATE / DELETE |
 |---|---|---|
-| `dosen`, `ruangan`, `jadwal_mengajar` | semua role terautentikasi | `admin` |
+| `dosen`, `ruangan` | semua role terautentikasi | `admin` |
+| `jadwal_mengajar` | semua role terautentikasi | `admin` **atau** pemilik (`dosen_id = auth.dosen_id()`) |
 | `blokir_waktu` | `admin`, pemilik (`dosen_id = auth.dosen_id()`) | pemilik & `admin` |
 | `jadwal_kuliah` | `admin`, pemilik (`mahasiswa_id = auth.mahasiswa_id()`) | pemilik & `admin` |
 | `gelombang`, `seminar` | `admin` | `admin` |
@@ -229,17 +245,23 @@ Response `200`:
 ```json
 {
   "gelombang_id": 7,
-  "summary": { "total": 45, "valid": 41, "invalid": 2, "duplikat": 2 },
+  "summary": { "total": 20, "valid": 18, "invalid": 1, "duplikat": 1, "dijadwalkan": 15, "ditunda": 5 },
   "seminars": [
     {
-      "row": 1,
+      "row": 1, "urutan_daftar": 1,
       "nim": "11221023", "nama": "Hylmi Wahyudi",
       "jenis": "sempro", "jenis_ta": "proyek",
       "judul": "Implementasi Dual-Homing dan Load Balancing pada Metro Ethernet",
       "pembimbing_utama": { "matched_dosen_id": 4, "raw": "Darmansyah, S.Si., M.T.I" },
       "pembimbing_pendamping": { "matched_dosen_id": 5, "raw": "Rizky Amelia, S.Si., M.Han." },
       "penguji1": null, "penguji2": null,
-      "validasi": "valid", "catatan": null
+      "dijadwalkan": true, "validasi": "valid", "catatan": null
+    },
+    {
+      "row": 17, "urutan_daftar": 16,
+      "nim": "11221088", "nama": "Contoh Mahasiswa",
+      "dijadwalkan": false, "validasi": "valid",
+      "catatan": "melebihi kuota bulan ini, ditunda ke gelombang berikutnya"
     },
     {
       "row": 8, "nim": "11221019", "nama": "Azhari Rambe",
@@ -248,7 +270,9 @@ Response `200`:
   ]
 }
 ```
-Data mahasiswa & kedua pembimbing **sudah lengkap** di sheet pendaftaran — Edge Function tinggal membacanya. Efek samping: buat baris `mahasiswa` (dari NIM+nama di sheet, tidak perlu di-input admin lebih dulu) + upsert baris `seminar` (pembimbing utama & pendamping terisi, penguji `null`, `validasi` sesuai hasil cek). Nama dosen dicocokkan fuzzy → `matched_dosen_id` (null bila ragu → baris jadi `invalid`, admin perbaiki manual).
+Data mahasiswa & kedua pembimbing **sudah lengkap** di sheet pendaftaran (prodi: mahasiswa wajib dapat persetujuan pembimbing sebelum mendaftar) — Edge Function tinggal membacanya. Efek samping: buat baris `mahasiswa` (dari NIM+nama di sheet, tidak perlu di-input admin lebih dulu) + upsert baris `seminar` (pembimbing utama & pendamping terisi, penguji `null`, `urutan_daftar` dari kolom waktu daftar di sheet, `validasi` sesuai hasil cek). Nama dosen dicocokkan fuzzy → `matched_dosen_id` (null bila ragu → baris jadi `invalid`, admin perbaiki manual).
+
+**Aturan kuota** (prodi: maks 15 mahasiswa/bulan): setelah semua baris terbaca, urutkan menurut `urutan_daftar`. Baris ke-1..`gelombang.kuota_maks` → `dijadwalkan = true`. Sisanya → `dijadwalkan = false`, `catatan = "melebihi kuota bulan ini, ditunda ke gelombang berikutnya"`. `summary` menyertakan `dijadwalkan` & `ditunda`. Admin bisa override manual (mis. bila ada yang mengundurkan diri) lewat `seminar` update.
 
 ### SC-3 (tetapkan penguji + mode online) — via tabel
 Setelah admin memilih **Penguji 1 & 2** (manual) dan menandai seminar yang **online** di UI preview:
@@ -284,11 +308,12 @@ Request:
 
 Yang dilakukan Edge Function:
 1. Verifikasi pemanggil `admin` & `gelombang.status = 'siap_generate'`.
-2. Baca `seminar` (valid), `jadwal_mengajar`, `blokir_waktu`, `jadwal_kuliah`, `ruangan` (yang `ruangan_aktif`).
-3. **Ekspansi**: jadwal mengajar & kuliah yang berbentuk Sesi → rentang jam; nama → `dosen_id`.
-4. Rakit payload GA (lihat §E) dan `POST {AI_URL}/solve` dengan header `X-AI-Key`.
-5. Tulis transaksional: 1 baris `schedule_run` + N `schedule_slot` + 4N `approval` (status `pending`).
-6. Kembalikan ringkasan.
+2. **Cek onboarding**: setiap dosen (4 peran) & setiap mahasiswa yang terlibat di gelombang harus `profiles.onboarding_at IS NOT NULL`. Bila ada yang belum → `VALIDATION_FAILED` dengan `details.belum_onboarding: [{nama, role}]` (jadwal mereka belum lengkap, generate ditolak).
+3. Baca `seminar` (`validasi = valid` **dan** `dijadwalkan = true` — yang ditunda kuota tidak ikut), `jadwal_mengajar`, `blokir_waktu`, `jadwal_kuliah`, `ruangan` (yang `ruangan_aktif`).
+4. **Ekspansi**: "hari + Sesi N" → rentang jam (`app_config.jadwal_kampus.sesi`, kolom Jumat bila hari Jumat); nama → `dosen_id`. Susun `blackout_windows` dari `app_config.jadwal_kampus.blackout`.
+5. Rakit payload GA (lihat §E) dan `POST {AI_URL}/solve` dengan header `X-AI-Key`.
+6. Tulis transaksional: 1 baris `schedule_run` + N `schedule_slot` + 4N `approval` (status `pending`).
+7. Kembalikan ringkasan.
 
 Response `200`:
 ```json
@@ -358,8 +383,13 @@ Request:
   "session_duration_minutes": 105,
   "period": { "start_date": "2026-06-01", "end_date": "2026-06-30" },
   "active_days": ["senin","selasa","rabu","kamis","jumat"],
-  "operational_hours": { "start": "08:00", "end": "17:00" },
+  "operational_hours": { "start": "08:00", "end": "17:30" },
   "gap_minutes": 15,
+  "blackout_windows": [
+    { "start": "12:00", "end": "13:00", "label": "Sholat Dzuhur", "hari": ["senin","selasa","rabu","kamis"] },
+    { "start": "11:00", "end": "13:00", "label": "Sholat Jumat",  "hari": ["jumat"] },
+    { "start": "15:00", "end": "16:00", "label": "Sholat Ashar" }
+  ],
   "rooms": [
     { "id": "B-207", "is_online": false },
     { "id": "B-201", "is_online": false }
@@ -387,7 +417,10 @@ Request:
 }
 ```
 Catatan:
-- Semua jadwal mengajar & kuliah dikirim **sudah dalam rentang jam** dan **sudah pakai `dosen_id`** — Edge Function yang mengonversi. AI service tidak tahu aturan SKS kampus atau varian penulisan nama.
+- `session_duration_minutes` = `gelombang.durasi_menit` bila di-set, else default jenis (sempro 60, semhas 105).
+- `seminars` hanya berisi yang `dijadwalkan = true` (≤ `kuota_maks`). Yang ditunda kuota tidak dikirim ke AI.
+- Semua jadwal mengajar & kuliah dikirim **sudah dalam rentang jam** dan **sudah pakai `dosen_id`** — Edge Function yang mengonversi (mis. "Rabu Sesi 3" → "Rabu 13:00–15:30"). AI service tidak tahu aturan Sesi kampus atau varian penulisan nama.
+- `blackout_windows` = waktu yang **tidak boleh dipakai seminar** (sholat Dzuhur/Jumat/Ashar). Tiap entry boleh punya `hari` (daftar hari berlakunya; tanpa `hari` = semua hari aktif). AI membuang slot yang beririsan saat generate slot kandidat — sama tier dengan `operational_hours` & `active_days`. Jumat berbeda: blackout 11.00–13.00 (bukan 12.00–13.00).
 - `seminars[].is_online` **ditetapkan admin** di langkah preview (SC-3), bukan diputuskan AI. Untuk seminar `is_online: true`, AI menjadwalkan **waktunya** tetapi venue dikunci ke "online" (tak konsumsi ruangan fisik, H1 dilewati).
 
 Response `200`:
@@ -424,6 +457,7 @@ Response `422` bila payload tak valid (mis. `rooms` kosong, tanggal_selesai < ta
 | Use case | Mekanisme | Endpoint / operasi |
 |---|---|---|
 | AC-1..4 | Auth SDK | `auth.signInWithPassword` / `getUser` / `signOut` / `resetPasswordForEmail` |
+| AC-5 | RPC + Table | isi `jadwal_mengajar`/`jadwal_kuliah` lalu `rpc('selesai_onboarding')` → set `profiles.onboarding_at` |
 | MD-1..3 | Table | `dosen`, `jadwal_mengajar`, `ruangan` (data dosen di-input manual admin) |
 | DS-1 | Table | `jadwal_mengajar` (filter `dosen_id`) |
 | DS-2 | Table | `blokir_waktu` (RLS pemilik) |

@@ -12,7 +12,8 @@ pages/{login,index,admin,dosen,mahasiswa}/   stores/   types/   utils/
 ```
 - `types/database.types.ts` — GENERATED (`pnpm gen:types`).
 - `types/domain.ts` — enum & konstanta manual (peran, status, jenis).
-- Guard: `definePageMeta({ role: 'admin' })` dibaca `middleware/role.ts`.
+- Guard peran: `definePageMeta({ role: 'admin' })` dibaca `middleware/role.ts`.
+- **Gate onboarding**: `middleware/onboarding.global.ts` — bila `profile.role` ∈ {dosen, mahasiswa} dan `profile.onboarding_at` null, semua rute selain `/<role>/onboarding` & logout di-redirect ke sana. Dilepas setelah `rpc('selesai_onboarding')` sukses (lihat `docs/api-contract.md` AC-5).
 
 ## Perintah
 ```bash

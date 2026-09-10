@@ -41,13 +41,14 @@ sipenta/
 │   ├── layouts/                  #    default (authed shell), auth (login), blank
 │   ├── middleware/
 │   │   ├── auth.global.ts        #    redirect ke /login kalau belum sesi
+│   │   ├── onboarding.global.ts  #    dosen/mahasiswa dgn onboarding_at null → paksa ke /<role>/onboarding
 │   │   └── role.ts               #    guard per-halaman: definePageMeta({ role: 'admin' })
 │   ├── pages/
 │   │   ├── login.vue
 │   │   ├── index.vue            #    redirect sesuai role
 │   │   ├── admin/               #    dashboard, seminar/ (wizard), jadwal/ (detail + finalisasi), riwayat, laporan, master/ (dosen, ruangan, jadwal-dosen), approval-status
-│   │   ├── dosen/               #    dashboard, seminar-saya, blokir-waktu, approve
-│   │   └── mahasiswa/           #    jadwal-seminar, jadwal-kuliah
+│   │   ├── dosen/               #    onboarding, dashboard, seminar-saya, blokir-waktu, approve
+│   │   └── mahasiswa/           #    onboarding, jadwal-seminar, jadwal-kuliah
 │   ├── stores/                  #    Pinia: auth, ui, wizardDraft
 │   ├── types/
 │   │   ├── database.types.ts    #    GENERATED: supabase gen types typescript
@@ -63,10 +64,10 @@ sipenta/
 │   │   └── 0004_triggers_notif.sql
 │   ├── functions/                #    Edge Functions (Deno/TypeScript)
 │   │   ├── _shared/              #    cors.ts, supabaseAdmin.ts, types.ts
-│   │   ├── parse-sps/            #    baca Excel SPS dari Storage → rows seminar
-│   │   ├── generate-schedule/    #    rakit payload GA, panggil ai-service, tulis hasil
+│   │   ├── parse-sps/            #    baca sheet pendaftaran → buat mahasiswa + seminar (+ bagi kuota)
+│   │   ├── generate-schedule/    #    rakit payload, panggil ai-service, tulis hasil
 │   │   ├── export-schedule/      #    render Excel/PDF → signed URL
-│   │   └── notify/              #    kirim notifikasi (+ email opsional via Resend)
+│   │   └── notify/              #    tulis notification + kirim email via Resend (keduanya)
 │   ├── seed.sql                 #    data dummy dev: dosen, ruangan, 1 gelombang contoh
 │   └── tests/                   #    pgTAP / deno test
 │
@@ -79,7 +80,7 @@ sipenta/
 │   │   ├── models/              #    pydantic: SolveRequest, SolveResponse
 │   │   ├── config.py
 │   │   └── ga/
-│   │       ├── slots.py         #    generate slot kandidat + reduksi domain (H3–H5)
+│   │       ├── slots.py         #    slot kandidat (buang blackout) + reduksi domain (H3–H5)
 │   │       ├── chromosome.py
 │   │       ├── fitness.py       #    H1–H2 dinamis + S0–S5 soft
 │   │       ├── operators.py     #    tournament, uniform crossover, reassignment mutation
@@ -105,10 +106,10 @@ sipenta/
 | Area | Owner | Deploy ke | Tidak boleh |
 |---|---|---|---|
 | `app/` | 2 FE | Cloudflare Pages / Vercel (web) + Play Store / App Store (Capacitor) | akses tabel tanpa lewat RLS; simpan secret |
-| `supabase/` | 2 BE | Supabase Cloud | logika berat di client; panggil GA service dari client |
-| `ai-service/` | 2 AI | Railway / Render / Fly.io (container) | akses database langsung; tahu aturan SKS kampus (dikirim sudah jadi) |
+| `supabase/` | 2 BE | Supabase Cloud | logika berat di client; panggil AI service dari client |
+| `ai-service/` | 2 AI | Railway / Render / Fly.io (container) | akses database langsung; tahu aturan Sesi/jam kampus (dikirim sudah jadi) |
 
-Kontrak antar area **hanya** lewat: (1) tabel + RLS Supabase, (2) Edge Function HTTP, (3) endpoint GA service. Semua didefinisikan di [`api-contract.md`](api-contract.md).
+Kontrak antar area **hanya** lewat: (1) tabel + RLS Supabase, (2) Edge Function HTTP, (3) endpoint AI service. Semua didefinisikan di [`api-contract.md`](api-contract.md).
 
 ## Konvensi
 

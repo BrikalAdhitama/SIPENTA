@@ -39,17 +39,39 @@ Deno.serve(async (req) => {
   if (g.status !== "siap_generate")
     return jsonError("CONFLICT_STATE", `gelombang berstatus ${g.status}`, 409);
 
-  // 3. baca seminar (semua harus valid), jadwal mengajar, blokir, jadwal kuliah, ruangan aktif
-  const { data: seminars } = await admin.from("seminar").select("*").eq("gelombang_id", gelombang_id);
+  // 3. baca seminar yang ikut dijadwalkan (valid & dalam kuota); jadwal mengajar, blokir, jadwal kuliah, ruangan aktif
+  const { data: seminars } = await admin.from("seminar").select("*")
+    .eq("gelombang_id", gelombang_id).eq("dijadwalkan", true);
   if (seminars!.some((s) => s.validasi !== "valid"))
-    return jsonError("VALIDATION_FAILED", "masih ada seminar invalid/duplikat", 422);
+    return jsonError("VALIDATION_FAILED", "masih ada seminar invalid/duplikat di kuota", 422);
+  if (seminars!.length === 0)
+    return jsonError("VALIDATION_FAILED", "tidak ada seminar yang dijadwalkan di gelombang ini", 422);
+
+  // 3b. gate onboarding — semua dosen & mahasiswa terkait harus sudah melengkapi jadwalnya
+  const dosenIds = [...new Set(seminars!.flatMap((s) => [
+    s.pembimbing_utama_id, s.pembimbing_pendamping_id, s.penguji1_id, s.penguji2_id,
+  ]))];
+  const mhsIds = [...new Set(seminars!.map((s) => s.mahasiswa_id))];
+  const { data: belum } = await admin.from("profiles")
+    .select("nama, role")
+    .is("onboarding_at", null)
+    .or(`dosen_id.in.(${dosenIds.join(",")}),mahasiswa_id.in.(${mhsIds.join(",")})`);
+  if (belum && belum.length > 0)
+    return jsonError("VALIDATION_FAILED", "ada dosen/mahasiswa yang belum melengkapi jadwal", 422, {
+      belum_onboarding: belum,
+    });
 
   // TODO: ambil jadwal_mengajar, blokir_waktu, jadwal_kuliah untuk dosen & mhs terkait
-  // TODO: ekspansi Sesi → rentang jam (bila kampus pakai sistem Sesi); nama dosen → dosen_id
+  // TODO: ekspansi "hari + Sesi N" → rentang jam pakai app_config.jadwal_kampus.sesi ; nama dosen → dosen_id
   // TODO: filter ruangan sesuai g.ruangan_aktif
 
-  const durasi = g.jenis === "semhas" ? 105 : 60;
+  const durasi = g.durasi_menit ?? (g.jenis === "semhas" ? 105 : 60);
   const { data: cfg } = await admin.from("app_config").select("value").eq("key", "ga_defaults").single();
+  const { data: kampus } = await admin.from("app_config").select("value").eq("key", "jadwal_kampus").single();
+  const blackout = (kampus!.value.blackout ?? []).map(
+    (b: { mulai: string; selesai: string; label: string; hari?: string[] }) =>
+      ({ start: b.mulai, end: b.selesai, label: b.label, ...(b.hari ? { hari: b.hari } : {}) }),
+  );
 
   const payload = {
     seminar_type: g.jenis,
@@ -58,6 +80,7 @@ Deno.serve(async (req) => {
     active_days: g.hari_aktif,
     operational_hours: { start: g.jam_operasional_mulai, end: g.jam_operasional_selesai },
     gap_minutes: g.jeda_menit,
+    blackout_windows: blackout, // waktu sholat — slot yang beririsan tidak dibuat
     rooms: [], // TODO
     seminars: seminars!.map((s) => ({
       id: s.id, nim: null, nama: null,

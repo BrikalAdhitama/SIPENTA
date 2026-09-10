@@ -1,6 +1,8 @@
 # Database ERD — SIPENTA
 
-Postgres (Supabase). Nama tabel & kolom pakai bahasa Indonesia domain. Sumber kebenaran skema: `supabase/migrations/`.
+Postgres (Supabase). Nama tabel & kolom pakai bahasa Indonesia domain. Sumber kebenaran skema: `supabase/migrations/0001_core_schema.sql`.
+
+**Untuk visualisasi cepat**: tempel isi [`database.dbml`](database.dbml) ke [dbdiagram.io](https://dbdiagram.io) → langsung jadi diagram interaktif. Diagram Mermaid di bawah render otomatis di GitHub / VS Code / editor Markdown.
 
 ## Diagram relasi
 
@@ -22,10 +24,14 @@ erDiagram
 
     schedule_run ||--o{ schedule_slot : menghasilkan
     seminar ||--o| schedule_slot : dijadwalkan
-    schedule_slot ||--o{ approval : "butuh 4"
+    schedule_slot ||--o{ approval : "butuh 4 (per peran)"
+    schedule_run ||--o{ approval : "punya"
     dosen ||--o{ approval : menyetujui
 
     profiles ||--o{ notification : menerima
+    schedule_run ||--o{ notification : "dirujuk"
+    profiles ||--o{ gelombang : "dibuat oleh"
+    profiles ||--o{ schedule_run : "dibuat / difinalisasi"
 
     profiles {
         uuid id PK "= auth.users.id"
@@ -33,6 +39,7 @@ erDiagram
         text nama
         bigint dosen_id FK "nullable"
         bigint mahasiswa_id FK "nullable"
+        timestamptz onboarding_at "null = akses terkunci"
     }
     dosen {
         bigint id PK
@@ -100,6 +107,8 @@ erDiagram
         time jam_operasional_mulai
         time jam_operasional_selesai
         int jeda_menit
+        int durasi_menit "null = default jenis (60/105)"
+        int kuota_maks "default 15"
         text[] ruangan_aktif
         text sps_file_path
         text status "draft|siap_generate|dijadwalkan"
@@ -117,6 +126,8 @@ erDiagram
         bigint penguji1_id FK
         bigint penguji2_id FK
         bool is_online "ditetapkan admin"
+        int urutan_daftar "urutan waktu pendaftaran"
+        bool dijadwalkan "false = melebihi kuota, ditunda"
         text validasi "valid|invalid|duplikat"
         text catatan
     }
@@ -164,15 +175,22 @@ erDiagram
         text pesan
         text tipe
         bool dibaca
-        bigint ref_run_id "nullable"
+        bigint ref_run_id FK "nullable"
         timestamptz created_at
+    }
+    app_config {
+        text key PK
+        jsonb value "ga_defaults, jadwal_kampus, finalisasi"
     }
 ```
 
 ## Catatan desain
 
-- **`profiles`** memetakan `auth.users` → role + tautan ke `dosen`/`mahasiswa`. Helper SQL `auth.role()`, `auth.dosen_id()`, `auth.mahasiswa_id()` dipakai di kebijakan RLS.
+- **`profiles`** memetakan `auth.users` → role + tautan ke `dosen`/`mahasiswa`. Helper SQL `auth.role()`, `auth.dosen_id()`, `auth.mahasiswa_id()`, `auth.onboarded()` dipakai di kebijakan RLS.
+- **`profiles.onboarding_at`** — null sampai dosen mengisi `jadwal_mengajar` / mahasiswa mengisi `jadwal_kuliah` lalu memanggil RPC `selesai_onboarding()`. Client memakai ini untuk mengunci akses; `generate-schedule` menolak bila ada dosen/mahasiswa terkait yang masih null.
+- **`app_config.jadwal_kampus`** menyimpan mapping Sesi 1–4 → jam (beda kolom `reguler` vs `jumat`) + daftar `blackout` (waktu sholat, tiap entry bisa dibatasi `hari`). Dipakai `generate-schedule` untuk ekspansi Sesi & menyusun `blackout_windows`.
 - **`seminar`** punya **4 FK ke `dosen`** (pembimbing utama, pembimbing pendamping, penguji 1, penguji 2). Data mahasiswa + kedua pembimbing berasal dari **sheet pendaftaran** (dibaca `parse-sps`, `mahasiswa` dibuat otomatis). Penguji 1 & 2 diisi **manual oleh admin** di langkah preview → nullable saat impor, wajib sebelum `generate`. `is_online` juga ditetapkan admin di langkah preview.
+- **Kuota** (aturan prodi: maks 15/bulan): `parse-sps` mengisi `seminar.urutan_daftar` dari sheet dan menandai baris di atas `gelombang.kuota_maks` sebagai `dijadwalkan = false` (ditunda ke gelombang berikutnya). `generate-schedule` hanya mengirim `dijadwalkan = true` ke GA. Admin bisa override.
 - **`schedule_run`** = satu kali eksekusi GA untuk sebuah gelombang. Satu gelombang boleh punya banyak run (generate ulang); hanya satu yang akhirnya `final`. `final` hanya bisa dicapai lewat RPC `finalisasi_jadwal` **setelah setiap slot di-ACC 4 dari 4 dosen** (2 pembimbing + 2 penguji); run lain di gelombang itu otomatis jadi `dibatalkan`.
 - **`approval`** menyimpan `run_id` (denormalisasi) supaya RLS & realtime bisa filter tanpa join berantai.
 - **Waktu** disimpan `time` + `hari` (text: `senin`..`jumat`) untuk data berulang (jadwal mengajar/kuliah/blokir), dan `date` + `time` untuk slot seminar konkret.

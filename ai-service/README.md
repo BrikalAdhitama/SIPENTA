@@ -9,7 +9,7 @@ Desain algoritma lengkap: [`../docs/ga-design.md`](../docs/ga-design.md). PRD ko
 `POST /solve` — dipanggil **hanya** oleh Edge Function `generate-schedule` (header `X-AI-Key`). Sinkron, timeout 60 dtk.
 `GET /health` — cek hidup.
 
-Skema request/response: [`../docs/api-contract.md`](../docs/api-contract.md) §E. Payload sudah bersih: jadwal mengajar/kuliah dalam rentang jam, dosen sebagai `dosen_id` — GA tidak tahu aturan SKS kampus.
+Skema request/response: [`../docs/api-contract.md`](../docs/api-contract.md) §E. Payload sudah bersih: jadwal mengajar/kuliah dalam rentang jam, dosen sebagai `dosen_id` — GA tidak tahu aturan Sesi kampus.
 
 ## Struktur
 
@@ -20,7 +20,7 @@ app/
   models/           pydantic SolveRequest, SolveResponse
   config.py         AI_KEY, defaults
   ga/
-    slots.py        generate slot kandidat + REDUKSI DOMAIN (buang slot langgar H3-H5)
+    slots.py        generate slot kandidat (buang irisan blackout_windows / waktu sholat) + REDUKSI DOMAIN (buang slot langgar H3-H5)
     chromosome.py   array integer, 1 gene = 1 seminar → index slot dari domain[i]
     fitness.py      V_hard = H1 + H2 ; soft = 10*S0 + 5*S1 + 4*S2 + 3*S3 + 2*S4 + 1*S5
     operators.py    tournament(k=3), uniform crossover(0.8), reassignment mutation(0.1), elitism(2)

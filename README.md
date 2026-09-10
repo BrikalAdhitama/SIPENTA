@@ -30,8 +30,9 @@ Detail pembagian folder & kepemilikan: [`docs/STRUCTURE.md`](docs/STRUCTURE.md)
 | Dokumen | Isi |
 |---|---|
 | [`docs/STRUCTURE.md`](docs/STRUCTURE.md) | Struktur folder, siapa mengerjakan apa, konvensi |
+| [`docs/sprint-plan.md`](docs/sprint-plan.md) | Rencana 7 sprint per area (FE/BE/AI) + aturan anti-tabrakan |
 | [`docs/prd.md`](docs/prd.md) | Product Requirements — peran, alur, semua use case |
-| [`docs/api-contract.md`](docs/api-contract.md) | Kontrak API per use case (Supabase + Edge Function + GA service) |
+| [`docs/api-contract.md`](docs/api-contract.md) | Kontrak API per use case (Supabase + Edge Function + AI service) |
 | [`docs/database-erd.md`](docs/database-erd.md) | Skema database & relasi |
 | [`docs/ga-design.md`](docs/ga-design.md) | Desain algoritma genetika (kromosom, fitness, constraint) |
 | [`docs/prd-ai-scheduling.md`](docs/prd-ai-scheduling.md) | PRD khusus komponen AI |

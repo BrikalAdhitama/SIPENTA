@@ -43,6 +43,13 @@ class Interval(BaseModel):
     jam_selesai: str
 
 
+class BlackoutWindow(BaseModel):
+    start: str
+    end: str
+    label: str = ""
+    hari: list[str] = Field(default_factory=list)  # kosong = semua hari aktif; mis. ["jumat"] utk sholat Jumat
+
+
 class SolveRequest(BaseModel):
     seminar_type: str
     session_duration_minutes: int
@@ -50,6 +57,7 @@ class SolveRequest(BaseModel):
     active_days: list[str]
     operational_hours: dict
     gap_minutes: int = 15
+    blackout_windows: list[BlackoutWindow] = Field(default_factory=list)  # mis. waktu sholat
     rooms: list[Room]
     seminars: list[SeminarIn]
     dosen_teaching_schedule: list[Interval] = Field(default_factory=list)

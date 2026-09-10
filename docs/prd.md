@@ -47,6 +47,12 @@ SIPENTA mengotomatiskan ini: admin mengunggah sheet pendaftaran, menetapkan peng
 
 Autentikasi: email + password (Supabase Auth). Role disimpan di tabel `profiles` (`admin` \| `dosen` \| `mahasiswa`), ditegakkan lewat Row Level Security.
 
+**Gate onboarding.** Data jadwal dari dosen & mahasiswa adalah bahan mentah GA (H3, H5), jadi akun mereka **terkunci sampai jadwalnya diisi**:
+- **Dosen** login pertama kali → langsung ke layar *Isi Jadwal Mengajar*. Menu lain tidak bisa dibuka sampai ≥1 baris jadwal diisi (atau centang "tidak mengajar semester ini"), lalu tekan **Selesai** (`profiles.onboarding_at` terisi).
+- **Mahasiswa** login pertama kali → layar *Isi Jadwal Kuliah*, aturan sama.
+- **Admin** tanpa gate.
+- Saat admin menekan **Generate**, sistem menolak bila masih ada dosen/mahasiswa terkait yang belum menyelesaikan onboarding — dan menyebut namanya.
+
 ## 4. Arsitektur (ringkas)
 
 ```
@@ -120,9 +126,10 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 | ID | Use case | Aktor |
 |---|---|---|
 | AC-1 | Login (email + password) | semua |
-| AC-2 | Ambil sesi + profil (role, nama) | semua |
+| AC-2 | Ambil sesi + profil (role, nama, `onboarding_at`) | semua |
 | AC-3 | Logout | semua |
 | AC-4 | Reset password via email | semua |
+| AC-5 | **Onboarding wajib**: dosen isi jadwal mengajar / mahasiswa isi jadwal kuliah → tekan Selesai (`selesai_onboarding`); akses menu lain terkunci sampai ini beres | Dosen, Mahasiswa |
 
 ### Data Master (Admin)
 | ID | Use case | Aktor |
@@ -149,8 +156,8 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 | ID | Use case | Aktor |
 |---|---|---|
 | SC-1 | Buat **gelombang** baru (jenis Sempro/Semhas) + unggah **sheet pendaftaran** | Admin |
-| SC-2 | Parse sheet → daftar seminar (data mhs & pembimbing sudah lengkap dari sheet), ringkasan valid / invalid / duplikat | Admin (Edge Fn) |
-| SC-3 | Preview & validasi: tetapkan **Penguji 1 & 2** manual per mahasiswa, **tandai seminar yang online**, perbaiki data | Admin |
+| SC-2 | Parse sheet → daftar seminar (data mhs & pembimbing sudah lengkap dari sheet); ringkasan valid/invalid/duplikat + **pembagian kuota** (15 pertama `dijadwalkan`, sisanya ditunda) | Admin (Edge Fn) |
+| SC-3 | Preview & validasi: tetapkan **Penguji 1 & 2** manual per mahasiswa, **tandai seminar yang online**, tinjau/ubah pembagian kuota, perbaiki data | Admin |
 | SC-4 | Simpan **konfigurasi** periode (tanggal mulai/selesai, hari aktif, jam operasional, jeda antar sesi, ruangan aktif) | Admin |
 | SC-5 | **Generate jadwal** — jalankan GA | Admin (Edge Fn → AI service) |
 | SC-6 | Lihat hasil: tampilan **tabel** & **kalender**, skor fitness, jumlah konflik, daftar `unscheduled` | Admin |
@@ -186,7 +193,7 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 ### Admin
 - **Dashboard** — kartu statistik (total seminar, sempro, semhas, ruangan aktif), jadwal terbaru, status penjadwalan, aksi cepat.
 - **Buat Penjadwalan** (wizard 4 langkah): Upload SPS → Preview & Validasi → Konfigurasi → Generate. Stepper menandai progres. Langkah Generate menampilkan progres tahap GA (Preparing Data → Generate Population → Fitness Evaluation → Selection → Crossover → Mutation → Complete).
-- **Data Seminar** — tabel semua seminar per gelombang, status validasi, pilih penguji.
+- **Data Seminar** — tabel semua seminar per gelombang, status validasi, pilih penguji, kolom kuota (`dijadwalkan` / `ditunda`) yang bisa diubah admin.
 - **Jadwal** — daftar run tersimpan; klik → detail: tabel slot dengan kolom 4 dosen + indikator status persetujuan (dot hijau/kuning/merah) + progress bar `n/4 disetujui`; modal detail per slot menampilkan 4 kartu approval + alasan penolakan. Tombol **Finalisasi Jadwal** aktif hanya bila semua slot 4/4; tombol **Batalkan**.
 - **Data Dosen** — CRUD dosen (nip, nama, gelar, email, bidang, status) — input manual.
 - **Jadwal Dosen** — CRUD jadwal mengajar per dosen (matkul, kelas, hari, jam, ruangan).
@@ -196,14 +203,34 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 - **Laporan** — kartu ringkasan (total jadwal, total seminar, rata-rata fitness, total konflik) + tabel semua run + tombol ekspor Excel/PDF. *(fungsi kaprodi, dijalankan admin)*
 
 ### Dosen
+- **Onboarding — Isi Jadwal Mengajar** *(muncul sekali, memblok menu lain sampai selesai)* — tabel jadwal mengajar (matkul, kelas, hari, Sesi/jam, ruangan) yang bisa ditambah/ubah/hapus; checkbox "Saya tidak mengajar semester ini"; tombol **Selesai** aktif bila ≥1 baris atau checkbox dicentang.
 - **Dashboard** — statistik (seminar sebagai pembimbing, sebagai penguji, perlu disetujui), daftar seminar terlibat, aksi cepat.
 - **Seminar Saya** — dua daftar: sebagai Pembimbing, sebagai Penguji; tampilkan slot bila sudah dijadwalkan.
 - **Blokir Waktu** — tab Jadwal Mengajar (read-only) + tab Blokir Waktu (CRUD: hari, jam mulai/selesai, keterangan).
 - **Approve Jadwal** — grid kartu slot miliknya; badge peran; 4 dot progres dosen; tombol Setujui / Tolak; modal alasan penolakan; tombol reset ke menunggu.
 
 ### Mahasiswa
+- **Onboarding — Isi Jadwal Kuliah** *(muncul sekali, memblok menu lain sampai selesai)* — CRUD mata kuliah (matkul, kelas, hari, Sesi/jam, ruangan, dosen); checkbox "Tidak ada kuliah semester ini"; tombol **Selesai**.
 - **Jadwal Seminar** — kartu detail seminar (judul, NIM, pembimbing, penguji) + kartu slot (tanggal, jam, ruangan) + progres persetujuan `n/4` + status per dosen.
-- **Jadwal Kuliah** — CRUD mata kuliah (matkul, kelas, hari, jam, ruangan, dosen); banner "N mata kuliah terdaftar sebagai hard constraint GA".
+- **Jadwal Kuliah** — sama seperti layar onboarding tapi bisa diakses kapan saja untuk memperbarui; banner "N mata kuliah terdaftar sebagai hard constraint GA".
+
+## 8b. Gelombang & Kuota (aturan prodi — Pengumuman Koordinator TA, 28 Jul 2026)
+
+- **Sempro dan Sidang TA (Semhas) punya timeline gelombang terpisah**, dibuka bertahap per bulan. Contoh Gasal 2026/2027:
+
+  | Jenis | Gelombang | Pendaftaran | Pelaksanaan |
+  |---|---|---|---|
+  | Sempro | G1 | 06–11 Agu 2026 | 18–21 Agu 2026 |
+  | Sempro | G2 | 01–09 Sep 2026 | 21–25 Sep 2026 |
+  | Sempro | G3 | tgl 01–09 (Okt/Nov/Des) | mulai tgl 15 bulan berjalan |
+  | Sidang TA | G1 | 01–09 Okt 2026 | mulai 15 Okt 2026 |
+  | Sidang TA | G2 | 01–09 Nov 2026 | mulai 15 Nov 2026 |
+  | Sidang TA | — | batas pelaksanaan | 22 Des 2026 |
+
+- **Pola**: pendaftaran di awal bulan (tgl 01–09) → jadwal detail (hari, jam, penguji) diumumkan **setelah pendaftaran ditutup** (inilah yang SIPENTA generate) → pelaksanaan mulai tgl 15.
+- **Kuota maksimal 15 mahasiswa per bulan** per jenis. Bila pendaftar > 15, kelebihannya (menurut **urutan waktu pendaftaran**) **ditunda ke gelombang bulan berikutnya**.
+- Di SIPENTA: satu **`gelombang`** = satu batch bulanan (satu jenis), `kuota_maks` default 15. `parse-sps` mengurutkan pendaftar (`urutan_daftar`) dan menandai baris ke-16 dst. sebagai `dijadwalkan = false`. Hanya `dijadwalkan = true` yang masuk ke GA.
+- Pembimbing (utama + pendamping) sudah disetujui sebelum mahasiswa mendaftar → datang lengkap dari sheet. Penguji 1 & 2 ditetapkan admin setelah pendaftaran ditutup.
 
 ## 9. Aturan Penjadwalan (ringkas — detail di `ga-design.md`)
 
@@ -219,7 +246,9 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 - S1 dosen idealnya total maks. 1 keterlibatan/hari
 - S2 beban merata antar dosen · S3 minim gap ruangan · S4 sebar antar hari · S5 dosen tidak lompat ruangan
 
-Durasi: Sempro **60 menit**, Semhas **105 menit**. Satu gelombang = satu jenis.
+Durasi per sesi: **Sempro 60 menit**, **Semhas 105 menit** (1 jam 45 menit) — bisa di-override per gelombang lewat `gelombang.durasi_menit`. Satu gelombang = satu jenis, maks 15 seminar (lihat §8b).
+
+**Jendela blackout** (tidak ada seminar): Sholat Dzuhur 12.00–13.00 (Sen–Kam), Sholat Jumat 11.00–13.00 (Jumat), Sholat Ashar 15.00–16.00 (semua hari). Diterapkan GA saat generate slot kandidat. **Jadwal kuliah kampus pakai sistem Sesi 1–4** dengan jam berbeda antara Sen–Kam dan Jumat (detail di [`ga-design.md`](ga-design.md) §2); Edge Function mengubah Sesi → jam sebelum kirim ke GA.
 
 ## 10. Kebutuhan Non-Fungsional
 
@@ -263,10 +292,11 @@ Durasi: Sempro **60 menit**, Semhas **105 menit**. Satu gelombang = satu jenis.
 
 ## 13. Pertanyaan Terbuka
 
-> Enam pertanyaan awal sudah dijawab tim (revisi 2026-09-10): (1) hanya 3 role, kaprodi = admin; (2) jadwal fix = **wajib 4/4 ACC** semua slot; (3) `online` **ditetapkan admin** per seminar; (4) notifikasi **in-app + email**; (5) **data dosen manual**, data mahasiswa + pembimbing dari **sheet pendaftaran**, penguji dipilih admin. Sisa:
+> Sudah dijawab tim (revisi 2026-09-10): (1) hanya 3 role, kaprodi = admin; (2) jadwal fix = **wajib 4/4 ACC** semua slot; (3) `online` **ditetapkan admin** per seminar; (4) notifikasi **in-app + email**; (5) **data dosen manual**, data mahasiswa + pembimbing dari **sheet pendaftaran**, penguji dipilih admin; (6) jadwal kuliah pakai **sistem Sesi 1–4** (07.30–10.00 / 10.20–12.00 / 13.00–15.30 / 15.50–17.30, Edge Function yang ekspansi ke jam); (7) **jendela blackout** sholat Dzuhur 12.00–13.00 & Ashar 15.00–16.00 — tidak ada seminar di jam ini. Sisa:
 
-1. Sesi jadwal kuliah kampus: sistem Sesi 1–4 (jam tergantung SKS) atau jam bebas? (lihat `ga-design.md` §2)
-2. Libur nasional / cuti bersama — perlu dikecualikan dari rentang tanggal gelombang?
-3. Urutan bobot soft constraint GA (S0=10 > S1=5 > …) — sudah sesuai prioritas? (mudah di-tuning kapan saja)
-4. Provider email: Resend, atau SMTP kampus?
-5. Perlu fitur "kunci slot yang sudah ACC" saat generate ulang (biar dosen tak perlu ACC ulang slot yang sudah oke)?
+1. Semhas (105 mnt) tidak muat di jendela sore 16.00–17.30 (berakhir 17.45) — jam operasional diperpanjang, atau slot sore Semhas hanya 13.00–15.00?
+2. Hari Jumat: sholat Jumat lebih panjang (± 11.30–13.00) — perlu jendela blackout khusus Jumat?
+3. Libur nasional / cuti bersama — perlu dikecualikan dari rentang tanggal gelombang?
+4. Urutan bobot soft constraint GA (S0=10 > S1=5 > …) — sudah sesuai prioritas? (mudah di-tuning kapan saja)
+5. Provider email: Resend, atau SMTP kampus?
+6. Perlu fitur "kunci slot yang sudah ACC" saat generate ulang (biar dosen tak perlu ACC ulang slot yang sudah oke)?

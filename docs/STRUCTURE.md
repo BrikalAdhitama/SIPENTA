@@ -55,9 +55,9 @@ sipenta/
 │   │   └── domain.ts            #    enum peran, status, jenis seminar (hand-written, dipakai lintas layar)
 │   └── utils/                   #    date, time-overlap helpers, formatters
 │
-├── supabase/                     # ── BACKEND (Supabase project) ──────────────────
-│   ├── config.toml
-│   ├── migrations/               #    SQL berurutan — SATU-SATUNYA sumber kebenaran skema
+├── supabase/                     # ── BACKEND (Supabase — CLOUD, tanpa Docker) ────
+│   ├── config.toml               #    dipakai `supabase link` & referensi; bukan `supabase start`
+│   ├── migrations/               #    SQL berurutan — SATU-SATUNYA sumber kebenaran skema; diterapkan via `db push`
 │   │   ├── 0001_core_schema.sql  #    tabel, enum, index
 │   │   ├── 0002_rls_policies.sql #    Row Level Security per tabel per role
 │   │   ├── 0003_rpc_approval.sql #    fungsi Postgres: submit_approval(), finalisasi_jadwal(), batalkan_jadwal()
@@ -68,7 +68,7 @@ sipenta/
 │   │   ├── generate-schedule/    #    rakit payload, panggil ai-service, tulis hasil
 │   │   ├── export-schedule/      #    render Excel/PDF → signed URL
 │   │   └── notify/              #    tulis notification + kirim email via Resend (keduanya)
-│   ├── seed.sql                 #    data dummy dev: dosen, ruangan, 1 gelombang contoh
+│   ├── seed.sql                 #    data awal — dijalankan manual ke DB cloud (psql / SQL Editor)
 │   └── tests/                   #    pgTAP / deno test
 │
 ├── ai-service/                   # ── AI ENGINEER (Python) ────────────────────────
@@ -115,7 +115,8 @@ Kontrak antar area **hanya** lewat: (1) tabel + RLS Supabase, (2) Edge Function 
 
 - **Bahasa domain**: Indonesia untuk nama tabel/kolom/enum (`gelombang`, `blokir_waktu`, `peran`), English untuk nama teknis kode (`useSchedule`, `SolveRequest`).
 - **Branch**: `main` (protected) ← PR dari `feat/<area>-<ringkas>`, mis. `feat/app-wizard-step-2`, `feat/be-rls-approval`, `feat/ai-fitness-h1`.
-- **Migrasi DB**: tidak pernah edit migrasi yang sudah di-merge — selalu tambah file baru bernomor.
-- **Tipe TS**: `pnpm --filter app gen:types` setelah tiap perubahan skema (regenerate `database.types.ts`).
+- **Backend cloud-only (tanpa Docker)**: satu project Supabase di supabase.com di-share semua orang. CLI hanya untuk command tanpa Docker (`link`, `db push`, `db pull`, `gen types`, `functions deploy`). Detail: [`../supabase/README.md`](../supabase/README.md).
+- **Migrasi DB**: selalu lewat file bernomor di `supabase/migrations/` + PR — **jangan ubah tabel di dashboard**. Tidak pernah edit migrasi yang sudah di-merge. **Satu orang BE ("DB owner")** yang menjalankan `supabase db push` setelah merge.
+- **Tipe TS**: `supabase gen types typescript --project-id <ref> > app/types/database.types.ts` setiap perubahan skema; DB owner commit hasilnya, anggota lain `git pull`.
 - **Commit**: Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
 - **Env**: `.env.example` di tiap area; `.env` tidak pernah di-commit.

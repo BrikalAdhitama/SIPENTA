@@ -31,17 +31,17 @@ Tujuan: setiap orang bisa `login` di lingkungan lokal, kontrak dibekukan, tiga k
 
 | Area | Tugas |
 |---|---|
-| **BE** | `supabase init` · migrasi `0001_core_schema.sql` (dari repo) + `0002_rls_policies.sql` + `0003_rpc_approval.sql` (stub) · `seed.sql` (3 user tiap role, 5 dosen, 4 ruangan, 1 gelombang contoh) · `supabase start` + `db reset` jalan · generate `app/types/database.types.ts` · CI: lint + typecheck + `supabase db lint` |
+| **BE** | Buat **project Supabase cloud** (`sipenta-dev`) · `supabase link` · migrasi `0001_core_schema.sql` (dari repo) + `0002_rls_policies.sql` + `0003_rpc_approval.sql` (stub) → `supabase db push` · jalankan `seed.sql` sekali (3 user/role, 5 dosen, 4 ruangan, 1 gelombang) · generate `app/types/database.types.ts` (`gen types --project-id`) · tentukan **DB owner** (satu-satunya yang `db push`) · CI: lint + typecheck |
 | **FE** | Scaffold Nuxt (`app/` sudah ada confignya) · pasang `@nuxtjs/supabase`, `@pinia/nuxt`, `@nuxtjs/tailwindcss` · `composables/useAuth` + `middleware/auth.global.ts` + `role.ts` + `onboarding.global.ts` · `layouts/` (default authed shell, auth) · `components/ui/`: Button, Badge, Card, Modal, Stepper, DataTable, EmptyState, FormField · halaman `login.vue` + `index.vue` (redirect per role) · shell: sidebar desktop / bottom-nav mobile |
 | **AI** | Scaffold FastAPI (`ai-service/` sudah ada) · `app/models/`: `SolveRequest`/`SolveResponse` **lengkap persis** [`api-contract.md`](api-contract.md) §E (termasuk `blackout_windows`, `seminars[].is_online`) · `/health` + `/solve` (return placeholder) · `scripts/build_fixture.py`: baca 3 Excel → anonimkan → `tests/fixtures/genap_2526_{sempro,semhas}_<bulan>.json`, **pecah per bulan pendaftaran jadi batch ≤ 15** · `Dockerfile` build & run |
 | **PM** | Bekukan `api-contract.md` v1 (tandai "FROZEN — perubahan lewat mini-RFC") · board (kolom: Backlog / Sprint / Review / Done) · isi tanggal semua sprint · buat template PR (checklist: area, contract-impact, test) |
 
 **Handoff akhir sprint**
-- BE → `database.types.ts` ter-commit + DB lokal ter-seed (dokumen "cara start" di `supabase/README.md`).
+- BE → project Supabase cloud ter-migrate + ter-seed, `database.types.ts` ter-commit (dokumen "cara start" di `supabase/README.md`).
 - AI → fixtures ter-commit.
 - FE → UI kit + alur login jalan.
 
-**Checkpoint**: semua anggota bisa `pnpm dev` / `supabase start` / `uvicorn` dan login sebagai admin/dosen/mahasiswa dengan user seed. `POST /solve` mengembalikan placeholder dari salah satu fixture.
+**Checkpoint**: semua anggota bisa `pnpm dev` (sambung ke Supabase cloud) / `uvicorn` dan login sebagai admin/dosen/mahasiswa dengan user seed. `POST /solve` mengembalikan placeholder dari salah satu fixture.
 
 ---
 
@@ -139,10 +139,10 @@ Tujuan: aplikasi native jalan di device, ekspor jalan, GA di-tuning.
 
 ## Aturan anti-tabrakan
 
-1. **Skema DB milik BE.** FE & AI tidak pernah menulis file di `supabase/migrations/`. Butuh kolom baru? minta BE. BE selesai → regenerate `database.types.ts` → umumkan di channel → FE jalankan `pnpm gen:types`.
+1. **Skema DB milik BE.** FE & AI tidak pernah menulis file di `supabase/migrations/` **atau ubah tabel di dashboard**. Butuh kolom baru? minta BE → BE tulis migrasi + PR → **DB owner** `supabase db push` + regenerate & commit `database.types.ts` → umumkan → FE & AI `git pull`.
 2. **`api-contract.md` dibekukan setelah S0.** Perubahan bentuk request/response Edge Function atau `/solve` = **mini-RFC**: 1 paragraf di PR ("apa berubah, kenapa, area terdampak"), tag area terkait, tunggu 👍 sebelum merge.
 3. **Batas folder = batas orang.** `app/` → FE, `supabase/` → BE, `ai-service/` → AI. Tidak ada import lintas folder. PR yang menyentuh > 1 folder harus di-review orang dari tiap folder.
-4. **Mock-first.** FE tidak menunggu Edge Function: pakai Supabase lokal ter-seed + stub response untuk Edge Fn yang belum ada. AI tidak menunggu BE: pakai JSON fixtures. Integrasi nyata hanya di S3 (AI↔BE) & S4 (FE↔BE).
+4. **Mock-first.** FE tidak menunggu Edge Function: pakai tabel di Supabase cloud ter-seed + stub response untuk Edge Fn yang belum di-deploy. AI tidak menunggu BE: pakai JSON fixtures. Integrasi nyata hanya di S3 (AI↔BE) & S4 (FE↔BE).
 5. **`ai-service` tanpa akses DB.** Semua data masuk lewat payload `/solve`. AI tidak pernah tahu Supabase URL/key.
 6. **Branch**: `feat/<area>-<ringkas>` dari `main` (protected). Contoh: `feat/fe-wizard-step-2`, `feat/be-parse-sps`, `feat/ai-fitness-h1`. Squash-merge.
 7. **Dokumen punya owner**: `prd.md` + `api-contract.md` + `STRUCTURE.md` + `database-erd.md` → PM/BE · `ga-design.md` + `prd-ai-scheduling.md` → AI · `sprint-plan.md` → PM. Perubahan dokumen orang lain = PR + tag owner.

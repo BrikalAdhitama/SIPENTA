@@ -10,15 +10,15 @@ Nuxt 3 (`ssr: false` → SPA) · Vue 3 · TS · Tailwind (`@nuxtjs/tailwindcss`)
 components/{ui,layout,schedule,approval}/   composables/   layouts/   middleware/
 pages/{login,index,admin,dosen,mahasiswa}/   stores/   types/   utils/
 ```
-- `types/database.types.ts` — GENERATED (`pnpm gen:types`).
+- `types/database.types.ts` — GENERATED oleh DB owner (`supabase gen types --project-id`), di-commit; anggota lain cukup `git pull`.
 - `types/domain.ts` — enum & konstanta manual (peran, status, jenis).
 - Guard peran: `definePageMeta({ role: 'admin' })` dibaca `middleware/role.ts`.
 - **Gate onboarding**: `middleware/onboarding.global.ts` — bila `profile.role` ∈ {dosen, mahasiswa} dan `profile.onboarding_at` null, semua rute selain `/<role>/onboarding` & logout di-redirect ke sana. Dilepas setelah `rpc('selesai_onboarding')` sukses (lihat `docs/api-contract.md` AC-5).
 
 ## Perintah
 ```bash
-pnpm install && pnpm dev        # web :3000
-pnpm gen:types                   # regenerate types dari Supabase
+pnpm install && pnpm dev        # web :3000 — sambung ke Supabase cloud (isi .env)
+pnpm gen:types                   # hanya DB owner; anggota lain git pull database.types.ts
 pnpm build                       # → .output/public (web hosting & Capacitor)
 pnpm cap:sync                     # nuxi generate + cap sync
 pnpm cap:android / cap:ios        # buka IDE native

@@ -39,13 +39,18 @@ Detail pembagian folder & kepemilikan: [`docs/STRUCTURE.md`](docs/STRUCTURE.md)
 
 ## Mulai kerja
 
+Backend = **1 project Supabase cloud** yang di-share (tanpa Docker). Isi `.env` tiap area dari `.env.example`.
+
 ```bash
-# Frontend
+# Frontend — sambung ke Supabase cloud
 cd app && pnpm install && pnpm dev
 
-# Backend (perlu Docker + Supabase CLI)
-cd supabase && supabase start && supabase db reset
+# Backend — Supabase CLI saja (tanpa Docker Desktop)
+npm i -g supabase && supabase login
+cd supabase && supabase link --project-ref <ref> && supabase db push
 
 # AI service
 cd ai-service && uv sync && uv run uvicorn app.main:app --reload
 ```
+
+Detail alur migrasi & deploy Edge Function: [`supabase/README.md`](supabase/README.md).

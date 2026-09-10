@@ -77,6 +77,8 @@ Autentikasi: email + password (Supabase Auth). Role disimpan di tabel `profiles`
 - CRUD sederhana (data master, blokir waktu, jadwal kuliah, baca jadwal) lewat **Supabase client SDK langsung**, diamankan RLS.
 - Operasi dengan aturan bisnis / secret / file → **Edge Function** atau **Postgres RPC**.
 
+**Mode backend**: satu project **Supabase cloud** yang di-share (tanpa Docker/stack lokal). Migrasi diterapkan lewat `supabase db push`, Edge Function lewat `supabase functions deploy`. Detail: [`../supabase/README.md`](../supabase/README.md).
+
 Keputusan arsitektur lengkap: `docs/adr/`.
 
 ## 5. Multiplatform — bagaimana web & mobile berbagi satu codebase
@@ -288,7 +290,8 @@ Durasi per sesi: **Sempro 60 menit**, **Semhas 105 menit** (1 jam 45 menit) — 
 | Satu slot ditolak → seluruh finalisasi tertahan | Admin generate ulang (bisa kunci slot yang sudah ACC di iterasi berikutnya — enhancement) atau sesuaikan manual lalu minta ACC ulang |
 | Capacitor build iOS butuh Mac | Pakai runner CI macOS (GitHub Actions) atau 1 anggota dengan Mac untuk rilis |
 | Email deliverability (Resend) | Verifikasi domain pengirim; fallback: notifikasi in-app tetap tercatat |
-| Supabase free-tier limit | Cukup untuk capstone; pantau kuota; hindari query N+1 |
+| Supabase free-tier limit | Cukup untuk capstone; pantau kuota; hindari query N+1 · project di-pause bila 1 minggu idle → tinggal restore |
+| **DB cloud dipakai bersama** (mode tanpa Docker) | Migrasi hanya lewat file + PR, tidak ubah tabel di dashboard · satu "DB owner" yang `db push` · idealnya 2 project: `sipenta-dev` + `sipenta-demo` |
 
 ## 13. Pertanyaan Terbuka
 

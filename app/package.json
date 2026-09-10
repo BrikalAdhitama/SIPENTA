@@ -7,7 +7,7 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "gen:types": "supabase gen types typescript --local > types/database.types.ts",
+    "gen:types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_REF > types/database.types.ts",
     "cap:sync": "nuxt generate && cap sync",
     "cap:android": "cap open android",
     "cap:ios": "cap open ios",

@@ -1,3 +1,6 @@
+# SIPENTA memakai Supabase CLOUD (tanpa Docker). File ini TIDAK menjalankan stack lokal
+# (`supabase start` tidak dipakai). Setting auth/storage yang berlaku diatur di dashboard
+# supabase.com → Settings. Blok di bawah hanya jadi acuan bila suatu saat pindah ke lokal.
 project_id = "sipenta"
 
 [api]

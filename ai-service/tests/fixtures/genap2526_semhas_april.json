@@ -1,0 +1,218 @@
+{
+  "seminar_type": "semhas",
+  "session_duration_minutes": 105,
+  "period": {
+    "start_date": "2026-04-27",
+    "end_date": "2026-05-01"
+  },
+  "active_days": [
+    "senin",
+    "selasa",
+    "rabu",
+    "kamis",
+    "jumat"
+  ],
+  "operational_hours": {
+    "start": "08:00",
+    "end": "17:30"
+  },
+  "gap_minutes": 15,
+  "blackout_windows": [
+    {
+      "start": "12:00",
+      "end": "13:00",
+      "label": "Sholat Dzuhur",
+      "hari": [
+        "senin",
+        "selasa",
+        "rabu",
+        "kamis"
+      ]
+    },
+    {
+      "start": "11:00",
+      "end": "13:00",
+      "label": "Sholat Jumat",
+      "hari": [
+        "jumat"
+      ]
+    },
+    {
+      "start": "15:00",
+      "end": "16:00",
+      "label": "Sholat Ashar"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "B-103",
+      "is_online": false
+    }
+  ],
+  "seminars": [
+    {
+      "id": 1,
+      "nim": "112110210",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 2,
+      "penguji1_id": 3,
+      "penguji2_id": 4
+    },
+    {
+      "id": 2,
+      "nim": "112210310",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 3,
+      "penguji1_id": 5,
+      "penguji2_id": 6
+    }
+  ],
+  "dosen_teaching_schedule": [
+    {
+      "dosen_id": 4,
+      "hari": "senin",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 4,
+      "hari": "jumat",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 4,
+      "hari": "rabu",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "senin",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "kamis",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 5,
+      "hari": "kamis",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 5,
+      "hari": "rabu",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 3,
+      "hari": "kamis",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 3,
+      "hari": "selasa",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "kamis",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "rabu",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 1,
+      "hari": "senin",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 1,
+      "hari": "rabu",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 5,
+      "hari": "senin",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 4,
+      "hari": "jumat",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "jumat",
+      "jam_mulai": "07:30",
+      "jam_selesai": "09:10"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "kamis",
+      "jam_mulai": "15:50",
+      "jam_selesai": "17:30"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "jumat",
+      "jam_mulai": "16:00",
+      "jam_selesai": "17:40"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "jumat",
+      "jam_mulai": "07:30",
+      "jam_selesai": "09:10"
+    },
+    {
+      "dosen_id": 5,
+      "hari": "rabu",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 4,
+      "hari": "rabu",
+      "jam_mulai": "15:50",
+      "jam_selesai": "17:30"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "selasa",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    }
+  ],
+  "dosen_blocked_time": [],
+  "student_class_schedule": [],
+  "ga_params": {
+    "random_seed": 42
+  },
+  "_meta": {
+    "sumber": "Jadwal Sidang TA Informatika-share mahasiswa.xlsx",
+    "bulan": "April",
+    "jumlah_dosen_unik": 6
+  }
+}

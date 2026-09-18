@@ -1,121 +1,149 @@
-"""SIPENTA AI service — FastAPI entrypoint.
+"""SIPENTA AI service — FastAPI.
 
-POST /solve  — jalankan Algoritma Genetika (dipanggil hanya oleh Edge Function generate-schedule)
-GET  /health — cek hidup
+  POST /solve   jalankan Algoritma Genetika (dipanggil Edge Function; butuh X-AI-Key)
+  GET  /health  cek hidup
 
-Kontrak: docs/api-contract.md §E. Algoritma: docs/ga-design.md.
-Ini KERANGKA — isi TODO di app/ga/*.
+Kontrak /solve & format error: docs/api-contract.md §E. Algoritma: docs/ga-design.md.
 """
 
 from __future__ import annotations
 
-import os
+import logging
 import time
+import uuid
 
-from fastapi import FastAPI, Header, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
-AI_KEY = os.environ.get("AI_SERVICE_KEY", "")
+from app.config import AI_KEY
+from app.ga.engine import solve
+from app.models import SolveRequest, SolveResponse
 
-app = FastAPI(title="SIPENTA AI service", version="0.1.0")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s"
+)
+log = logging.getLogger("sipenta.ai")
 
-
-# ── Skema (ringkas — lengkapnya di app/models/) ────────────────────────────────
-class Room(BaseModel):
-    id: str
-    is_online: bool = False
-
-
-class SeminarIn(BaseModel):
-    id: int
-    is_online: bool = False  # ditetapkan admin; venue dikunci "online", waktu tetap dijadwalkan GA
-    pembimbing_utama_id: int
-    pembimbing_pendamping_id: int
-    penguji1_id: int
-    penguji2_id: int
+app = FastAPI(
+    title="SIPENTA AI service",
+    version="0.1.0",
+    description="Penjadwalan seminar dengan Algoritma Genetika. Dipanggil Edge Function generate-schedule.",
+)
 
 
-class Interval(BaseModel):
-    dosen_id: int | None = None
-    nim: str | None = None
-    hari: str
-    jam_mulai: str
-    jam_selesai: str
+# ── format error seragam: {"error": {"code", "message", "details"}} ──────────
+def err(code: str, message: str, status: int, details: dict | None = None) -> JSONResponse:
+    return JSONResponse(
+        status_code=status,
+        content={"error": {"code": code, "message": message, "details": details or {}}},
+    )
 
 
-class BlackoutWindow(BaseModel):
-    start: str
-    end: str
-    label: str = ""
-    hari: list[str] = Field(default_factory=list)  # kosong = semua hari aktif; mis. ["jumat"] utk sholat Jumat
+@app.exception_handler(RequestValidationError)
+async def _validation_handler(_req: Request, exc: RequestValidationError) -> JSONResponse:
+    e = exc.errors()[0]
+    field = ".".join(str(x) for x in e.get("loc", ()) if x != "body") or "body"
+    pesan = e.get("msg", "payload tidak valid")
+    pesan = pesan.split("Value error, ")[-1]  # buang prefiks pydantic
+    return err("VALIDATION_FAILED", pesan, 422, {"field": field, "jumlah_error": len(exc.errors())})
 
 
-class SolveRequest(BaseModel):
-    seminar_type: str
-    session_duration_minutes: int
-    period: dict
-    active_days: list[str]
-    operational_hours: dict
-    gap_minutes: int = 15
-    blackout_windows: list[BlackoutWindow] = Field(default_factory=list)  # mis. waktu sholat
-    rooms: list[Room]
-    seminars: list[SeminarIn]
-    dosen_teaching_schedule: list[Interval] = Field(default_factory=list)
-    dosen_blocked_time: list[Interval] = Field(default_factory=list)
-    student_class_schedule: list[Interval] = Field(default_factory=list)
-    ga_params: dict = Field(default_factory=dict)
+@app.exception_handler(HTTPException)
+async def _http_handler(_req: Request, exc: HTTPException) -> JSONResponse:
+    kode = {401: "UNAUTHENTICATED", 403: "FORBIDDEN", 404: "NOT_FOUND", 422: "VALIDATION_FAILED"}
+    detail = exc.detail if isinstance(exc.detail, str) else "permintaan ditolak"
+    return err(kode.get(exc.status_code, "INTERNAL"), detail, exc.status_code)
 
 
-class SlotOut(BaseModel):
-    seminar_id: int
-    tanggal: str
-    jam_mulai: str
-    jam_selesai: str
-    ruangan: str
+@app.exception_handler(Exception)
+async def _unhandled_handler(_req: Request, exc: Exception) -> JSONResponse:
+    log.exception("kesalahan tak tertangani: %s", exc)
+    return err("INTERNAL", f"kesalahan internal AI service: {exc}", 500)
 
 
-class SolveResponse(BaseModel):
-    status: str = "success"
-    fitness_score: float
-    conflict_count: int
-    generations_run: int
-    execution_time_ms: int
-    stats: dict
-    schedule: list[SlotOut]
-    unscheduled: list[dict]
-
-
-# ── Routes ────────────────────────────────────────────────────────────────────
+# ── endpoint ────────────────────────────────────────────────────────────────
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "version": app.version}
 
 
 @app.post("/solve", response_model=SolveResponse)
-def solve(req: SolveRequest, x_ai_key: str = Header(default="")) -> SolveResponse:
-    if not AI_KEY or x_ai_key != AI_KEY:
+def solve_endpoint(req: SolveRequest, x_ai_key: str = Header(default="")) -> SolveResponse:
+    if AI_KEY and x_ai_key != AI_KEY:
         raise HTTPException(status_code=401, detail="X-AI-Key tidak valid")
-    if not req.rooms:
-        raise HTTPException(status_code=422, detail="rooms tidak boleh kosong")
 
-    started = time.perf_counter()
-
-    # TODO: from app.ga.slots import build_candidate_slots, reduce_domains
-    # TODO: from app.ga.engine import run_ga
-    #   slots = build_candidate_slots(req)
-    #   domains, unscheduled = reduce_domains(req, slots)      # buang slot langgar H3-H5
-    #   best, meta = run_ga(req, slots, domains)                # optimasi H1,H2 + S0..S5
-    #   schedule = decode(best, slots)
-
-    elapsed_ms = int((time.perf_counter() - started) * 1000)
-
-    # placeholder response
-    return SolveResponse(
-        fitness_score=0.0,
-        conflict_count=0,
-        generations_run=0,
-        execution_time_ms=elapsed_ms,
-        stats={},
-        schedule=[],
-        unscheduled=[{"seminar_id": s.id, "alasan": "belum diimplementasi"} for s in req.seminars],
+    rid = uuid.uuid4().hex[:8]
+    t0 = time.perf_counter()
+    log.info(
+        "[%s] /solve mulai — %s, %d seminar, %d ruangan, periode %s s.d. %s",
+        rid, req.seminar_type, len(req.seminars), len(req.rooms),
+        req.period["start_date"], req.period["end_date"],
     )
+
+    res = solve(req)
+    res.stats["peringatan"] = _peringatan_data(req)
+
+    log.info(
+        "[%s] /solve selesai — status=%s terjadwal=%d/%d bentrok=%d skor=%s generasi=%d %dms%s",
+        rid, res.status, res.stats.get("jumlah_terjadwal", 0), len(req.seminars),
+        res.conflict_count, res.fitness_score, res.generations_run, res.execution_time_ms,
+        f" peringatan={len(res.stats['peringatan'])}" if res.stats["peringatan"] else "",
+    )
+    if res.stats["peringatan"]:
+        log.warning("[%s] %s", rid, " | ".join(res.stats["peringatan"]))
+    log.debug("[%s] total handler %.0f ms", rid, (time.perf_counter() - t0) * 1000)
+    return res
+
+
+def _peringatan_data(req: SolveRequest) -> list[str]:
+    """Data yang secara teknis valid tetapi kemungkinan salah rakit di Edge Function.
+    Tidak menggagalkan generate — hanya membantu BE menelusuri saat integrasi."""
+    pesan: list[str] = []
+
+    nim_seminar = {s.nim for s in req.seminars if s.nim}
+    tanpa_nim = sum(1 for s in req.seminars if not s.nim)
+    if req.student_class_schedule and tanpa_nim:
+        pesan.append(
+            f"{tanpa_nim} seminar tidak memuat nim sehingga jadwal kuliah mahasiswanya (H5) tidak dapat diterapkan"
+        )
+    nim_asing = {iv.nim for iv in req.student_class_schedule if iv.nim not in nim_seminar}
+    if nim_asing:
+        pesan.append(
+            f"{len(nim_asing)} nim di student_class_schedule tidak cocok dengan seminar mana pun: "
+            + ", ".join(sorted(map(str, nim_asing))[:5])
+        )
+
+    dosen_seminar = {d for s in req.seminars for d in s.dosen_ids}
+    for field, data in (
+        ("dosen_teaching_schedule", req.dosen_teaching_schedule),
+        ("dosen_waktu_pribadi", req.dosen_waktu_pribadi),
+    ):
+        asing = {iv.dosen_id for iv in data if iv.dosen_id not in dosen_seminar}
+        if asing:
+            pesan.append(
+                f"{len(asing)} dosen_id di {field} tidak terlibat seminar mana pun: "
+                + ", ".join(map(str, sorted(asing)[:5]))
+            )
+
+    luar_periode = [
+        iv.tanggal for iv in req.dosen_waktu_pribadi
+        if iv.tanggal and not (req.period["start_date"] <= iv.tanggal <= req.period["end_date"])
+    ]
+    if luar_periode:
+        pesan.append(
+            f"{len(luar_periode)} waktu pribadi bertanggal di luar periode gelombang (diabaikan): "
+            + ", ".join(sorted(set(luar_periode))[:5])
+        )
+
+    hari_blackout = {h for b in req.blackout_windows for h in b.hari}
+    asing_hari = hari_blackout - set(req.active_days)
+    if asing_hari:
+        pesan.append(
+            "blackout_windows memuat hari di luar active_days: " + ", ".join(sorted(asing_hari))
+        )
+    if not req.dosen_teaching_schedule and not req.dosen_waktu_pribadi:
+        pesan.append(
+            "dosen_teaching_schedule dan dosen_waktu_pribadi kosong — H3 & H4 tidak diterapkan; pastikan Edge Function sudah mengirimnya"
+        )
+    return pesan

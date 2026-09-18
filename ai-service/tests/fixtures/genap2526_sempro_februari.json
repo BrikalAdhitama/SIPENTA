@@ -1,0 +1,440 @@
+{
+  "seminar_type": "sempro",
+  "session_duration_minutes": 60,
+  "period": {
+    "start_date": "2026-02-16",
+    "end_date": "2026-03-13"
+  },
+  "active_days": [
+    "senin",
+    "selasa",
+    "rabu",
+    "kamis",
+    "jumat"
+  ],
+  "operational_hours": {
+    "start": "08:00",
+    "end": "17:30"
+  },
+  "gap_minutes": 15,
+  "blackout_windows": [
+    {
+      "start": "12:00",
+      "end": "13:00",
+      "label": "Sholat Dzuhur",
+      "hari": [
+        "senin",
+        "selasa",
+        "rabu",
+        "kamis"
+      ]
+    },
+    {
+      "start": "11:00",
+      "end": "13:00",
+      "label": "Sholat Jumat",
+      "hari": [
+        "jumat"
+      ]
+    },
+    {
+      "start": "15:00",
+      "end": "16:00",
+      "label": "Sholat Ashar"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "B-103",
+      "is_online": false
+    },
+    {
+      "id": "B-104",
+      "is_online": false
+    },
+    {
+      "id": "B-105",
+      "is_online": false
+    },
+    {
+      "id": "RUANG-P-DAN-Q-PERPUS",
+      "is_online": false
+    },
+    {
+      "id": "RUANG-RAPAT-A2",
+      "is_online": false
+    },
+    {
+      "id": "RUANG-RAPAT-A2-GEDUN",
+      "is_online": false
+    }
+  ],
+  "seminars": [
+    {
+      "id": 1,
+      "nim": "112210050",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 2,
+      "penguji1_id": 3,
+      "penguji2_id": 4
+    },
+    {
+      "id": 2,
+      "nim": "112210580",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 2,
+      "pembimbing_pendamping_id": 5,
+      "penguji1_id": 6,
+      "penguji2_id": 7
+    },
+    {
+      "id": 3,
+      "nim": "112210070",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 6,
+      "pembimbing_pendamping_id": 7,
+      "penguji1_id": 4,
+      "penguji2_id": 3
+    },
+    {
+      "id": 4,
+      "nim": "112210470",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 6,
+      "pembimbing_pendamping_id": 2,
+      "penguji1_id": 3,
+      "penguji2_id": 8
+    },
+    {
+      "id": 5,
+      "nim": "112210190",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 9,
+      "pembimbing_pendamping_id": 10,
+      "penguji1_id": 7,
+      "penguji2_id": 11
+    },
+    {
+      "id": 6,
+      "nim": "112210820",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 11,
+      "pembimbing_pendamping_id": 12,
+      "penguji1_id": 13,
+      "penguji2_id": 5
+    },
+    {
+      "id": 7,
+      "nim": "112210110",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 2,
+      "penguji1_id": 8,
+      "penguji2_id": 4
+    },
+    {
+      "id": 8,
+      "nim": "112210210",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 2,
+      "pembimbing_pendamping_id": 1,
+      "penguji1_id": 8,
+      "penguji2_id": 3
+    },
+    {
+      "id": 9,
+      "nim": "112210200",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 4,
+      "penguji1_id": 3,
+      "penguji2_id": 7
+    },
+    {
+      "id": 10,
+      "nim": "112210480",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 7,
+      "penguji1_id": 8,
+      "penguji2_id": 3
+    },
+    {
+      "id": 11,
+      "nim": "112210560",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 12,
+      "pembimbing_pendamping_id": 10,
+      "penguji1_id": 13,
+      "penguji2_id": 11
+    },
+    {
+      "id": 12,
+      "nim": "112210770",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 12,
+      "pembimbing_pendamping_id": 10,
+      "penguji1_id": 11,
+      "penguji2_id": 13
+    },
+    {
+      "id": 13,
+      "nim": "112210510",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 12,
+      "pembimbing_pendamping_id": 10,
+      "penguji1_id": 13,
+      "penguji2_id": 9
+    },
+    {
+      "id": 14,
+      "nim": "112210080",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 4,
+      "penguji1_id": 3,
+      "penguji2_id": 5
+    },
+    {
+      "id": 15,
+      "nim": "112210250",
+      "nama": null,
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 7,
+      "penguji1_id": 3,
+      "penguji2_id": 8
+    }
+  ],
+  "dosen_teaching_schedule": [
+    {
+      "dosen_id": 5,
+      "hari": "selasa",
+      "jam_mulai": "15:50",
+      "jam_selesai": "17:30"
+    },
+    {
+      "dosen_id": 5,
+      "hari": "kamis",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "rabu",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "senin",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 2,
+      "hari": "jumat",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 12,
+      "hari": "senin",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 12,
+      "hari": "kamis",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 1,
+      "hari": "rabu",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 1,
+      "hari": "senin",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 11,
+      "hari": "kamis",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 11,
+      "hari": "rabu",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 8,
+      "hari": "selasa",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 8,
+      "hari": "kamis",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 3,
+      "hari": "kamis",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 3,
+      "hari": "selasa",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 7,
+      "hari": "kamis",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 7,
+      "hari": "rabu",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 9,
+      "hari": "kamis",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 9,
+      "hari": "rabu",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 13,
+      "hari": "selasa",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 13,
+      "hari": "senin",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 8,
+      "hari": "selasa",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 8,
+      "hari": "senin",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "senin",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 6,
+      "hari": "rabu",
+      "jam_mulai": "07:30",
+      "jam_selesai": "10:00"
+    },
+    {
+      "dosen_id": 11,
+      "hari": "senin",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 13,
+      "hari": "jumat",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 13,
+      "hari": "kamis",
+      "jam_mulai": "13:00",
+      "jam_selesai": "15:30"
+    },
+    {
+      "dosen_id": 12,
+      "hari": "jumat",
+      "jam_mulai": "07:30",
+      "jam_selesai": "09:10"
+    },
+    {
+      "dosen_id": 12,
+      "hari": "kamis",
+      "jam_mulai": "15:50",
+      "jam_selesai": "17:30"
+    },
+    {
+      "dosen_id": 9,
+      "hari": "jumat",
+      "jam_mulai": "16:00",
+      "jam_selesai": "17:40"
+    },
+    {
+      "dosen_id": 9,
+      "hari": "jumat",
+      "jam_mulai": "07:30",
+      "jam_selesai": "09:10"
+    },
+    {
+      "dosen_id": 11,
+      "hari": "rabu",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    },
+    {
+      "dosen_id": 9,
+      "hari": "selasa",
+      "jam_mulai": "10:20",
+      "jam_selesai": "12:00"
+    }
+  ],
+  "dosen_blocked_time": [],
+  "student_class_schedule": [],
+  "ga_params": {
+    "random_seed": 42
+  },
+  "_meta": {
+    "sumber": "Jadwal Sempro TA--IF (Mahasiswa) .xlsx",
+    "bulan": "Februari",
+    "jumlah_dosen_unik": 13
+  }
+}

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /* Token desain — selaras dengan design system figmake.
@@ -12,6 +13,13 @@
   --color-accent-strong: #3730a3;
   --color-border: #e2e8f0;
 
+  /* Custom Color Palette */
+  --color-primary-100: #E3F2FD;
+  --color-primary-200: #90CAF9;
+  --color-primary-500: #2196F3;
+  --color-primary-900: #0D47A1;
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }

@@ -7,19 +7,13 @@ export default defineNuxtConfig({
   // SPA — satu build untuk web hosting & Capacitor (tidak butuh server Node)
   ssr: false,
 
-  modules: ["@pinia/nuxt", "@nuxtjs/supabase"],
+  modules: ["@pinia/nuxt", /* "@nuxtjs/supabase" */],
 
   // Tailwind CSS v4 lewat plugin resmi Vite (sama seperti prototype figmake).
   // Tidak ada tailwind.config.js — konfigurasi ada di assets/css/tailwind.css (@theme).
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
-  },
-
-  supabase: {
-    url: process.env.SUPABASE_URL || "",
-    key: process.env.SUPABASE_KEY || "",
-    redirect: false,
   },
 
   runtimeConfig: {
@@ -35,5 +29,5 @@ export default defineNuxtConfig({
         { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       ],
     },
-  },
+  }, 
 });

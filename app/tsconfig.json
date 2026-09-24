@@ -1,4 +1,7 @@
 {
+<<<<<<< Updated upstream
   // https://nuxt.com/docs/guide/concepts/typescript
+=======
+>>>>>>> Stashed changes
   "extends": "./.nuxt/tsconfig.json"
 }

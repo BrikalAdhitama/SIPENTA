@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Lato:wght@700&family=Mulish:wght@600&display=swap');
 @import "tailwindcss";
 
@@ -41,13 +42,93 @@
   --font-lato: "Lato", "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-mulish: "Mulish", "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+=======
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2196f3;
+  --color-primary-50: #e3f2fd;
+  --color-primary-100: #bbdefb;
+  --color-primary-200: #90caf9;
+  --color-primary-300: #64b5f6;
+  --color-primary-500: #2196f3;
+  --color-primary-600: #1e88e5;
+  --color-primary-700: #1976d2;
+  --color-primary-800: #1565c0;
+  --color-primary-900: #0d47a1;
+  --color-primary-hover: #0d47a1;
+  --color-navy: #0d47a1;
+  --color-tile: #f5f9fd;
+  --color-ok: #059669;
+  --color-warn: #d97706;
+  --color-danger: #dc2626;
+  --color-info: #0891b2;
+
+  --font-sans: "Poppins", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Sans", "Poppins", ui-sans-serif, system-ui, sans-serif;
+>>>>>>> Stashed changes
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
-/* Utility kustom untuk mobile native (Capacitor) */
+:root {
+  --ui-scale: 0.35;
+}
+
+html {
+  font-size: 75%;
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+@media (min-width: 768px) {
+  html.ui-compact {
+    font-size: calc(16px * var(--ui-scale));
+  }
+}
+
 @utility pt-safe {
   padding-top: env(safe-area-inset-top);
 }
+
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }

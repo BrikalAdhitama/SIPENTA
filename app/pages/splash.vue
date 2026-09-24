@@ -14,6 +14,9 @@ import { useRouter } from 'vue-router'
 import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
 
+// layar penuh tanpa sidebar/bottom nav
+definePageMeta({ layout: false })
+
 const router = useRouter()
 
 onMounted(async () => {

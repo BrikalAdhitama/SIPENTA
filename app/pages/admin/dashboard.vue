@@ -1,5 +1,6 @@
 <template>
-  <AdminMobileDashboardMobile />
+  <AdminMobileDashboardMobile v-if="isMobile" />
+  <AdminWebDashboard v-else />
 </template>
 
 <script setup>
@@ -8,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { Capacitor } from '@capacitor/core'
 
 const router = useRouter()
+const { isMobile } = useLayoutMode()
 
 onMounted(() => {
   // Hanya jalankan di sisi klien (browser/aplikasi)

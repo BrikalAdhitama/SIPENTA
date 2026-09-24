@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Lato:wght@700&family=Mulish:wght@600&display=swap');
 @import "tailwindcss";
 
-/* Token desain — selaras dengan design system figmake.
+/* Token desain — sumber: Figma SIPENTA (variables + palet yang dipakai di frame web & mobile).
    Di Tailwind v4, variabel di @theme otomatis jadi utility:
-   --color-accent  →  bg-accent / text-accent / border-accent, dst. */
+   --color-primary-900  →  bg-primary-900 / text-primary-900 / border-primary-900, dst. */
 @theme {
+  /* ── dari prototipe figmake (lama, masih dipakai beberapa tempat) ── */
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-ink: #0f172a;
@@ -13,13 +14,32 @@
   --color-accent-strong: #3730a3;
   --color-border: #e2e8f0;
 
-  /* Custom Color Palette */
-  --color-primary-100: #E3F2FD;
-  --color-primary-200: #90CAF9;
-  --color-primary-500: #2196F3;
-  --color-primary-900: #0D47A1;
+  /* ── Palet utama SIPENTA (Figma) ── */
+  --color-primary-50: #f0f7ff;   /* latar menu aktif sidebar */
+  --color-primary-100: #e3f2fd;  /* latar kartu overview */
+  --color-primary-200: #90caf9;  /* chip ruangan, ujung gradien tombol */
+  --color-primary-500: #2196f3;  /* gradien tombol aksi cepat */
+  --color-primary-600: #197bbd;  /* Figma var "primary" — teks/ikon menu aktif */
+  --color-primary-900: #0d47a1;  /* tombol utama, border kartu, link */
+
+  /* ── Teks & status (Figma variables) ── */
+  --color-heading: #404040;      /* Figma var "text-primary" */
+  --color-body: #060606;
+  --color-label: #797979;
+  --color-subtle: #aeaeae;
+  --color-inactive: #c7c7c7;     /* Figma var "unactive" — menu tidak aktif */
+  --color-danger: #ff3b30;       /* Figma var "Red" — log out */
+
+  /* ── Chip jenis seminar ── */
+  --color-sempro: #ff82ac;
+  --color-sempro-soft: #ffe0eb;
+  --color-semhas: #396aff;
+  --color-semhas-soft: #e7edff;
 
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-lato: "Lato", "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-mulish: "Mulish", "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-display: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }

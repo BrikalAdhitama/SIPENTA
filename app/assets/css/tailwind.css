@@ -36,6 +36,16 @@
   --color-semhas: #396aff;
   --color-semhas-soft: #e7edff;
 
+  /* ── Kartu & tabel (frame web mahasiswa) ── */
+  --color-title: #1a1d29;        /* judul kartu & isi tabel */
+  --color-meta: #898f9c;         /* label & teks sekunder */
+  --color-line: #e7e9ee;         /* border kartu */
+  --color-line-soft: #f1f2f5;    /* garis antarbaris tabel */
+  --color-success: #1a922d;      /* status Terkonfirmasi / Selesai */
+  --color-warning: #c77c02;      /* status Menunggu */
+
+  --shadow-card: 0px 12px 36px 0px rgba(15, 23, 42, 0.04), 0px 1px 2px 0px rgba(0, 0, 0, 0.06);
+
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-lato: "Lato", "Poppins", ui-sans-serif, system-ui, sans-serif;

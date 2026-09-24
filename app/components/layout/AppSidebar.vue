@@ -32,7 +32,8 @@
             <p class="text-sm text-subtle">{{ user.roleLabel }}</p>
           </div>
         </div>
-        <NuxtLink to="/admin/notifications" class="mt-1.5 shrink-0" aria-label="Notifikasi">
+        <!-- lonceng notifikasi hanya ada di frame admin -->
+        <NuxtLink v-if="user.role === 'admin'" to="/admin/notifications" class="mt-1.5 shrink-0" aria-label="Notifikasi">
           <img src="/icons/bell.svg" alt="" class="size-6" />
         </NuxtLink>
       </div>

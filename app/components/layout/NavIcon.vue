@@ -27,5 +27,6 @@ const SIZE: Record<NavIcon, number> = {
   jadwal: 20,
   dosen: 30,
   ruangan: 30,
+  profil: 20,
 };
 </script>

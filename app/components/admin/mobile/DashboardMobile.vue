@@ -4,12 +4,12 @@
       
       <!-- Top Header -->
       <header class="flex justify-between items-center mb-8">
-        <div class="flex items-center gap-4">
-          <!-- Profile Picture (Placeholder) -->
-          <img src="https://ui-avatars.com/api/?name=Marci+Xander&background=0D47A1&color=fff&size=100" alt="Profile" class="w-14 h-14 rounded-full object-cover shadow-sm" />
+        <div class="flex items-center gap-4 cursor-pointer" @click="showProfileSheet = true">
+          <!-- Profile Picture -->
+          <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=0D47A1&color=fff&size=100" alt="Profile" class="w-14 h-14 rounded-full object-cover shadow-sm active:scale-95 transition-transform" />
           <div>
             <p class="text-slate-500 text-sm font-medium">Hello!</p>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Marci Xander</h1>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Budi Santoso</h1>
           </div>
         </div>
         <!-- Notification Bell -->
@@ -87,10 +87,10 @@
       <section>
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-bold text-slate-800">Jadwal Terbaru</h2>
-          <a href="#" class="text-primary-900 text-sm font-semibold flex items-center hover:underline">
+          <NuxtLink to="/admin/jadwal" class="text-primary-900 text-sm font-semibold flex items-center hover:underline active:scale-95 transition-transform">
             Lihat selengkapnya
             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-          </a>
+          </NuxtLink>
         </div>
 
         <div class="bg-white rounded-3xl shadow-sm border border-slate-100/50 overflow-hidden">
@@ -191,33 +191,136 @@
         <div class="grid grid-cols-3 gap-3">
           
           <!-- Action 1: Buat Penjadwalan -->
-          <button class="aspect-square rounded-[22px] bg-gradient-to-br from-[#42A5F5] to-[#1565C0] shadow-[0_6px_16px_rgba(21,101,192,0.25)] flex flex-col items-center justify-center gap-2.5 p-2 transition-transform active:scale-95">
-            <div class="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center backdrop-blur-sm">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+          <NuxtLink to="/admin/penjadwalan" class="aspect-square rounded-[22px] bg-primary-50 border border-primary-100 shadow-sm flex flex-col items-center justify-center gap-2.5 transition-transform active:scale-95">
+            <div class="w-[42px] h-[42px] rounded-full bg-white/60 flex items-center justify-center backdrop-blur-sm">
+              <svg class="w-5 h-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
             </div>
-            <span class="text-white text-[11px] font-medium text-center leading-[1.25]">Buat<br>Penjadwalan</span>
-          </button>
+            <span class="text-primary-900 text-[11px] font-bold text-center leading-[1.2]">Buat<br>Penjadwalan</span>
+          </NuxtLink>
 
-          <!-- Action 2: Upload Data SPS -->
-          <button class="aspect-square rounded-[22px] bg-gradient-to-br from-[#42A5F5] to-[#1565C0] shadow-[0_6px_16px_rgba(21,101,192,0.25)] flex flex-col items-center justify-center gap-2.5 p-2 transition-transform active:scale-95">
-            <div class="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center backdrop-blur-sm">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19V5m-7 7l7-7 7 7"></path></svg>
+          <!-- Action 2: Kelola Mahasiswa -->
+          <NuxtLink to="/admin/mahasiswa" class="aspect-square rounded-[22px] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2.5 transition-transform active:scale-95">
+            <div class="w-[42px] h-[42px] rounded-full bg-slate-50 border border-slate-100/50 flex items-center justify-center">
+              <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </div>
-            <span class="text-white text-[11px] font-medium text-center leading-[1.25]">Upload<br>Data SPS</span>
-          </button>
+            <span class="text-slate-700 text-[11px] font-semibold text-center leading-[1.2]">Kelola<br>Mahasiswa</span>
+          </NuxtLink>
 
           <!-- Action 3: Lihat Jadwal -->
-          <button class="aspect-square rounded-[22px] bg-gradient-to-br from-[#42A5F5] to-[#1565C0] shadow-[0_6px_16px_rgba(21,101,192,0.25)] flex flex-col items-center justify-center gap-2.5 p-2 transition-transform active:scale-95">
-            <div class="w-10 h-10 rounded-full bg-white/25 flex items-center justify-center backdrop-blur-sm">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+          <NuxtLink to="/admin/jadwal" class="aspect-square rounded-[22px] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-2.5 transition-transform active:scale-95">
+            <div class="w-[42px] h-[42px] rounded-full bg-slate-50 border border-slate-100/50 flex items-center justify-center">
+              <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </div>
-            <span class="text-white text-[11px] font-medium text-center leading-[1.25]">Lihat<br>Jadwal</span>
-          </button>
+            <span class="text-slate-700 text-[11px] font-semibold text-center leading-[1.2]">Lihat<br>Jadwal</span>
+          </NuxtLink>
 
         </div>
       </section>
 
     </main>
+
+    <!-- Profile Bottom Sheet -->
+    <div v-if="showProfileSheet" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity" @click.self="showProfileSheet = false">
+      <div class="bg-white w-full rounded-t-[32px] pt-4 pb-12 animate-slide-up shadow-2xl relative flex flex-col items-center">
+        <!-- Handle -->
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mb-6"></div>
+        
+        <!-- Header -->
+        <div class="w-full px-6 flex justify-between items-center mb-8">
+          <button @click="showProfileSheet = false" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 active:scale-95 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </button>
+          <h2 class="text-[17px] font-extrabold text-slate-800">Profil Admin</h2>
+          <div class="w-10"></div> <!-- Spacer for centering -->
+        </div>
+
+        <!-- Avatar & Info -->
+        <div class="flex flex-col items-center px-6 w-full mb-8">
+          <div class="w-[88px] h-[88px] rounded-full flex items-center justify-center text-[36px] font-bold text-white shadow-lg mb-4 relative" style="background: linear-gradient(135deg, #0F3B8C 0%, #1E40AF 100%);">
+            B
+            <div class="absolute bottom-0 right-0 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-sm">
+              <div class="w-5 h-5 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+              </div>
+            </div>
+          </div>
+          <h3 class="text-xl font-extrabold text-slate-800 tracking-tight">Budi Santoso, S.Kom.</h3>
+          <p class="text-[12px] font-medium text-slate-500 font-mono mt-1 mb-3">NIP. 198507232010121001</p>
+          <div class="px-3 py-1 bg-blue-50 rounded-lg text-blue-600 text-xs font-bold tracking-wide mb-1.5">
+            Admin Informatika
+          </div>
+          <p class="text-xs font-medium text-slate-500">budi.admin@kampus.ac.id</p>
+        </div>
+
+        <!-- Action Menus -->
+        <div class="w-full px-6 flex flex-col gap-3">
+          <button @click="showPasswordModal = true; showProfileSheet = false" class="w-full flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100/50 active:bg-slate-100 transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-slate-700">
+                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+              </div>
+              <span class="text-[14px] font-bold text-slate-700">Ubah Kata Sandi</span>
+            </div>
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </button>
+          
+          <button @click="showLogoutModal = true; showProfileSheet = false" class="w-full flex items-center justify-between p-4 rounded-2xl bg-[#FEF2F2] border border-red-100 active:bg-red-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-white shadow-sm flex items-center justify-center text-red-500">
+                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+              </div>
+              <span class="text-[14px] font-bold text-red-600">Keluar Akun</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div v-if="showPasswordModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in" @click.self="showPasswordModal = false">
+      <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-zoom-in flex flex-col">
+        <div class="p-5 flex justify-between items-center border-b border-slate-100">
+          <h3 class="font-extrabold text-[17px] text-slate-800">Ubah Kata Sandi</h3>
+          <button @click="showPasswordModal = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 active:scale-95 transition-transform">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-bold text-slate-700">Kata Sandi Lama</label>
+            <input type="password" v-model="passForm.old" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[13px] font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-slate-400" placeholder="Masukkan kata sandi lama">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-bold text-slate-700">Kata Sandi Baru</label>
+            <input type="password" v-model="passForm.new" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[13px] font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-slate-400" placeholder="Minimal 8 karakter">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[12px] font-bold text-slate-700">Konfirmasi Kata Sandi</label>
+            <input type="password" v-model="passForm.confirm" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-[13px] font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder-slate-400" placeholder="Ketik ulang kata sandi baru">
+          </div>
+        </div>
+        <div class="p-5 bg-slate-50 border-t border-slate-100 flex gap-3">
+          <button @click="showPasswordModal = false" class="flex-1 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl text-[13px] active:scale-95 transition-transform shadow-sm">Batal</button>
+          <button @click="handleSavePassword" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl text-[13px] active:scale-95 transition-transform shadow-[0_8px_16px_-6px_rgba(37,99,235,0.4)]">Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div v-if="showLogoutModal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-fade-in" @click.self="showLogoutModal = false">
+      <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-zoom-in flex flex-col items-center p-6 pt-8 text-center relative">
+        <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-4">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+        </div>
+        <h3 class="font-extrabold text-[19px] text-slate-800 mb-1.5">Keluar dari Akun?</h3>
+        <p class="text-[13px] text-slate-500 font-medium mb-8 px-2">Anda harus login kembali untuk mengakses panel admin SIPENTA.</p>
+        
+        <div class="flex gap-3 w-full">
+          <button @click="showLogoutModal = false" class="flex-1 py-3.5 bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl text-[14px] active:scale-95 transition-transform">Batal</button>
+          <button @click="handleLogout" class="flex-1 py-3.5 bg-red-500 text-white font-bold rounded-xl text-[14px] active:scale-95 transition-transform shadow-[0_8px_16px_-6px_rgba(239,68,68,0.4)]">Ya, Keluar</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Mobile Bottom Nav -->
     <BottomNav />
@@ -225,13 +328,71 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 const isDropdownOpen = ref(false)
 const selectedFilter = ref('Semua')
+const showProfileSheet = ref(false)
+const showPasswordModal = ref(false)
+const showLogoutModal = ref(false)
+
+const passForm = ref({ old: '', new: '', confirm: '' })
+
+const handleSavePassword = () => {
+  if (!passForm.value.old || !passForm.value.new || !passForm.value.confirm) {
+    if (window.$toast) window.$toast({ title: 'Gagal Menyimpan', message: 'Semua kolom kata sandi wajib diisi.', type: 'error' })
+    return
+  }
+  if (passForm.value.new !== passForm.value.confirm) {
+    if (window.$toast) window.$toast({ title: 'Kata Sandi Tidak Cocok', message: 'Konfirmasi kata sandi baru tidak sesuai.', type: 'error' })
+    return
+  }
+  
+  // success
+  if (window.$toast) window.$toast({ title: 'Berhasil Diubah', message: 'Kata sandi Anda telah berhasil diperbarui.', type: 'success' })
+  showPasswordModal.value = false
+  passForm.value = { old: '', new: '', confirm: '' }
+}
+
+const handleLogout = () => {
+  showLogoutModal.value = false
+  if (window.$toast) window.$toast({ title: 'Berhasil Keluar', message: 'Anda telah keluar dari sesi saat ini.', type: 'success' })
+}
+
 
 const selectFilter = (filter) => {
   selectedFilter.value = filter
   isDropdownOpen.value = false
 }
+
+// Scroll Lock logic for Profile Sheet
+watch(showProfileSheet, (val) => {
+  if (typeof document !== 'undefined') {
+    if (val) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+  }
+})
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.body.style.overflow = ''
+  }
+})
 </script>
+
+<style scoped>
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>

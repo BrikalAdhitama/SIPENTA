@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">SIPENTA</string>
-    <string name="title_activity_main">SIPENTA</string>
-    <string name="package_name">com.capstone.sipenta</string>
-    <string name="custom_url_scheme">com.capstone.sipenta</string>
-</resources>

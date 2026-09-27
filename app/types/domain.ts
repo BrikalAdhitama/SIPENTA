@@ -24,6 +24,11 @@ export type StatusApproval = (typeof STATUS_APPROVAL)[number];
 
 export const DURASI_MENIT: Record<JenisSeminar, number> = { sempro: 60, semhas: 105 };
 
+export const JENIS_LABEL: Record<JenisSeminar, string> = {
+  sempro: "Seminar Proposal",
+  semhas: "Seminar Hasil",
+};
+
 export const PERAN_LABEL: Record<Peran, string> = {
   pembimbing_utama: "Pembimbing 1",
   pembimbing_pendamping: "Pembimbing 2",

@@ -44,6 +44,9 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
+// layar penuh tanpa sidebar/bottom nav
+definePageMeta({ layout: false })
+
 const router = useRouter()
 
 const goToHome = () => {

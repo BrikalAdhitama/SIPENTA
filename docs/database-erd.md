@@ -45,7 +45,6 @@ erDiagram
         bigint id PK
         text nip UK
         text nama
-        text gelar
         text email
         text bidang
         text status "aktif|nonaktif"
@@ -60,7 +59,7 @@ erDiagram
         bigint id PK
         text kode UK
         text nama
-        int kapasitas
+        text gedung "nullable for online rooms"
         int lantai
         bool is_online
         text status "aktif|nonaktif"
@@ -200,8 +199,8 @@ erDiagram
 
 ## Storage buckets
 
-| Bucket | Isi | Akses |
-|---|---|---|
-| `sps` | file Excel pendaftaran per gelombang | `admin` upload/read; privat |
-| `exports` | hasil Excel/PDF | dibuat Edge Fn; signed URL berlaku 1 jam |
-| `templates` | template Excel SPS resmi | publik read |
+| Bucket      | Isi                                  | Akses                                    |
+| ----------- | ------------------------------------ | ---------------------------------------- |
+| `sps`       | file Excel pendaftaran per gelombang | `admin` upload/read; privat              |
+| `exports`   | hasil Excel/PDF                      | dibuat Edge Fn; signed URL berlaku 1 jam |
+| `templates` | template Excel SPS resmi             | publik read                              |

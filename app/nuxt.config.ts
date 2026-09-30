@@ -33,8 +33,13 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
+    aiServiceUrl: process.env.AI_SERVICE_URL || "",
+    aiServiceKey: process.env.AI_SERVICE_KEY || "",
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL || "http://localhost:3000",
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || "",
+      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL || "",
     },
   },
 

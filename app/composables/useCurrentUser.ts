@@ -2,8 +2,9 @@ import type { Role } from "~/types/domain";
 
 // SEMENTARA: pengguna tiruan sampai auth Supabase tersambung.
 // Nanti diganti: useSupabaseUser() + baca tabel `profiles`.
-// Selama itu, role ditebak dari awalan URL (/admin, /dosen, /mahasiswa)
-// supaya sidebar tiap role menampilkan akun yang sesuai.
+// Bila sudah login lewat halaman login (lihat useAuth), yang dipakai akun login itu.
+// Bila belum (mis. membuka URL langsung saat pengembangan), role ditebak dari awalan
+// URL (/admin, /dosen, /mahasiswa) supaya sidebar tiap role tetap menampilkan akun yang sesuai.
 
 export interface CurrentUser {
   nama: string;
@@ -20,7 +21,9 @@ const PENGGUNA_TIRUAN: Record<Role, CurrentUser> = {
 
 export function useCurrentUser() {
   const route = useRoute();
-  const user = computed(() => {
+  const { akun } = useAuth();
+  const user = computed<CurrentUser>(() => {
+    if (akun.value) return akun.value;
     if (route.path.startsWith("/mahasiswa")) return PENGGUNA_TIRUAN.mahasiswa;
     if (route.path.startsWith("/dosen")) return PENGGUNA_TIRUAN.dosen;
     return PENGGUNA_TIRUAN.admin;

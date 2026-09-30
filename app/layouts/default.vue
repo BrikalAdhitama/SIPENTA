@@ -14,6 +14,7 @@
 import { navForPath } from "~/utils/navigation";
 
 const { isMobile } = useLayoutMode();
+const { badge } = useDosenSaya();
 const route = useRoute();
-const nav = computed(() => navForPath(route.path));
+const nav = computed(() => navForPath(route.path, badge.value));
 </script>

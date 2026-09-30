@@ -9,7 +9,7 @@
     <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-primary-100 rounded-full mix-blend-multiply filter blur-2xl opacity-60 z-0"></div>
     <!-- Simple geometric lines simulation using CSS -->
     <div class="absolute bottom-10 -left-10 w-48 h-px bg-primary-200/40 rotate-45 z-0"></div>
-    <div class="absolute bottom-20 -left-5 w-64 h-px bg-primary-200/40 rotate-[35deg] z-0"></div>
+    <div class="absolute bottom-20 -left-5 w-64 h-px bg-primary-200/40 rotate-35 z-0"></div>
 
 
     <!-- Main Content -->
@@ -26,23 +26,27 @@
       <!-- Form Inputs -->
       <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
         
-        <!-- Email Input -->
+        <!-- NIM Input -->
         <div>
           <input 
-            type="email" 
-            placeholder="Email" 
+            v-model="nim"
+            type="text" 
+            inputmode="numeric"
+            autocomplete="username"
+            placeholder="NIM" 
             class="w-full bg-primary-100 border-2 border-primary-900 text-slate-800 placeholder-slate-500 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium"
             required
           />
+          <p v-if="galat" role="alert" class="mt-2 px-1 text-sm text-red-500">{{ galat }}</p>
         </div>
 
         <!-- Password Input -->
         <div class="relative">
           <input 
+            v-model="password"
             :type="showPassword ? 'text' : 'password'" 
             placeholder="Password" 
             class="w-full bg-primary-100 border-2 border-transparent text-slate-800 placeholder-slate-500 rounded-xl px-5 py-4 focus:outline-none focus:border-primary-200 transition-all font-medium pr-12"
-            required
           />
           <!-- Eye Icon Toggle -->
           <button 
@@ -83,15 +87,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch } from 'vue'
 
-const router = useRouter()
+const { login, dashboardPath } = useAuth()
+
+const nim = ref('')
+const password = ref('')
+const galat = ref('')
 const showPassword = ref(false)
 
+watch(nim, () => { galat.value = '' })
+
 const handleLogin = () => {
-  // TODO: Implement actual login logic here
-  // For now, redirect to the dashboard
-  router.push('/')
+  // SEMENTARA: cukup NIM (password belum diperiksa, jadi field-nya tidak wajib diisi).
+  // TODO: signInWithPassword (Supabase) + wajibkan password lagi.
+  const hasil = login(nim.value)
+  if (!hasil.ok) {
+    galat.value = hasil.error
+    return
+  }
+  navigateTo(dashboardPath(hasil.akun.role), { replace: true })
 }
 </script>

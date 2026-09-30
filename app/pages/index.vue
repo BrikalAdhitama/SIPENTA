@@ -6,13 +6,11 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
+const { akun, dashboardPath } = useAuth()
 
 onMounted(() => {
-  // TODO: Check actual user role here from auth state
-  // For now, redirect everyone to the admin dashboard
-  router.replace('/admin/dashboard')
+  // sudah login → dashboard sesuai role; belum → halaman login
+  navigateTo(akun.value ? dashboardPath(akun.value.role) : '/login', { replace: true })
 })
 </script>

@@ -63,7 +63,7 @@
     </section>
 
     <!-- Jadwal Terbaru -->
-    <section class="mt-7 min-h-87.25 w-full max-w-168 rounded-[14px] border border-primary-900 px-4.5 pt-4.5 pb-2.5">
+    <section class="mt-7 min-h-87.25 w-full max-w-2xl rounded-[14px] border border-primary-900 px-4.5 pt-4.5 pb-2.5">
       <div class="flex items-center">
         <h2 class="flex-1 text-base leading-normal tracking-[0.16px]">Jadwal Terbaru</h2>
 

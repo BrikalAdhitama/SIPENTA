@@ -52,8 +52,8 @@ export function useMahasiswaSaya() {
   const profil = ref<ProfilMahasiswa>({
     nama: "Nadia Ramadhani",
     inisial: "NR",
-    nim: "11251099",
-    email: "11251099@student.itk.ac.id",
+    nim: "11111012",
+    email: "11111012@student.itk.ac.id",
     prodi: "Teknik Informatika",
     programStudi: "S1 Teknik Informatika",
     angkatan: "2021",

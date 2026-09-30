@@ -1,5 +1,5 @@
 <template>
-  <!-- Figma "dashboard Mahasiswa - web" (node 164:6728) -->
+  <!-- "dashboard Mahasiswa - web" -->
   <div class="max-w-312.25 pt-9 pr-8 pb-16 pl-8 xl:pr-13.5">
     <header class="leading-normal">
       <h1 class="text-[43px] font-semibold text-heading">Selamat datang, {{ user.namaPanggilan }}</h1>
@@ -50,8 +50,8 @@
           :key="kartu.label"
           class="flex min-h-26.75 items-center gap-4 rounded-2xl border border-line bg-white py-5 pr-5.5 pl-5.75 shadow-card"
         >
-          <span class="flex size-13 shrink-0 items-center justify-center rounded-2xl text-[23px] text-white" :class="kartu.ikonBg" aria-hidden="true">
-            {{ kartu.ikon }}
+          <span class="flex size-13 shrink-0 items-center justify-center rounded-2xl text-white" :class="kartu.ikonBg" aria-hidden="true">
+            <UiMaskIcon :src="kartu.ikon" :width="22" />
           </span>
           <div class="flex min-w-0 flex-col gap-0.75">
             <p class="text-[13px] leading-4.5 font-medium text-meta">{{ kartu.label }}</p>
@@ -136,7 +136,6 @@ import {
 const { user } = useCurrentUser();
 const { profil, seminar, seminarTerdekat: terdekat, seminarJenis } = useMahasiswaSaya();
 
-// kolom tabel "Jadwal Seminar Saya" — lebar mengikuti Figma
 const BARIS = "grid grid-cols-[130px_minmax(0,1fr)_124px_110px] gap-x-4.5";
 
 const sisaHari = computed(() => (terdekat.value ? hariMenuju(terdekat.value.tanggal) : 0));
@@ -144,14 +143,13 @@ const sisaHari = computed(() => (terdekat.value ? hariMenuju(terdekat.value.tang
 const sempro = seminarJenis("sempro");
 const semhas = seminarJenis("semhas");
 
-// ikon kartu ringkasan mengikuti status (Figma: ✓ hijau = selesai, ⌚ biru = terjadwal)
 function kartuSeminar(label: string, s: SeminarSaya | null) {
-  if (!s) return { label, nilai: ["Belum dijadwalkan"], ikon: "⌚", ikonBg: "bg-inactive" };
-  if (s.status === "selesai") return { label, nilai: [STATUS_SEMINAR_LABEL.selesai], ikon: "✓", ikonBg: "bg-success" };
+  if (!s) return { label, nilai: ["Belum dijadwalkan"], ikon: "/icons/stat-clock-outline.svg", ikonBg: "bg-inactive" };
+  if (s.status === "selesai") return { label, nilai: [STATUS_SEMINAR_LABEL.selesai], ikon: "/icons/stat-check-outline.svg", ikonBg: "bg-success" };
   return {
     label,
     nilai: [STATUS_SEMINAR_LABEL[s.status]],
-    ikon: "⌚",
+    ikon: "/icons/stat-clock-outline.svg",
     ikonBg: s.status === "menunggu" ? "bg-warning" : "bg-primary-500",
   };
 }
@@ -162,7 +160,7 @@ const ringkasan = computed(() => [
   {
     label: "Dosen Pembimbing",
     nilai: [profil.value.pembimbing1, profil.value.pembimbing2],
-    ikon: "🎓",
+    ikon: "/icons/stat-user-outline.svg",
     ikonBg: "bg-primary-900",
   },
 ]);

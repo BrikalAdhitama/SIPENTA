@@ -1,6 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
+const isValidUrl = (v?: string) => {
+  try { return !!v && !v.includes("<") && !!new URL(v); } catch { return false; }
+};
+const envUrl = process.env.SUPABASE_URL || process.env.NUXT_PUBLIC_SUPABASE_URL;
+const envKey = process.env.SUPABASE_KEY || process.env.NUXT_PUBLIC_SUPABASE_KEY;
+const supabaseUrl = isValidUrl(envUrl) ? envUrl! : "http://localhost:54321";
+const supabaseKey = envKey && !envKey.includes("<") ? envKey : "dummy-anon-key-for-local-ui";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-01-01",
 
@@ -17,8 +25,10 @@ export default defineNuxtConfig({
   },
 
   supabase: {
-    url: process.env.SUPABASE_URL || "",
-    key: process.env.SUPABASE_KEY || "",
+    // Fallback dummy supaya `npm run dev` tetap jalan walau .env belum diisi
+    // (login & data asli tetap butuh kredensial Supabase yang benar).
+    url: supabaseUrl,
+    key: supabaseKey,
     redirect: false,
   },
 

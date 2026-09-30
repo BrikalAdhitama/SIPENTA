@@ -19,8 +19,12 @@
             autocomplete="username"
             placeholder="11231099"
             required
+            :aria-invalid="!!galat"
+            aria-describedby="login-galat"
             class="mt-3.5 h-13.75 w-full rounded-xl border border-[#cbd5e0] bg-[#f7fafc] px-3 text-base tracking-[-0.154px] text-[#4a5568] shadow-[inset_0_2px_0_0_rgba(231,235,238,0.2)] outline-none placeholder:text-[#a0aec0] focus:border-primary-900 focus:ring-2 focus:ring-primary-900/20"
           />
+
+          <p v-if="galat" id="login-galat" role="alert" class="mt-2 text-sm leading-5 text-danger">{{ galat }}</p>
 
           <label for="login-password" class="mt-7.75 block text-base leading-5 font-medium tracking-[-0.154px] text-[#718096]">Password</label>
           <div
@@ -32,7 +36,6 @@
               :type="lihatPassword ? 'text' : 'password'"
               autocomplete="current-password"
               placeholder="••••••••"
-              required
               class="h-full min-w-0 flex-1 rounded-xl bg-transparent px-3 text-base tracking-[-0.154px] text-[#4a5568] outline-none placeholder:text-[#a0aec0]"
             />
             <span class="h-10 w-px bg-[#cfd9e0]" aria-hidden="true" />
@@ -85,13 +88,24 @@
 </template>
 
 <script setup lang="ts">
+const { login, dashboardPath } = useAuth();
+
 const nim = ref("");
 const password = ref("");
 const lihatPassword = ref(false);
 const ingatSaya = ref(false);
+const galat = ref("");
+
+watch(nim, () => (galat.value = ""));
 
 function masuk() {
-  // TODO: login Supabase (signInWithPassword) + arahkan sesuai role dari tabel profiles
-  navigateTo("/");
+  // SEMENTARA: cukup NIM (password belum diperiksa, karena itu field-nya tidak wajib diisi).
+  // TODO: signInWithPassword (Supabase) + wajibkan password lagi.
+  const hasil = login(nim.value, ingatSaya.value);
+  if (!hasil.ok) {
+    galat.value = hasil.error;
+    return;
+  }
+  navigateTo(dashboardPath(hasil.akun.role), { replace: true });
 }
 </script>

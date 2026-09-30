@@ -25,6 +25,7 @@ const SIZE: Record<NavIcon, number> = {
   penjadwalan: 20,
   mahasiswa: 22,
   jadwal: 20,
+  "jadwal-pribadi": 20,
   dosen: 30,
   ruangan: 30,
   profil: 20,

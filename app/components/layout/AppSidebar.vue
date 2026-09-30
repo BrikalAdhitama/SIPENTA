@@ -10,12 +10,20 @@
         v-for="item in items"
         :key="item.to"
         :to="item.to"
-        class="flex h-9.75 items-center gap-4.5 rounded-sm pl-2.75 font-lato text-sm font-bold transition-colors"
+        class="relative flex h-9.75 items-center gap-4.5 rounded-sm pl-2.75 font-lato text-sm font-bold whitespace-nowrap transition-colors"
         :class="isActive(item.to) ? 'bg-primary-50 text-primary-600' : 'text-inactive hover:text-primary-600/70'"
         :aria-current="isActive(item.to) ? 'page' : undefined"
       >
         <LayoutNavIcon :icon="item.icon" />
         {{ item.label }}
+        <!-- lencana angka merah (frame dosen): menggantung di kanan item, di luar area menu -->
+        <span
+          v-if="item.badge"
+          class="absolute top-1/2 -right-7.5 flex size-4.75 -translate-y-1/2 items-center justify-center rounded-full bg-danger font-sans text-[11px] leading-none font-semibold text-white"
+          :aria-label="`${item.badge} menunggu`"
+        >
+          {{ item.badge }}
+        </span>
       </NuxtLink>
     </nav>
 
@@ -57,11 +65,7 @@ defineProps<{ items: NavItem[] }>();
 
 const route = useRoute();
 const { user } = useCurrentUser();
+const { logout } = useAuth();
 
-const isActive = (to: string) => route.path === to || route.path.startsWith(`${to}/`);
-
-function logout() {
-  // TODO: supabase.auth.signOut() setelah auth tersambung
-  navigateTo("/login");
-}
+const isActive = (to: string) => route.path === to || (to.split("/").length > 2 && route.path.startsWith(`${to}/`));
 </script>

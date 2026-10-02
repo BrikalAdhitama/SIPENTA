@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-white font-sans pb-10">
+  <div class="min-h-screen font-sans pb-10" style="background-color: #ffffff;">
     
     <!-- Header -->
-    <header class="px-6 pb-4 pt-10 sticky top-0 bg-white/90 backdrop-blur-md z-20 border-b border-slate-100 shadow-sm">
+    <header class="px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] sticky top-0 bg-white/90 backdrop-blur-md z-20 border-b border-slate-100 shadow-sm">
       <div class="flex items-start gap-1">
         
         <!-- Back Button -->

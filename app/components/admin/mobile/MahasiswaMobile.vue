@@ -2,7 +2,7 @@
   <div class="min-h-screen font-sans pb-24 relative" style="background-color: #ffffff;">
     
     <!-- Header -->
-    <div class="px-6 pt-10 pb-5 flex justify-between items-start">
+    <div class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-5 flex justify-between items-start">
       <div class="flex flex-col gap-1.5 w-full">
         <h1 class="text-[26px] font-extrabold tracking-tight leading-none" style="color: #0F172A;">Data Mahasiswa</h1>
         <p class="text-[12px] font-medium leading-snug" style="color: #64748B; max-width: 85%;">Kelola data mahasiswa dan informasi seminar.</p>

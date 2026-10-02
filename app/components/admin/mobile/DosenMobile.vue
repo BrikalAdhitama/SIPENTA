@@ -2,11 +2,11 @@
   <div class="min-h-screen font-sans pb-24 relative" style="background-color: #ffffff;">
     
     <!-- Top Header & Stats (Not sticky anymore) -->
-    <div class="pt-10 pb-4">
+    <div class="pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-white/20">
       
       <!-- Top Tabs -->
       <div class="px-6">
-        <div class="flex rounded-2xl p-1 mb-6" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
+        <div class="flex rounded-2xl p-1 mb-2" style="background-color: #F8FAFC; border: 1px solid #F1F5F9;">
           <button 
             @click="activeTab = 'Daftar Dosen'"
             class="flex-1 py-3 text-sm font-bold rounded-xl transition-all"
@@ -23,7 +23,9 @@
           </button>
         </div>
       </div>
-
+    </div>
+    
+    <div> <!-- Content Container -->
       <!-- ============================== -->
       <!-- DAFTAR DOSEN VIEW -->
       <!-- ============================== -->
@@ -696,11 +698,28 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import BottomNav from '~/components/BottomNav.vue'
+import { App } from '@capacitor/app'
 
 const activeTab = ref('Daftar Dosen')
 const activeFilter = ref('Semua')
+
+// Intercept Android hardware back button
+let backHandler = null
+onMounted(() => {
+  backHandler = App.addListener('backButton', () => {
+    if (selectedDosen.value) {
+      selectedDosen.value = null
+    } else {
+      App.exitApp()
+    }
+  })
+})
+
+onUnmounted(() => {
+  backHandler?.remove()
+})
 
 // Modal States
 const showAddModal = ref(false)

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white font-sans pb-24 relative">
+  <div class="min-h-screen font-sans pb-24 relative" style="background-color: #ffffff;">
     
     <!-- Global Toast Notification -->
     <div class="fixed top-4 left-0 right-0 z-[100] flex justify-center pointer-events-none px-4">
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Header -->
-    <header class="px-6 pb-4 pt-10 sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-slate-100 shadow-sm flex items-center gap-3">
+    <header class="px-6 pb-4 pt-[calc(env(safe-area-inset-top)+1rem)] sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-slate-100 shadow-sm flex items-center gap-3">
       <button @click="handleBack" class="p-2 -ml-2 rounded-full hover:bg-slate-100 transition-colors text-slate-500 active:bg-slate-200 shrink-0 inline-flex items-center justify-center">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
       </button>
@@ -822,14 +822,32 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { App } from '@capacitor/app'
 
 const router = useRouter()
 const currentStep = ref(1)
 const selectedSeminar = ref(null)
 const uploadedFile = ref(null)
 const activeDropdown = ref(null)
+
+// Intercept Android hardware back button
+let backHandler = null
+onMounted(() => {
+  backHandler = App.addListener('backButton', () => {
+    if (currentStep.value > 1) {
+      // Kalau di step wizard selanjutnya → kembali ke step sebelumnya
+      currentStep.value--
+    } else {
+      App.exitApp()
+    }
+  })
+})
+
+onUnmounted(() => {
+  backHandler?.remove()
+})
 
 // Toast Validation State
 const toastMessage = ref('')

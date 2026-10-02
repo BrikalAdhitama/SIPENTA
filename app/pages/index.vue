@@ -10,7 +10,7 @@ import { onMounted } from 'vue'
 const { akun, dashboardPath } = useAuth()
 
 onMounted(() => {
-  // sudah login → dashboard sesuai role; belum → halaman login
-  navigateTo(akun.value ? dashboardPath(akun.value.role) : '/login', { replace: true })
+  // sudah login → dashboard sesuai role; belum → halaman splash (nanti ke onboarding lalu login)
+  navigateTo(akun.value ? dashboardPath(akun.value.role) : '/splash', { replace: true })
 })
 </script>

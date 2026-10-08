@@ -69,6 +69,8 @@ ngrok kasih URL kayak `https://a1b2-xxx.ngrok-free.app`. Kasih ke BE:
 
 ### 3.2 Bikin service di Render
 
+> **Cara cepat:** repo ini sudah punya [`../render.yaml`](../render.yaml). Di Render pilih **New → Blueprint → pilih repo SIPENTA → Apply**; service `sipenta-ai` langsung terbentuk dengan Root Directory, build/start command, dan health check yang benar. Sisanya tinggal mengisi env `AI_SERVICE_KEY`. Langkah manual di bawah tetap berlaku bila ingin menyetel sendiri.
+
 1. Buka **https://render.com** → **Get Started** → login pakai akun **GitHub**.
 2. Dashboard → **New +** → **Web Service**.
 3. **Connect a repository** → pilih repo SIPENTA (kalau nggak muncul, klik "Configure account" → kasih Render akses ke repo itu).

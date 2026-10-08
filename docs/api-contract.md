@@ -628,12 +628,18 @@ Request:
       "jam_selesai": "15:30"
     }
   ],
-  "dosen_blocked_time": [
+  "dosen_waktu_pribadi": [
     {
       "dosen_id": 4,
       "hari": "jumat",
       "jam_mulai": "11:30",
       "jam_selesai": "13:00"
+    },
+    {
+      "dosen_id": 9,
+      "tanggal": "2026-06-08",
+      "jam_mulai": "08:00",
+      "jam_selesai": "17:00"
     }
   ],
   "student_class_schedule": [
@@ -664,6 +670,8 @@ Catatan:
 - `seminars` hanya berisi yang `dijadwalkan = true` (≤ `kuota_maks`). Yang ditunda kuota tidak dikirim ke AI.
 - Semua jadwal mengajar & kuliah dikirim **sudah dalam rentang jam** dan **sudah pakai `dosen_id`** — Edge Function yang mengonversi (mis. "Rabu Sesi 3" → "Rabu 13:00–15:30"). AI service tidak tahu aturan Sesi kampus atau varian penulisan nama.
 - `blackout_windows` = waktu yang **tidak boleh dipakai seminar** (sholat Dzuhur/Jumat/Ashar). Tiap entry boleh punya `hari` (daftar hari berlakunya; tanpa `hari` = semua hari aktif). AI membuang slot yang beririsan saat generate slot kandidat — sama tier dengan `operational_hours` & `active_days`. Jumat berbeda: blackout 11.00–13.00 (bukan 12.00–13.00).
+- `dosen_waktu_pribadi` = tabel `blokir_waktu` (H4). Tiap entry mengisi **salah satu**: `hari` (berulang mingguan) atau `tanggal` (sekali, mis. dinas luar) — sama seperti kolom di DB. Nama lama `dosen_blocked_time` masih diterima AI service.
+- `dosen_teaching_schedule` & `student_class_schedule` selalu memakai `hari` (berulang mingguan); mengirim `tanggal` di sana ditolak `422`.
 - `seminars[].is_online` **ditetapkan admin** di langkah preview (SC-3), bukan diputuskan AI. Untuk seminar `is_online: true`, AI menjadwalkan **waktunya** tetapi venue dikunci ke "online" (tak konsumsi ruangan fisik, H1 dilewati).
 
 Response `200`:
@@ -704,6 +712,13 @@ Response `422` bila payload tak valid (mis. `rooms` kosong, tanggal_selesai < ta
   }
 }
 ```
+Kode error AI service: `UNAUTHENTICATED` (401, `X-AI-Key` salah), `VALIDATION_FAILED` (422), `INTERNAL` (500) — bentuk body sama dengan Edge Function.
+
+Catatan implementasi (AI service):
+- `ga_params` **opsional**, dan `soft_weights` boleh dikirim sebagian. Nilai `app_config.ga_defaults` yang hanya memuat `s0…` & `s1…` tetap diterima; bobot lain memakai default `10 · 5 · 4 · 3 · 2 · 1`. Kunci bobot yang tidak dikenal ditolak `422`.
+- Jam toleran terhadap penulisan `13.30` dan `13:30:00`; nama hari wajib bahasa Indonesia huruf kecil.
+- `stats.peringatan[]` berisi masalah data yang **tidak** menggagalkan generate (mis. `nim` di `student_class_schedule` tak cocok dengan seminar, `dosen_teaching_schedule` kosong). Dipakai untuk menelusuri payload saat integrasi.
+- Service stateless: aman dipanggil ulang; hasil identik bila `random_seed` sama.
 
 ---
 

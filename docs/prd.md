@@ -80,7 +80,6 @@ Autentikasi: email + password (Supabase Auth). Role disimpan di tabel `profiles`
 
 **Mode backend**: satu project **Supabase cloud** yang di-share (tanpa Docker/stack lokal). Migrasi diterapkan lewat `supabase db push`, Edge Function lewat `supabase functions deploy`. Detail: [`../supabase/README.md`](../supabase/README.md).
 
-Keputusan arsitektur lengkap: `docs/adr/`.
 
 ## 5. Multiplatform — bagaimana web & mobile berbagi satu codebase
 
@@ -252,7 +251,7 @@ Notasi: **AC**=Auth, **MD**=Master Data, **DS**=Dosen self-service, **MS**=Mahas
 - H1 ruangan tidak dipakai 2 seminar bersamaan (dilewati bila `is_online`)
 - H2 dosen tidak di 2 seminar bersamaan (berlaku 4 peran)
 - H3 tidak bentrok jadwal mengajar dosen
-- H4 tidak bentrok blokir waktu dosen
+- H4 tidak bentrok waktu pribadi dosen
 - H5 tidak bentrok jadwal kuliah mahasiswa
 
 **Soft constraint** (menentukan kualitas, tidak memblokir hasil):

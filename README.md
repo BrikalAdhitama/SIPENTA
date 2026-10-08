@@ -19,7 +19,7 @@ sipenta/
 ├── app/          → Nuxt 3 — SATU codebase untuk web & mobile (Capacitor)   [Frontend]
 ├── supabase/     → skema DB, RLS, Edge Functions, seed                       [Backend]
 ├── ai-service/   → microservice Python algoritma genetika                    [AI Engineer]
-├── docs/         → PRD, API contract, ERD, ADR
+├── docs/         → PRD, API contract, ERD, desain & implementasi GA
 └── figmake/      → prototipe UI/UX referensi (React, tidak di-build)
 ```
 

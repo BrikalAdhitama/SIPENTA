@@ -569,7 +569,7 @@ Untuk **setiap** penerima: tulis baris `notification` **dan** kirim email (via `
 
 ## E. AI Service — `POST {AI_URL}/solve`
 
-Dipanggil **hanya** oleh Edge Function `generate-schedule`. Auth: header `X-AI-Key: <shared secret>`. Sinkron untuk MVP (timeout 60 dtk). Detail algoritma & constraint: [`ga-design.md`](ga-design.md).
+Dipanggil **hanya** oleh backend (Nuxt Nitro `app/server/`, lihat [`integrasi-ai-nuxt.md`](integrasi-ai-nuxt.md)). Auth: header `X-AI-Key: <shared secret>`. Sinkron untuk MVP (timeout 60 dtk). Detail algoritma & constraint: [`ga-design.md`](ga-design.md).
 
 ### `GET /health`
 
@@ -670,7 +670,7 @@ Catatan:
 - `seminars` hanya berisi yang `dijadwalkan = true` (≤ `kuota_maks`). Yang ditunda kuota tidak dikirim ke AI.
 - Semua jadwal mengajar & kuliah dikirim **sudah dalam rentang jam** dan **sudah pakai `dosen_id`** — Edge Function yang mengonversi (mis. "Rabu Sesi 3" → "Rabu 13:00–15:30"). AI service tidak tahu aturan Sesi kampus atau varian penulisan nama.
 - `blackout_windows` = waktu yang **tidak boleh dipakai seminar** (sholat Dzuhur/Jumat/Ashar). Tiap entry boleh punya `hari` (daftar hari berlakunya; tanpa `hari` = semua hari aktif). AI membuang slot yang beririsan saat generate slot kandidat — sama tier dengan `operational_hours` & `active_days`. Jumat berbeda: blackout 11.00–13.00 (bukan 12.00–13.00).
-- `dosen_waktu_pribadi` = tabel `blokir_waktu` (H4). Tiap entry mengisi **salah satu**: `hari` (berulang mingguan) atau `tanggal` (sekali, mis. dinas luar) — sama seperti kolom di DB. Nama lama `dosen_blocked_time` masih diterima AI service.
+- `dosen_waktu_pribadi` = tabel `blokir_waktu` (H4). Kirim barisnya apa adanya: boleh `hari` saja, `tanggal` saja, atau keduanya sekaligus (seperti isi tabel) — bila ada `tanggal`, itu yang dipakai dan `hari` hanya pelengkap. Nama lama `dosen_blocked_time` masih diterima.
 - `dosen_teaching_schedule` & `student_class_schedule` selalu memakai `hari` (berulang mingguan); mengirim `tanggal` di sana ditolak `422`.
 - `seminars[].is_online` **ditetapkan admin** di langkah preview (SC-3), bukan diputuskan AI. Untuk seminar `is_online: true`, AI menjadwalkan **waktunya** tetapi venue dikunci ke "online" (tak konsumsi ruangan fisik, H1 dilewati).
 
@@ -715,6 +715,7 @@ Response `422` bila payload tak valid (mis. `rooms` kosong, tanggal_selesai < ta
 Kode error AI service: `UNAUTHENTICATED` (401, `X-AI-Key` salah), `VALIDATION_FAILED` (422), `INTERNAL` (500) — bentuk body sama dengan Edge Function.
 
 Catatan implementasi (AI service):
+- `seminar_type` menerima enum DB (`seminar_proposal` / `seminar_hasil`) maupun singkatan (`sempro` / `semhas`); AI menormalkannya sendiri.
 - `ga_params` **opsional**, dan `soft_weights` boleh dikirim sebagian. Nilai `app_config.ga_defaults` yang hanya memuat `s0…` & `s1…` tetap diterima; bobot lain memakai default `10 · 5 · 4 · 3 · 2 · 1`. Kunci bobot yang tidak dikenal ditolak `422`.
 - Jam toleran terhadap penulisan `13.30` dan `13:30:00`; nama hari wajib bahasa Indonesia huruf kecil.
 - `stats.peringatan[]` berisi masalah data yang **tidak** menggagalkan generate (mis. `nim` di `student_class_schedule` tak cocok dengan seminar, `dosen_teaching_schedule` kosong). Dipakai untuk menelusuri payload saat integrasi.

@@ -1,0 +1,17 @@
+# Yang tidak perlu masuk image produksi
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+tests/
+examples/
+scripts/
+notebooks/
+*.md
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
+requirements-dev.txt

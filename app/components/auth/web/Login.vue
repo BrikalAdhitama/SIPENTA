@@ -10,14 +10,13 @@
         <p class="mt-8.5 text-lg leading-normal text-[#718096]">Silahkan masuk untuk melanjutkan</p>
 
         <form class="mt-10 max-w-132" @submit.prevent="masuk">
-          <label for="login-nim" class="block text-base leading-5 font-medium tracking-[-0.154px] text-[#718096]">NIM</label>
+          <label for="login-nim" class="block text-base leading-5 font-medium tracking-[-0.154px] text-[#718096]">NIM / NIP / Email</label>
           <input
             id="login-nim"
-            v-model="nim"
+            v-model="identitas"
             type="text"
-            inputmode="numeric"
             autocomplete="username"
-            placeholder="11231099"
+            placeholder="NIM / NIP / Email"
             required
             :aria-invalid="!!galat"
             aria-describedby="login-galat"
@@ -36,6 +35,7 @@
               :type="lihatPassword ? 'text' : 'password'"
               autocomplete="current-password"
               placeholder="••••••••"
+              required
               class="h-full min-w-0 flex-1 rounded-xl bg-transparent px-3 text-base tracking-[-0.154px] text-[#4a5568] outline-none placeholder:text-[#a0aec0]"
             />
             <span class="h-10 w-px bg-[#cfd9e0]" aria-hidden="true" />
@@ -60,9 +60,10 @@
 
           <button
             type="submit"
-            class="mt-7.25 flex h-15 w-full items-center justify-center rounded-[20px] bg-primary-900 px-6 text-xl leading-7 font-semibold text-[#f7fafc] transition-transform hover:bg-primary-900/90 active:scale-[0.99]"
+            :disabled="sedangMasuk"
+            class="mt-7.25 flex h-15 w-full items-center justify-center rounded-[20px] bg-primary-900 px-6 text-xl leading-7 font-semibold text-[#f7fafc] transition-transform hover:bg-primary-900/90 active:scale-[0.99] disabled:opacity-60"
           >
-            Login
+            {{ sedangMasuk ? "Memeriksa..." : "Login" }}
           </button>
         </form>
       </div>
@@ -90,22 +91,26 @@
 <script setup lang="ts">
 const { login, dashboardPath } = useAuth();
 
-const nim = ref("");
+const identitas = ref("");
 const password = ref("");
 const lihatPassword = ref(false);
 const ingatSaya = ref(false);
 const galat = ref("");
+const sedangMasuk = ref(false);
 
-watch(nim, () => (galat.value = ""));
+watch(identitas, () => (galat.value = ""));
 
-function masuk() {
-  // SEMENTARA: cukup NIM (password belum diperiksa, karena itu field-nya tidak wajib diisi).
-  // TODO: signInWithPassword (Supabase) + wajibkan password lagi.
-  const hasil = login(nim.value, ingatSaya.value);
-  if (!hasil.ok) {
-    galat.value = hasil.error;
-    return;
+async function masuk() {
+  sedangMasuk.value = true;
+  try {
+    const hasil = await login(identitas.value, password.value, ingatSaya.value);
+    if (!hasil.ok) {
+      galat.value = hasil.error;
+      return;
+    }
+    navigateTo(dashboardPath(hasil.akun.role), { replace: true });
+  } finally {
+    sedangMasuk.value = false;
   }
-  navigateTo(dashboardPath(hasil.akun.role), { replace: true });
 }
 </script>

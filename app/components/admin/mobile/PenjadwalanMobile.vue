@@ -846,21 +846,64 @@ const showToast = (message) => {
 // Step 4 State
 const generateState = ref('initial')
 const generateProgress = ref(0)
+const generateError = ref('')
+const generateResult = ref(null)
 
-const startGenerate = () => {
+// gelombangId dari wizard (dibuat saat step 3 -> 4) atau seed demo
+const gelombangId = ref(null)
+
+async function pastikanGelombang() {
+  if (gelombangId.value) return gelombangId.value
+  const res = await $fetch('/api/gelombang', {
+    method: 'POST',
+    body: {
+      nama: config.value.namaJadwal,
+      jenis: selectedSeminar.value,
+      tanggalMulai: config.value.tanggalMulai,
+      tanggalSelesai: config.value.tanggalSelesai,
+      hari: config.value.hari,
+      jamMulai: konversiKe24(config.value.jamMulai),
+      jamSelesai: konversiKe24(config.value.jamSelesai),
+      ruangan: config.value.ruangan,
+    },
+  })
+  gelombangId.value = res.data.id
+  return res.data.id
+}
+
+function konversiKe24(v) {
+  if (!v) return v
+  if (/^\d{2}:\d{2}$/.test(v)) return v
+  const m = v.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i)
+  if (!m) return v
+  let h = parseInt(m[1], 10) % 12
+  if (/pm/i.test(m[3])) h += 12
+  return `${String(h).padStart(2, '0')}:${m[2]}`
+}
+
+const startGenerate = async () => {
+  generateError.value = ''
   generateState.value = 'loading'
-  generateProgress.value = 0
-  
-  const interval = setInterval(() => {
-    generateProgress.value += Math.floor(Math.random() * 15) + 5
-    if (generateProgress.value >= 100) {
-      generateProgress.value = 100
-      clearInterval(interval)
-      setTimeout(() => {
-        generateState.value = 'success'
-      }, 500)
-    }
-  }, 400)
+  generateProgress.value = 10
+  const tick = setInterval(() => {
+    if (generateProgress.value < 90) generateProgress.value += 5
+  }, 800)
+  try {
+    const id = await pastikanGelombang()
+    const res = await $fetch('/api/admin/generate-schedule', {
+      method: 'POST',
+      body: { gelombangId: id },
+    })
+    generateResult.value = res.data
+    generateProgress.value = 100
+    clearInterval(tick)
+    setTimeout(() => { generateState.value = 'success' }, 500)
+  } catch (e) {
+    clearInterval(tick)
+    generateState.value = 'initial'
+    generateError.value = e?.data?.statusMessage || e?.message || 'Generate gagal.'
+    showToast(generateError.value)
+  }
 }
 
 // Custom Calendar State

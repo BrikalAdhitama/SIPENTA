@@ -26,14 +26,13 @@
       <!-- Form Inputs -->
       <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
         
-        <!-- NIM Input -->
+        <!-- NIM / NIP / Email Input -->
         <div>
           <input 
-            v-model="nim"
+            v-model="identitas"
             type="text" 
-            inputmode="numeric"
             autocomplete="username"
-            placeholder="NIM" 
+            placeholder="NIM / NIP / Email" 
             class="w-full bg-primary-100 border-2 border-primary-900 text-slate-800 placeholder-slate-500 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all font-medium"
             required
           />
@@ -46,6 +45,7 @@
             v-model="password"
             :type="showPassword ? 'text' : 'password'" 
             placeholder="Password" 
+            required
             class="w-full bg-primary-100 border-2 border-transparent text-slate-800 placeholder-slate-500 rounded-xl px-5 py-4 focus:outline-none focus:border-primary-200 transition-all font-medium pr-12"
           />
           <!-- Eye Icon Toggle -->
@@ -76,9 +76,10 @@
         <!-- Login Button -->
         <button 
           type="submit" 
-          class="w-full bg-primary-900 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-transform transform active:scale-95 mt-6 text-lg"
+          :disabled="sedangMasuk"
+          class="w-full bg-primary-900 hover:bg-primary-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-transform transform active:scale-95 mt-6 text-lg disabled:opacity-60"
         >
-          Login
+          {{ sedangMasuk ? "Memeriksa..." : "Login" }}
         </button>
 
       </form>
@@ -91,21 +92,25 @@ import { ref, watch } from 'vue'
 
 const { login, dashboardPath } = useAuth()
 
-const nim = ref('')
+const identitas = ref('')
 const password = ref('')
 const galat = ref('')
 const showPassword = ref(false)
+const sedangMasuk = ref(false)
 
-watch(nim, () => { galat.value = '' })
+watch(identitas, () => { galat.value = '' })
 
-const handleLogin = () => {
-  // SEMENTARA: cukup NIM (password belum diperiksa, jadi field-nya tidak wajib diisi).
-  // TODO: signInWithPassword (Supabase) + wajibkan password lagi.
-  const hasil = login(nim.value)
-  if (!hasil.ok) {
-    galat.value = hasil.error
-    return
+const handleLogin = async () => {
+  sedangMasuk.value = true
+  try {
+    const hasil = await login(identitas.value, password.value)
+    if (!hasil.ok) {
+      galat.value = hasil.error
+      return
+    }
+    navigateTo(dashboardPath(hasil.akun.role), { replace: true })
+  } finally {
+    sedangMasuk.value = false
   }
-  navigateTo(dashboardPath(hasil.akun.role), { replace: true })
 }
 </script>

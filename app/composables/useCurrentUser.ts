@@ -1,10 +1,7 @@
 import type { Role } from "~/types/domain";
 
-// SEMENTARA: pengguna tiruan sampai auth Supabase tersambung.
-// Nanti diganti: useSupabaseUser() + baca tabel `profiles`.
-// Bila sudah login lewat halaman login (lihat useAuth), yang dipakai akun login itu.
-// Bila belum (mis. membuka URL langsung saat pengembangan), role ditebak dari awalan
-// URL (/admin, /dosen, /mahasiswa) supaya sidebar tiap role tetap menampilkan akun yang sesuai.
+// Header/sidebar: tampilkan akun login. Belum login → tebak role dari URL
+// supaya layout tiap role tetap bisa dibuka saat pengembangan.
 
 export interface CurrentUser {
   nama: string;

@@ -2,9 +2,12 @@ import { createError } from "h3";
 
 import { MahasiswaService } from "../../services/mahasiswa.service";
 import { validateMahasiswaId } from "../../validators/mahasiswa.validator";
+import { requireRole } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   try {
+    await requireRole(event, ["admin", "dosen", "mahasiswa"]);
+
     const id = getRouterParam(event, "id");
     const validation = validateMahasiswaId(id);
 

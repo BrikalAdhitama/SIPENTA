@@ -4,8 +4,10 @@
 export const ROLES = ["admin", "dosen", "mahasiswa"] as const;
 export type Role = (typeof ROLES)[number];
 
-export const JENIS_SEMINAR = ["seminar_proposal", "seminar_hasil"] as const;
+export const JENIS_SEMINAR = ["seminar_proposal", "seminar_hasil", "sempro", "semhas"] as const;
 export type JenisSeminar = (typeof JENIS_SEMINAR)[number];
+
+// ponytail: FE lama pakai sempro/semhas, DB pakai seminar_*. Normalisasi di service, hapus alias bila FE seragam.
 
 export const PERAN = [
   "pembimbing_utama",
@@ -22,11 +24,13 @@ export type StatusRun = (typeof STATUS_RUN)[number];
 export const STATUS_APPROVAL = ["menunggu", "konfirmasi", "tolak"] as const;
 export type StatusApproval = (typeof STATUS_APPROVAL)[number];
 
-export const DURASI_MENIT: Record<JenisSeminar, number> = { seminar_proposal: 60, seminar_hasil: 105 };
+export const DURASI_MENIT: Record<string, number> = { seminar_proposal: 60, seminar_hasil: 105, sempro: 60, semhas: 105 };
 
-export const JENIS_LABEL: Record<JenisSeminar, string> = {
+export const JENIS_LABEL: Record<string, string> = {
   seminar_proposal: "Seminar Proposal",
   seminar_hasil: "Seminar Hasil",
+  sempro: "Seminar Proposal",
+  semhas: "Seminar Hasil",
 };
 
 export const PERAN_LABEL: Record<Peran, string> = {

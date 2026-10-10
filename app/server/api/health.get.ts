@@ -5,8 +5,8 @@ export default defineEventHandler(() => {
   return {
     status: "ok",
     service: "sipenta-nuxt-api",
-    // databaseConfigured: Boolean(config.public.supabaseUrl),
-    // aiServiceConfigured: Boolean(config.aiServiceUrl && config.aiServiceKey),
+    databaseConfigured: Boolean(config.public.supabaseUrl),
+    aiServiceConfigured: Boolean(config.aiServiceUrl && config.aiServiceKey),
     timestamp: new Date().toISOString(),
   };
 });

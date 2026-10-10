@@ -1,9 +1,12 @@
 import { createError } from "h3";
 
 import { MahasiswaService } from "../../services/mahasiswa.service";
+import { requireRole } from "../../utils/auth";
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
   try {
+    await requireRole(event, ["admin", "dosen", "mahasiswa"]);
+
     const service = new MahasiswaService();
     return await service.list();
   } catch (error) {

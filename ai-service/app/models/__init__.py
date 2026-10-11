@@ -13,7 +13,13 @@ import re
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
 
 HARI_VALID = ("senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu")
-JENIS_VALID = ("sempro", "semhas")
+# enum DB (`jenis_seminar`) maupun singkatan lama sama-sama diterima, lalu dinormalkan
+JENIS_ALIAS = {
+    "seminar_proposal": "sempro",
+    "sempro": "sempro",
+    "seminar_hasil": "semhas",
+    "semhas": "semhas",
+}
 _JAM_RE = re.compile(r"^([01]\d|2[0-3])[:.]([0-5]\d)(:[0-5]\d)?$")
 
 # bobot default; payload boleh mengirim sebagian saja (sisanya memakai nilai ini)
@@ -86,9 +92,12 @@ class SeminarIn(BaseModel):
 class Interval(BaseModel):
     """Rentang waktu sibuk: jadwal mengajar, waktu pribadi dosen, atau jadwal kuliah.
 
-    Isi **salah satu**: `hari` (berulang tiap minggu) atau `tanggal` (sekali, untuk
-    waktu pribadi seperti dinas luar) — sama seperti kolom `blokir_waktu` di DB.
-    Jadwal mengajar & jadwal kuliah selalu memakai `hari`.
+    Isi minimal salah satu dari `hari` atau `tanggal`:
+
+    - hanya `hari`   → berulang tiap minggu (jadwal mengajar, jadwal kuliah)
+    - ada `tanggal`  → berlaku pada tanggal itu saja (waktu pribadi, mis. dinas luar).
+      Tabel `blokir_waktu` mengisi `hari` dan `tanggal` sekaligus; bila keduanya ada,
+      `tanggal` yang dipakai dan `hari` hanya pelengkap tampilan.
     """
 
     dosen_id: int | None = None
@@ -114,9 +123,9 @@ class Interval(BaseModel):
         return _cek_jam(v, info.field_name)
 
     @model_validator(mode="after")
-    def _isi_salah_satu_dan_urutan_jam(self):
-        if (self.hari is None) == (self.tanggal is None):
-            raise ValueError("isi tepat salah satu: hari (berulang mingguan) atau tanggal (sekali)")
+    def _isi_minimal_satu_dan_urutan_jam(self):
+        if self.hari is None and self.tanggal is None:
+            raise ValueError("isi minimal salah satu: hari (berulang mingguan) atau tanggal (sekali)")
         if self.jam_selesai <= self.jam_mulai:
             raise ValueError(
                 f"jam_selesai harus setelah jam_mulai ({self.jam_mulai}–{self.jam_selesai})"
@@ -213,9 +222,11 @@ class SolveRequest(BaseModel):
     @classmethod
     def _jenis(cls, v: str) -> str:
         j = str(v).strip().lower()
-        if j not in JENIS_VALID:
-            raise ValueError(f"seminar_type harus salah satu dari {JENIS_VALID}, dapat: {v!r}")
-        return j
+        if j not in JENIS_ALIAS:
+            raise ValueError(
+                f"seminar_type harus salah satu dari {', '.join(JENIS_ALIAS)}, dapat: {v!r}"
+            )
+        return JENIS_ALIAS[j]  # dinormalkan ke sempro / semhas
 
     @field_validator("active_days")
     @classmethod

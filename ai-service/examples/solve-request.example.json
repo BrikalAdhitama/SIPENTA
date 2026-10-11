@@ -1,0 +1,77 @@
+{
+  "seminar_type": "seminar_proposal",
+  "session_duration_minutes": 60,
+  "period": { "start_date": "2026-10-05", "end_date": "2026-10-16" },
+  "active_days": ["senin", "selasa", "rabu", "kamis", "jumat"],
+  "operational_hours": { "start": "08:00", "end": "17:00" },
+  "gap_minutes": 15,
+  "blackout_windows": [
+    { "start": "12:00", "end": "13:00", "label": "Sholat Dzuhur", "hari": ["senin", "selasa", "rabu", "kamis"] },
+    { "start": "11:00", "end": "13:00", "label": "Sholat Jumat", "hari": ["jumat"] },
+    { "start": "15:00", "end": "16:00", "label": "Sholat Ashar" }
+  ],
+  "rooms": [
+    { "id": "R201", "is_online": false },
+    { "id": "R202", "is_online": false },
+    { "id": "ONLINE", "is_online": true }
+  ],
+  "seminars": [
+    {
+      "id": 1,
+      "nim": "220001",
+      "nama": "Andi Pratama",
+      "is_online": false,
+      "pembimbing_utama_id": 1,
+      "pembimbing_pendamping_id": 2,
+      "penguji1_id": 3,
+      "penguji2_id": 4
+    },
+    {
+      "id": 2,
+      "nim": "220002",
+      "nama": "Rina Salsabila",
+      "is_online": true,
+      "pembimbing_utama_id": 3,
+      "pembimbing_pendamping_id": 4,
+      "penguji1_id": 1,
+      "penguji2_id": 2
+    },
+    {
+      "id": 3,
+      "nim": "220003",
+      "nama": "Fajar Nugraha",
+      "is_online": false,
+      "pembimbing_utama_id": 2,
+      "pembimbing_pendamping_id": 1,
+      "penguji1_id": 4,
+      "penguji2_id": 3
+    }
+  ],
+  "dosen_teaching_schedule": [
+    { "dosen_id": 1, "hari": "senin", "jam_mulai": "07:30", "jam_selesai": "10:00" },
+    { "dosen_id": 2, "hari": "selasa", "jam_mulai": "13:00", "jam_selesai": "15:30" },
+    { "dosen_id": 3, "hari": "rabu", "jam_mulai": "10:20", "jam_selesai": "12:00" },
+    { "dosen_id": 4, "hari": "kamis", "jam_mulai": "07:30", "jam_selesai": "10:00" }
+  ],
+  "dosen_waktu_pribadi": [
+    { "dosen_id": 1, "hari": "senin", "tanggal": "2026-10-12", "jam_mulai": "08:00", "jam_selesai": "17:00" },
+    { "dosen_id": 4, "hari": "jumat", "jam_mulai": "11:00", "jam_selesai": "13:00" }
+  ],
+  "student_class_schedule": [
+    { "nim": "220001", "hari": "selasa", "jam_mulai": "07:30", "jam_selesai": "10:00" },
+    { "nim": "220002", "hari": "rabu", "jam_mulai": "13:00", "jam_selesai": "15:30" },
+    { "nim": "220003", "hari": "kamis", "jam_mulai": "10:20", "jam_selesai": "12:00" }
+  ],
+  "ga_params": {
+    "population_size": 100,
+    "generations": 500,
+    "crossover_rate": 0.8,
+    "mutation_rate": 0.1,
+    "elitism_count": 2,
+    "soft_weights": {
+      "s0_menguji_lebih_dari_1_per_hari": 10,
+      "s1_total_peran_lebih_dari_1_per_hari": 5
+    },
+    "random_seed": 42
+  }
+}

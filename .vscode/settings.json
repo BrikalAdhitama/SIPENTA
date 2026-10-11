@@ -8,5 +8,6 @@
   // Rekomendasi: install extension "Tailwind CSS IntelliSense" (bradlc.vscode-tailwindcss)
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "CodeGPT.apiKey": "CodeGPT Plus Beta"
 }

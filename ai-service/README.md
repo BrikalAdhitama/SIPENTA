@@ -8,8 +8,12 @@ Desain algoritma lengkap: [`../docs/ga-design.md`](../docs/ga-design.md) · urai
 
 | Method | Route | Keterangan |
 |---|---|---|
-| `POST` | `/solve` | Dipanggil **hanya** oleh Edge Function `generate-schedule` (header `X-AI-Key`). Sinkron, timeout 60 dtk. |
-| `GET` | `/health` | Cek hidup (dipakai uptime ping / cold start Render). |
+| `POST` | `/solve` | Dipanggil **hanya** oleh backend Nuxt (`app/server/api/penjadwalan/generate.post.ts`), header `X-AI-Key`. Sinkron, timeout 60 dtk. |
+| `GET` | `/health` | Cek hidup (dipakai health check Render & uptime ping). |
+| `GET` | `/ready` | Cek siap pakai: mesin GA dijalankan pada kasus mini. |
+| `GET` | `/version` | Versi service + parameter GA default (dipakai FE/BE memastikan versi yang jalan). |
+
+Setiap permintaan punya **`X-Request-Id`** (dipakai ulang bila dikirim pemanggil) yang muncul di log dan header respons — memudahkan menelusuri satu permintaan dari Nuxt sampai AI.
 
 Skema request/response: [`../docs/api-contract.md`](../docs/api-contract.md) §E. Payload sudah bersih: jadwal mengajar/kuliah dalam rentang jam, dosen sebagai `dosen_id` — GA tidak tahu aturan Sesi kampus.
 
@@ -30,9 +34,20 @@ app/
     engine.py       loop GA + terminasi (hard=0 & plateau / 2×plateau / batas waktu 25 dtk) ; solve() = pipeline 5 fase
 tests/
   fixtures/         dataset riil Genap 25/26 (anonim) + contoh_sempro_februari.json (rakitan tangan)
-  test_*.py         unit test slot, fitness, engine + kontrak HTTP /solve (46 test)
-Dockerfile          image produksi (python:3.11-slim, uvicorn)
+  test_*.py         unit test slot, fitness, engine + kontrak HTTP (55 test)
+examples/
+  solve-request.example.json   contoh payload lengkap bergaya skema DB (dipakai BE & diuji di test)
+scripts/
+  benchmark.py      GA vs penyusunan manual pada fixture riil → tabel Markdown (M5)
+  tuning.py         bandingkan beberapa set bobot soft → tabel Markdown (M6)
+  smoke_test.py     uji service yang sudah jalan/di-deploy (health, ready, solve, 401, 422)
+requirements.txt      dependensi runtime (versi terkunci) — dipakai Docker & Render
+requirements-dev.txt  tambahan untuk test & lint
+Dockerfile            image produksi (python:3.11-slim, non-root, healthcheck)
+.dockerignore         test/examples/scripts tidak ikut ke image
 ```
+
+Test berjalan otomatis di GitHub Actions (`.github/workflows/ai-service.yml`) setiap ada perubahan di folder ini.
 
 `solve(req, trace=...)` menerima argumen opsional `trace` (dict) untuk merekam jejak evolusi per generasi — dipakai saat benchmark/tuning, tidak memengaruhi hasil dan tidak dipakai `/solve`.
 
@@ -57,9 +72,9 @@ Dockerfile          image produksi (python:3.11-slim, uvicorn)
 ## Jalankan
 
 ```bash
-uv sync                                        # atau: pip install fastapi "uvicorn[standard]" pydantic
+pip install -r requirements-dev.txt            # atau: uv sync
 uv run uvicorn app.main:app --reload --port 8000
-uv run pytest -q                               # 46 test
+uv run pytest -q                               # 55 test
 ```
 
 Uji `/solve` memakai fixture sebagai payload:
@@ -86,7 +101,9 @@ Content-Type: application/json
 X-AI-Key: <AI_SERVICE_KEY>        # wajib bila service dijalankan dengan env AI_SERVICE_KEY
 ```
 
-Payload & response: [`../docs/api-contract.md`](../docs/api-contract.md) §E. Contoh payload siap pakai ada di `tests/fixtures/*.json` (dataset riil Genap 25/26, anonim).
+Payload & response: [`../docs/api-contract.md`](../docs/api-contract.md) §E. Panduan integrasi lengkap + contoh endpoint Nitro: [`../docs/integrasi-ai-nuxt.md`](../docs/integrasi-ai-nuxt.md).
+
+Contoh payload siap pakai: `examples/solve-request.example.json` (bergaya skema DB) dan `tests/fixtures/*.json` (dataset riil Genap 25/26, anonim).
 
 ### Format error (sama dengan Edge Function)
 
@@ -111,9 +128,10 @@ Yang divalidasi: `seminar_type` ∈ {sempro, semhas} · `period` format & urutan
 
 ### Checklist payload dari Edge Function
 
+0. Jenis seminar boleh dikirim apa adanya dari DB (`seminar_proposal` / `seminar_hasil`); singkatan `sempro` / `semhas` juga diterima.
 1. `seminars` hanya yang `validasi = 'valid'` **dan** `dijadwalkan = true`.
 2. Isi `nim` tiap seminar (dipakai H5) dan `dosen_id` keempat peran.
-2b. `dosen_waktu_pribadi` (tabel `blokir_waktu`): kirim `hari` **atau** `tanggal` per entry — keduanya didukung. Nama lama `dosen_blocked_time` masih diterima.
+2b. `dosen_waktu_pribadi` (tabel `blokir_waktu`): boleh mengirim `hari` dan `tanggal` sekaligus seperti isi tabelnya — bila ada `tanggal`, itu yang dipakai. Nama lama `dosen_blocked_time` masih diterima.
 3. Ekspansi "hari + Sesi N" → `jam_mulai`/`jam_selesai` memakai `app_config.jadwal_kampus.sesi` (kolom Jumat untuk hari Jumat).
 4. `rooms` = `gelombang.ruangan_aktif` (+ satu ruangan `is_online: true` bila ada seminar daring).
 5. `blackout_windows` dari `app_config.jadwal_kampus.blackout` (`mulai`/`selesai` → `start`/`end`).
@@ -129,12 +147,31 @@ curl -X POST http://127.0.0.1:8000/solve -H "Content-Type: application/json" \
 
 Dokumentasi interaktif (coba langsung dari browser): `http://127.0.0.1:8000/docs`.
 
+## Benchmark & tuning (bahan laporan)
+
+```bash
+python -m scripts.benchmark --seeds 42,1,7 --out ../docs/benchmark-ga.md
+python -m scripts.tuning   --seeds 42      --out ../docs/tuning-bobot.md
+```
+
+Hasil terbaru sudah tersimpan: [`../docs/benchmark-ga.md`](../docs/benchmark-ga.md) · [`../docs/tuning-bobot.md`](../docs/tuning-bobot.md).
+
 ## Docker
 
 ```bash
 docker build -t sipenta-ai .
 docker run -p 8000:8000 -e AI_SERVICE_KEY=<rahasia> sipenta-ai
 ```
+
+Image hanya berisi `app/` + dependensi terkunci, berjalan sebagai user non-root, dan punya healthcheck bawaan.
+
+## Smoke test (setelah deploy)
+
+```bash
+python -m scripts.smoke_test --url https://sipenta-ai.onrender.com --key <rahasia>
+```
+
+Memeriksa `/health`, `/ready`, `/version`, `/solve` dengan contoh payload, serta penolakan 401 dan 422. Keluar dengan kode 1 bila ada yang gagal, jadi bisa dipakai di pipeline.
 
 ## Env (`.env`)
 ```
@@ -145,4 +182,4 @@ AI_SERVICE_KEY=            # shared secret, dicek terhadap header X-AI-Key
 
 Panduan langkah demi langkah (ramah pemula, tanpa nulis Docker): **[`../docs/deploy-ai-service.md`](../docs/deploy-ai-service.md)**.
 
-Ringkas: Render → New Web Service → Root `ai-service` → env `AI_SERVICE_KEY` → dapat URL → serahkan URL + key ke BE (`supabase secrets set`). Cold start Render Free diatasi dengan ping `/health` tiap 10 menit via cron-job.org.
+Ringkas: Render → **New → Blueprint** → pilih repo (membaca [`../render.yaml`](../render.yaml)) → isi env `AI_SERVICE_KEY` → dapat URL. Serahkan URL + key ke BE untuk diisi ke `AI_SERVICE_URL` / `AI_SERVICE_KEY` pada host Nuxt, lalu jalankan `scripts/smoke_test.py`. Cold start Render Free diatasi dengan ping `/health` tiap 10 menit via cron-job.org.

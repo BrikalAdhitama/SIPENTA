@@ -29,7 +29,6 @@ Table dosen {
   id         bigint       [pk, increment]
   nip        text         [unique]
   nama       text         [not null]
-  gelar      text
   email      text
   bidang     text
   status     status_aktif [not null, default: 'aktif']
@@ -60,7 +59,7 @@ Table ruangan {
   id        bigint       [pk, increment]
   kode      text         [unique, not null]
   nama      text         [not null]
-  kapasitas int
+  gedung    text
   lantai    int
   is_online boolean      [not null, default: false, note: 'true = venue daring, GA lewati bentrok ruangan (H1)']
   status    status_aktif [not null, default: 'aktif']

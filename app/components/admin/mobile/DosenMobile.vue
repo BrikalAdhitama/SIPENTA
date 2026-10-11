@@ -2,7 +2,7 @@
   <div class="min-h-screen font-sans pb-24 relative" style="background-color: #ffffff;">
     
     <!-- Top Header & Stats (Not sticky anymore) -->
-    <div class="pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-white/20">
+    <div class="mobile-safe-top pb-4 sticky top-0 bg-white/90 backdrop-blur-md z-30 border-b border-white/20">
       
       <!-- Top Tabs -->
       <div class="px-6">
@@ -289,7 +289,7 @@
     
     <!-- Add Modal -->
     <div v-if="showAddModal" class="fixed inset-0 z-50 flex flex-col justify-end">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showAddModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showAddModal = false"></div>
       <div class="relative bg-white rounded-t-[32px] w-full p-6 animate-slide-up" style="max-height: 90vh; overflow-y: auto;">
         <!-- Handle -->
         <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
@@ -364,7 +364,7 @@
 
     <!-- Edit Modal -->
     <div v-if="showEditModal" class="fixed inset-0 z-50 flex flex-col justify-end">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showEditModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showEditModal = false"></div>
       <div class="relative bg-white rounded-t-[32px] w-full p-6 animate-slide-up" style="max-height: 90vh; overflow-y: auto;">
         <!-- Handle -->
         <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
@@ -439,7 +439,7 @@
 
     <!-- Delete Modal -->
     <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center px-6">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showDeleteModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showDeleteModal = false"></div>
       <div class="relative bg-white rounded-[28px] w-full p-6 animate-zoom-in text-center flex flex-col items-center shadow-xl">
         
         <div class="w-14 h-14 rounded-full flex items-center justify-center mb-4" style="background-color: #FEE2E2; color: #EF4444;">
@@ -463,7 +463,7 @@
 
     <!-- Jadwal Detail Modal -->
     <div v-if="showDetailModal" class="fixed inset-0 z-50 flex flex-col justify-end">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showDetailModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showDetailModal = false"></div>
       <div class="relative bg-white rounded-t-[32px] w-full p-6 animate-slide-up" style="max-height: 90vh; overflow-y: auto;">
         
         <!-- Header -->
@@ -548,7 +548,7 @@
 
     <!-- Edit Jadwal Modal -->
     <div v-if="showEditJadwalModal" class="fixed inset-0 z-[60] flex flex-col justify-end">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showEditJadwalModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showEditJadwalModal = false"></div>
       <div class="relative bg-white rounded-t-[32px] w-full p-6 animate-slide-up">
         
         <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
@@ -612,7 +612,7 @@
 
     <!-- Tambah Jadwal Modal -->
     <div v-if="showAddJadwalModal" class="fixed inset-0 z-[60] flex flex-col justify-end">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showAddJadwalModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showAddJadwalModal = false"></div>
       <div class="relative bg-white rounded-t-[32px] w-full p-6 animate-slide-up">
         
         <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
@@ -676,7 +676,7 @@
 
     <!-- Hapus Jadwal Modal -->
     <div v-if="showDeleteJadwalModal" class="fixed inset-0 z-[60] flex items-center justify-center px-6">
-      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(3px);" @click="showDeleteJadwalModal = false"></div>
+      <div class="absolute inset-0 transition-opacity" style="background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(5px);" @click="showDeleteJadwalModal = false"></div>
       <div class="relative bg-white rounded-[24px] w-full p-7 flex flex-col items-center text-center animate-zoom-in">
         
         <div class="w-14 h-14 rounded-full flex items-center justify-center mb-5" style="background-color: #FEF2F2; color: #EF4444;">

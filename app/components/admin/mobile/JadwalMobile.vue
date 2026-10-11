@@ -4,7 +4,7 @@
     <!-- LIST VIEW -->
     <div v-if="!selectedJadwal" class="animate-in fade-in slide-in-from-left-4 duration-300">
       
-      <header class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 z-30" style="background-color: #ffffff;">
+      <header class="mobile-safe-top px-6 pb-4 sticky top-0 z-30" style="background-color: #ffffff;">
         <h1 class="text-[26px] font-extrabold tracking-tight leading-tight mb-1" style="color: #0F172A;">Daftar Jadwal</h1>
         <p class="text-[13px] font-medium" style="color: #64748B;">Semua hasil penjadwalan yang telah dibuat</p>
       </header>
@@ -91,7 +91,7 @@
     <!-- DETAIL VIEW -->
     <div v-else class="animate-in fade-in slide-in-from-right-4 duration-300 min-h-screen" style="background-color: #ffffff;">
       
-      <header class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 z-30 border-b shadow-sm bg-white/90 backdrop-blur-md" style="border-color: #F8FAFC;">
+      <header class="mobile-safe-top px-6 pb-4 sticky top-0 z-30 border-b shadow-sm bg-white/90 backdrop-blur-md" style="border-color: #F8FAFC;">
         <button @click="selectedJadwal = null" class="flex items-center gap-1.5 font-bold text-[13px] mb-5 hover:opacity-70 transition-opacity active:scale-95 origin-left text-primary-900">
           <svg class="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
           Semua Jadwal

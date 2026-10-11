@@ -4,12 +4,12 @@
     <!-- LIST VIEW -->
     <div v-if="!selectedJadwal" class="animate-in fade-in slide-in-from-left-4 duration-300">
       
-      <header class="px-6 pt-10 pb-4 sticky top-0 z-30" style="background-color: #ffffff;">
+      <header class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 z-30" style="background-color: #ffffff;">
         <h1 class="text-[26px] font-extrabold tracking-tight leading-tight mb-1" style="color: #0F172A;">Daftar Jadwal</h1>
         <p class="text-[13px] font-medium" style="color: #64748B;">Semua hasil penjadwalan yang telah dibuat</p>
       </header>
 
-      <main class="px-6">
+      <main class="px-6 pt-4">
         <!-- Search Bar -->
         <div class="relative mb-6">
           <input type="text" placeholder="Search ..." class="w-full border rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none transition-all" style="background-color: #ffffff; border-color: #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.03);" />
@@ -29,56 +29,56 @@
         <div class="flex flex-col gap-3">
           <div v-for="jadwal in filteredJadwals" :key="jadwal.id" 
                @click="openDetail(jadwal)"
-               class="rounded-2xl overflow-hidden active:scale-[0.98] transition-all duration-200 cursor-pointer group flex"
-               style="background-color: #ffffff; border: 1px solid #EEF2F7; box-shadow: 0 2px 12px rgba(15,23,42,0.04);">
+               class="bg-white rounded-[22px] p-4 flex flex-col gap-1 active:scale-[0.98] transition-all duration-200 cursor-pointer group border border-slate-100/80 shadow-[0_8px_30px_-4px_rgba(15,23,42,0.04)]">
             
-            <!-- Left Accent Bar -->
-            <div class="w-1.5 shrink-0 rounded-l-2xl transition-all duration-300"
-                 :style="jadwal.type === 'Sempro' ? 'background: linear-gradient(180deg, #F48FB1, #E91E63);' : 'background: linear-gradient(180deg, #90CAF9, #1565C0);'">
-            </div>
-
-            <!-- Main Content -->
-            <div class="flex-1 p-4">
-              <!-- Row 1: Icon + Title + Arrow -->
-              <div class="flex items-start gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background-color: #F0F6FF;">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style="color: #1976D2;">
-                    <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
+            <!-- Row 1: Header -->
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="flex items-center gap-3.5">
+                <!-- Icon Box -->
+                <div class="w-12 h-12 rounded-[16px] flex items-center justify-center shrink-0 shadow-sm" 
+                     :class="jadwal.type === 'Sempro' ? 'bg-pink-50 text-pink-500' : 'bg-blue-50 text-blue-600'">
+                  <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                   </svg>
                 </div>
-
-                <div class="flex-1 min-w-0">
-                  <p class="font-extrabold text-[13.5px] leading-snug" style="color: #0F172A;">{{ jadwal.title }}</p>
-                  <p class="text-[11px] font-semibold mt-0.5" style="color: #64748B;">{{ jadwal.date }}</p>
+                <!-- Title & Date -->
+                <div class="flex flex-col justify-center">
+                  <h3 class="font-extrabold text-[15px] text-slate-800 leading-tight mb-1 group-hover:text-primary-600 transition-colors">{{ jadwal.title }}</h3>
+                  <div class="flex items-center gap-1.5 text-slate-500">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-[11.5px] font-medium">{{ jadwal.date }}</span>
+                  </div>
                 </div>
-
-                <svg class="w-4 h-4 shrink-0 mt-1 transition-all duration-200 group-hover:translate-x-0.5" style="color: #CBD5E1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
-                </svg>
               </div>
-
-              <!-- Row 2: Badge + Count -->
-              <div class="flex items-center justify-between">
-                <span v-if="jadwal.type === 'Sempro'" 
-                      class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold"
-                      style="background-color: #FCE4EC; color: #C2185B;">
-                  Sempro
-                </span>
-                <span v-else
-                      class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold"
-                      style="background-color: #E3F2FD; color: #1565C0;">
-                  Semhas
-                </span>
-
-                <div class="flex items-baseline gap-1">
-                  <span class="font-black text-[16px]" style="color: #0F172A; letter-spacing: -0.5px;">
-                    {{ jadwal.scheduled }}<span style="color: #CBD5E1;">/</span>{{ jadwal.total }}
-                  </span>
-                  <span class="text-[10px] font-semibold" style="color: #94A3B8;">Terjadwal</span>
-                </div>
+              <!-- Right Chevron -->
+              <div class="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:bg-slate-50 group-hover:text-primary-500 transition-colors shrink-0 mt-1">
+                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
               </div>
             </div>
 
+            <!-- Row 2: Status & Progress -->
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50/80">
+              <!-- Type Badge -->
+              <span class="px-3 py-1.5 rounded-full text-[10.5px] font-extrabold tracking-wide uppercase"
+                    :class="jadwal.type === 'Sempro' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
+                {{ jadwal.type }}
+              </span>
+
+              <!-- Progress Indicator -->
+              <div class="flex flex-col items-end gap-1.5">
+                <div class="flex items-baseline gap-1">
+                  <span class="font-black text-[13.5px] text-slate-800 leading-none">{{ jadwal.scheduled }}</span>
+                  <span class="text-[11px] font-semibold text-slate-400 leading-none">/ {{ jadwal.total }} Terjadwal</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-24 h-[5px] rounded-full bg-slate-100 overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-1000 ease-out"
+                       :class="jadwal.scheduled === jadwal.total ? 'bg-emerald-500' : (jadwal.type === 'Sempro' ? 'bg-pink-500' : 'bg-blue-500')"
+                       :style="{ width: `${(jadwal.scheduled / jadwal.total) * 100}%` }">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -91,7 +91,7 @@
     <!-- DETAIL VIEW -->
     <div v-else class="animate-in fade-in slide-in-from-right-4 duration-300 min-h-screen" style="background-color: #ffffff;">
       
-      <header class="px-6 pt-10 pb-4 sticky top-0 z-30 border-b shadow-sm" style="background-color: #ffffff; border-color: #F8FAFC;">
+      <header class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-4 sticky top-0 z-30 border-b shadow-sm bg-white/90 backdrop-blur-md" style="border-color: #F8FAFC;">
         <button @click="selectedJadwal = null" class="flex items-center gap-1.5 font-bold text-[13px] mb-5 hover:opacity-70 transition-opacity active:scale-95 origin-left text-primary-900">
           <svg class="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
           Semua Jadwal
@@ -305,12 +305,34 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import BottomNav from '~/components/BottomNav.vue'
+import { App } from '@capacitor/app'
 
 const activeFilter = ref('Semua')
 const selectedJadwal = ref(null)
 const selectedStudent = ref(null)
+
+// Intercept Android hardware back button
+let backHandler = null
+onMounted(() => {
+  backHandler = App.addListener('backButton', () => {
+    if (selectedStudent.value) {
+      // Kalau modal student buka → tutup dulu
+      selectedStudent.value = null
+    } else if (selectedJadwal.value) {
+      // Kalau di halaman detail jadwal → kembali ke list
+      selectedJadwal.value = null
+    } else {
+      // Kalau sudah di list → back normal (keluar halaman)
+      App.exitApp()
+    }
+  })
+})
+
+onUnmounted(() => {
+  backHandler?.remove()
+})
 
 // Lock body scroll when student detail modal is open
 watch(selectedStudent, (val) => {

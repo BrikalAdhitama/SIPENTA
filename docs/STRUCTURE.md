@@ -76,7 +76,6 @@ sipenta/
 │   ├── Dockerfile
 │   ├── app/
 │   │   ├── main.py              #    FastAPI: POST /solve, GET /health
-│   │   ├── api/routes.py
 │   │   ├── models/              #    pydantic: SolveRequest, SolveResponse
 │   │   ├── config.py
 │   │   └── ga/
@@ -85,9 +84,8 @@ sipenta/
 │   │       ├── fitness.py       #    H1–H2 dinamis + S0–S5 soft
 │   │       ├── operators.py     #    tournament, uniform crossover, reassignment mutation
 │   │       └── engine.py        #    loop GA + terminasi
-│   ├── tests/
-│   │   └── fixtures/            #    dataset riil Genap 25/26 (anonim) untuk benchmark
-│   └── notebooks/              #    eksperimen tuning bobot
+│   └── tests/
+│       └── fixtures/            #    dataset riil Genap 25/26 (anonim) untuk benchmark
 │
 ├── docs/                         # ── DOKUMENTASI (semua) ─────────────────────────
 │   ├── STRUCTURE.md
@@ -95,8 +93,8 @@ sipenta/
 │   ├── api-contract.md
 │   ├── database-erd.md
 │   ├── ga-design.md
-│   ├── prd-ai-scheduling.md
-│   └── adr/                     #    Architecture Decision Records (1 file per keputusan)
+│   ├── proposal-algoritma-genetika.md   #    implementasi GA + diagram alir (untuk proposal)
+│   └── prd-ai-scheduling.md
 │
 └── figmake/                      # prototipe UI/UX (React) — REFERENSI SAJA, tidak di-build, tidak di-deploy
 ```

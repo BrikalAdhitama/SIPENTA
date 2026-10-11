@@ -1,0 +1,19 @@
+# Blueprint Render untuk AI service SIPENTA (Algoritma Genetika).
+# Pakai: Render → New → Blueprint → pilih repo ini → Apply.
+# Setelah service dibuat, isi env AI_SERVICE_KEY di dashboard (sync: false = tidak disimpan di git).
+services:
+  - type: web
+    name: sipenta-ai
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: ai-service
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: AI_SERVICE_KEY
+        sync: false # isi manual di dashboard Render; nilainya sama dengan env di host Nuxt

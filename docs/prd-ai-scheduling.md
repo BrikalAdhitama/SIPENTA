@@ -76,7 +76,7 @@ Bobot 100/hard-violation memastikan 1 bentrok selalu lebih buruk dari seluruh so
 
 ## 7. Input/Output
 
-`POST /solve` — skema di [`api-contract.md`](api-contract.md) §E. Parameter GA default + `soft_weights` terkonfigurasi. `random_seed` opsional untuk reproduksibilitas demo.
+`POST /solve` — skema di [`api-contract.md`](api-contract.md) §E. Parameter GA default + `soft_weights` terkonfigurasi. `random_seed` opsional agar hasil dapat direproduksi.
 
 ## 8. Evaluasi
 
@@ -97,11 +97,11 @@ Bobot 100/hard-violation memastikan 1 bentrok selalu lebih buruk dari seluruh so
 
 ## 10. Milestone
 
-| # | Isi |
-|---|---|
-| M1 | `slots.py` + reduksi domain + unit test; laporan ukuran domain/seminar |
-| M2 | `fitness.py` H1–H2 + S0–S5 + unit test per constraint |
-| M3 | operator + loop GA; konvergen dataset kecil |
-| M4 | FastAPI `/solve` sesuai kontrak, integrasi awal dengan Edge Function |
-| M5 | benchmark vs manual Genap 25/26 |
-| M6 | tuning bobot soft, dokumentasi akhir |
+| # | Isi | Status |
+|---|---|---|
+| M1 | `slots.py` + reduksi domain + unit test; laporan ukuran domain/seminar | ✅ |
+| M2 | `fitness.py` H1–H2 + S0–S5 + unit test per constraint | ✅ |
+| M3 | operator + loop GA; konvergen dataset kecil | ✅ |
+| M4 | FastAPI `/solve` + `/health` sesuai kontrak | ✅ jalan & teruji; integrasi Edge Function nunggu BE |
+| M5 | benchmark vs manual Genap 25/26 memakai fixture riil di `tests/fixtures/` | 🔄 fixture riil siap (sempro Feb 15/15 bebas bentrok, skor 94.5); tabel pembanding manual belum |
+| M6 | tuning bobot soft, dokumentasi akhir | ⬜ |

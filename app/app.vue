@@ -6,9 +6,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const isDesktop = ref(false)
+const route = useRoute()
+
+// Otomatis scroll ke paling atas setiap pindah halaman
+watch(() => route.path, () => {
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+})
 
 const checkDevice = () => {
   // Anggap desktop jika lebar layar >= 768px DAN bukan touch device

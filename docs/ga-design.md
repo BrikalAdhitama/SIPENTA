@@ -85,7 +85,7 @@ Gene `i` **hanya** boleh bernilai index dari `domain[i]`. Inisialisasi, mutasi, 
 | H1 | Ruangan tidak dipakai 2 seminar bersamaan | Admin | fitness — dilewati bila `is_online` |
 | H2 | Dosen tidak di 2 seminar bersamaan (4 peran) | Dosen | fitness |
 | H3 | Tidak bentrok jadwal mengajar | Dosen | reduksi domain → dijamin 0 |
-| H4 | Tidak bentrok blokir waktu | Dosen | reduksi domain → dijamin 0 |
+| H4 | Tidak bentrok waktu pribadi dosen (hari berulang atau tanggal tertentu) | Dosen | reduksi domain → dijamin 0 |
 | H5 | Tidak bentrok jadwal kuliah mahasiswa | Mahasiswa | reduksi domain → dijamin 0 |
 
 ### Soft constraints — kualitas, tidak memblokir
@@ -116,12 +116,12 @@ fitness = 1000 / (1 + V_hard*100 + soft*10)
 
 | Tahap | Metode |
 |---|---|
-| Inisialisasi | gene acak dari `domain[i]` |
+| Inisialisasi | 1 kromosom *greedy first-fit* + sisanya gene acak dari `domain[i]` |
 | Seleksi | tournament k=3 |
 | Crossover | uniform, rate 0.8 |
 | Mutasi | reassignment dari `domain[i]`, rate 0.1 |
 | Elitism | top-2 utuh |
-| Terminasi | V_hard=0 & stabil / plateau N generasi / max 500 |
+| Terminasi | V_hard=0 & plateau 60 generasi / plateau 120 generasi / batas waktu 25 dtk / generasi maksimum |
 
 ## 8. Parameter Default
 
@@ -159,6 +159,8 @@ fitness = 1000 / (1 + V_hard*100 + soft*10)
 Stack Python 3.11+, FastAPI. Struktur: lihat [`../ai-service/README.md`](../ai-service/README.md).
 
 Testing: unit test per constraint (kasus sengaja bentrok → terdeteksi; domain kosong → `unscheduled`, bukan crash), lalu **benchmark vs jadwal manual**.
+
+Uraian implementasi lengkap beserta diagram alir: [`proposal-algoritma-genetika.md`](proposal-algoritma-genetika.md).
 
 > Catatan skala: satu panggilan `/solve` = satu gelombang bulanan = **≤ 15 seminar** (kuota prodi). Data manual Genap 25/26 (45 sempro + 48 semhas) itu total ~6 gelombang. Untuk benchmark, pecah dataset per bulan pendaftaran jadi beberapa fixture ≤15, jalankan GA per gelombang, lalu agregasi metrik. Ukuran kecil ini menguntungkan: ruang pencarian sempit, konvergensi cepat, `conflict_count = 0` mudah dicapai.
 

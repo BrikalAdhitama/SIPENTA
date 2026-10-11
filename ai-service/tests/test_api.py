@@ -180,15 +180,50 @@ def test_nama_lama_dosen_blocked_time_masih_diterima_lewat_http(client, payload)
     assert client.post("/solve", json=d).status_code == 200
 
 
-def test_interval_wajib_hari_atau_tanggal(client, payload):
+def test_baris_blokir_waktu_db_punya_hari_dan_tanggal(client, payload):
+    """Tabel blokir_waktu mengisi hari DAN tanggal sekaligus — harus diterima,
+    dan yang dipakai adalah tanggalnya."""
     d = copy.deepcopy(payload)
+    dosen_id = d["seminars"][0]["penguji1_id"]
+    tgl = d["period"]["start_date"]
     d["dosen_waktu_pribadi"] = [
-        {"dosen_id": 1, "hari": "senin", "tanggal": "2026-02-17",
-         "jam_mulai": "08:00", "jam_selesai": "12:00"}
+        {"dosen_id": dosen_id, "hari": "senin", "tanggal": tgl,
+         "jam_mulai": "08:00", "jam_selesai": "17:00"}
     ]
     r = client.post("/solve", json=d)
+    assert r.status_code == 200, r.text
+    sid = d["seminars"][0]["id"]
+    slot = next((s for s in r.json()["schedule"] if s["seminar_id"] == sid), None)
+    assert slot is None or slot["tanggal"] != tgl
+
+
+def test_interval_tanpa_hari_dan_tanggal_ditolak(client, payload):
+    d = copy.deepcopy(payload)
+    d["dosen_waktu_pribadi"] = [{"dosen_id": 1, "jam_mulai": "08:00", "jam_selesai": "12:00"}]
+    r = client.post("/solve", json=d)
     assert r.status_code == 422
-    assert "tepat salah satu" in r.json()["error"]["message"]
+    assert "minimal salah satu" in r.json()["error"]["message"]
+
+
+@pytest.mark.parametrize("jenis", ["seminar_proposal", "sempro", "seminar_hasil", "semhas"])
+def test_jenis_seminar_enum_db_maupun_singkatan_diterima(client, payload, jenis):
+    """DB memakai enum seminar_proposal/seminar_hasil; fixture lama memakai sempro/semhas."""
+    d = copy.deepcopy(payload)
+    d["seminar_type"] = jenis
+    r = client.post("/solve", json=d)
+    assert r.status_code == 200, r.text
+
+
+def test_peringatan_hari_tidak_cocok_dengan_tanggal(client, payload):
+    d = copy.deepcopy(payload)
+    d["dosen_waktu_pribadi"] = [
+        {"dosen_id": d["seminars"][0]["penguji1_id"], "hari": "jumat",
+         "tanggal": "2026-02-16",  # 16 Feb 2026 = Senin, bukan Jumat
+         "jam_mulai": "08:00", "jam_selesai": "10:00"}
+    ]
+    r = client.post("/solve", json=d)
+    assert r.status_code == 200, r.text
+    assert any("tidak cocok" in p and "tanggal" in p for p in r.json()["stats"]["peringatan"])
 
 
 def test_jadwal_mengajar_tidak_boleh_pakai_tanggal(client, payload):
@@ -210,3 +245,39 @@ def test_peringatan_waktu_pribadi_di_luar_periode(client, payload):
     r = client.post("/solve", json=d)
     assert r.status_code == 200, r.text
     assert any("luar periode" in p for p in r.json()["stats"]["peringatan"])
+
+
+def test_contoh_payload_untuk_be_valid(client):
+    """examples/solve-request.example.json harus selalu bisa dijalankan —
+    inilah contoh yang dipakai BE saat merakit payload."""
+    contoh = json.loads((Path(__file__).parent.parent / "examples" / "solve-request.example.json").read_text(encoding="utf-8"))
+    r = client.post("/solve", json=contoh)
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["status"] == "success"
+    assert d["conflict_count"] == 0
+    assert d["stats"]["jumlah_terjadwal"] == len(contoh["seminars"])
+    assert d["stats"]["peringatan"] == []
+
+
+def test_ready_dan_version(client):
+    r = client.get("/ready")
+    assert r.status_code == 200 and r.json()["status"] == "ready"
+
+    v = client.get("/version")
+    assert v.status_code == 200
+    d = v.json()
+    assert d["service"] == "sipenta-ai" and d["version"] == app.version
+    assert set(d["ga_default"]["soft_weights"]) == {
+        "s0_menguji_lebih_dari_1_per_hari", "s1_total_peran_lebih_dari_1_per_hari",
+        "s2_beban_merata_antar_dosen", "s3_gap_kosong_ruangan",
+        "s4_sebar_antar_hari", "s5_dosen_lompat_ruangan",
+    }
+
+
+def test_request_id_dikembalikan_dan_bisa_diteruskan(client):
+    r = client.get("/version")
+    assert r.headers.get("X-Request-Id")
+
+    r = client.get("/version", headers={"X-Request-Id": "dari-nuxt-123"})
+    assert r.headers["X-Request-Id"] == "dari-nuxt-123"

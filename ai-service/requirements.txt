@@ -1,0 +1,5 @@
+# Dependensi runtime AI service (dipakai Docker, Render, dan server lokal).
+# Versi dikunci supaya build selalu sama. Dev/test: lihat requirements-dev.txt.
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.9.2

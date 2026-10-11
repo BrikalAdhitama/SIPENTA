@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-slate-50 font-sans pb-32">
-    <main class="p-6 max-w-lg mx-auto">
+  <div class="min-h-screen bg-slate-50 font-sans pb-32 pt-[calc(env(safe-area-inset-top)+1rem)]">
+    <main class="px-6 pb-6 max-w-lg mx-auto">
       
       <!-- Top Header -->
       <header class="flex justify-between items-center mb-8">

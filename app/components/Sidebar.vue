@@ -60,7 +60,7 @@
         </button>
       </div>
 
-      <button class="flex items-center gap-3 px-2 py-2 text-[#FF4747] hover:bg-red-50 rounded-lg transition-colors font-semibold text-sm">
+      <button @click="logout" class="flex items-center gap-3 px-2 py-2 text-[#FF4747] hover:bg-red-50 rounded-lg transition-colors font-semibold text-sm">
         <svg class="w-5 h-5 stroke-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
         </svg>
@@ -71,6 +71,8 @@
 </template>
 
 <script setup>
+const { logout } = useAuth()
+
 // Menggunakan state global yang sama dengan BottomNav
 const activeMenu = useState('activeMenu', () => 'Dashboard')
 

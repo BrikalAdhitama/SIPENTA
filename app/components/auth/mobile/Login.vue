@@ -101,7 +101,7 @@ watch(nim, () => { galat.value = '' })
 const handleLogin = () => {
   // SEMENTARA: cukup NIM (password belum diperiksa, jadi field-nya tidak wajib diisi).
   // TODO: signInWithPassword (Supabase) + wajibkan password lagi.
-  const hasil = login(nim.value)
+  const hasil = login(nim.value, true)
   if (!hasil.ok) {
     galat.value = hasil.error
     return

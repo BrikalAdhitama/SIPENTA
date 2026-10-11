@@ -7,10 +7,8 @@
 <script setup>
 import { onMounted } from 'vue'
 
-const { akun, dashboardPath } = useAuth()
-
 onMounted(() => {
-  // sudah login → dashboard sesuai role; belum → halaman splash (nanti ke onboarding lalu login)
-  navigateTo(akun.value ? dashboardPath(akun.value.role) : '/splash', { replace: true })
+  // Splash memeriksa onboarding dan session agar alur pembukaan aplikasi konsisten.
+  navigateTo('/splash', { replace: true })
 })
 </script>

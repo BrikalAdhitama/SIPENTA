@@ -1,6 +1,5 @@
 <template>
-  <!-- TODO: versi mobile (frame "... - mobile dosen") belum dibuat -->
-  <UiSegeraHadir v-if="isMobile" judul="Dashboard" />
+  <DosenMobileDashboardMobile v-if="isMobile" />
   <DosenWebDashboard v-else />
 </template>
 

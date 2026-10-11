@@ -1,6 +1,6 @@
 <template>
   <!-- Floating Pill Navigation -->
-  <nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[400px] bg-white border border-slate-100 rounded-full shadow-[0_20px_40px_rgba(0,0,0,0.08)] p-2 z-50">
+  <nav class="mobile-bottom-nav md:hidden fixed bottom-2 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[400px] bg-white border border-slate-100 rounded-full shadow-[0_20px_40px_rgba(0,0,0,0.08)] p-2 z-50">
     <div class="flex items-center justify-between">
       <button 
         v-for="item in menuItems" 

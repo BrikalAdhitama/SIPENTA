@@ -175,8 +175,10 @@
             </div>
 
             <!-- Dropzone -->
-            <div 
-              @click="!uploadedFile ? handleUploadMock() : null"
+            <!-- ponytail: .csv manual tanpa dep; .xlsx ditolak dengan pesan jelas -->
+            <input ref="fileInput" type="file" accept=".csv,text/csv" class="hidden" @change="tanganFileDipilih" />
+            <div
+              @click="!uploadedFile ? $refs.fileInput.click() : null"
               class="border-2 border-dashed rounded-[20px] p-8 flex flex-col items-center justify-center text-center transition-all cursor-pointer group mb-5"
               :class="uploadedFile ? 'border-primary-500 bg-primary-50/50' : 'border-slate-200 bg-slate-50 hover:bg-primary-50/30 hover:border-primary-200'"
             >
@@ -185,10 +187,10 @@
                 <div class="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <svg class="w-6 h-6 text-primary-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                 </div>
-                <p class="text-slate-700 font-bold text-sm mb-1 group-hover:text-primary-900 transition-colors">Drag & drop file Excel di sini</p>
-                <p class="text-slate-400 text-xs font-medium mb-4">atau klik untuk memilih file</p>
+                <p class="text-slate-700 font-bold text-sm mb-1 group-hover:text-primary-900 transition-colors">Klik untuk memilih file CSV</p>
+                <p class="text-slate-400 text-xs font-medium mb-4">format: nim,nama,judul,urutan</p>
                 <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold tracking-wide">
-                  .xlsx, .xls — maks. 10 MB
+                  .csv — maks. 10 MB
                 </span>
               </template>
               <!-- Uploaded State -->
@@ -224,11 +226,17 @@
       <div v-show="currentStep === 2" class="animate-in fade-in slide-in-from-right-4 duration-300">
         
         <!-- Header -->
-        <div class="mb-6">
-          <h2 class="text-xl font-extrabold text-slate-800 tracking-tight mb-1">Preview & Validasi Data</h2>
-          <p class="text-slate-500 text-[13px] font-medium leading-relaxed">
-            Data {{ selectedSeminar === 'sempro' ? 'Sempro' : 'Semhas' }} — periksa dan tetapkan penguji sebelum melanjutkan
-          </p>
+        <div class="mb-6 flex items-start justify-between gap-3">
+          <div>
+            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight mb-1">Preview & Validasi Data</h2>
+            <p class="text-slate-500 text-[13px] font-medium leading-relaxed">
+              Data {{ selectedSeminar === 'sempro' ? 'Sempro' : 'Semhas' }} — periksa dan tetapkan penguji sebelum melanjutkan
+            </p>
+          </div>
+          <button @click="segarkanStep2" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-2.5 min-h-[44px] rounded-xl border border-slate-200 bg-white text-slate-600 text-[11px] font-bold hover:border-slate-300 active:scale-95">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h5M20 20v-5h-5M5 9a7 7 0 0114 0M5 15a7 7 0 0014 0"></path></svg>
+            Refresh
+          </button>
         </div>
 
         <!-- Metrics Grid -->
@@ -240,7 +248,7 @@
               <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
               </div>
-              <span class="text-2xl font-black text-primary-900 leading-none">2</span>
+              <span class="text-2xl font-black text-primary-900 leading-none">{{ totalTampil }}</span>
             </div>
             <span class="text-[11px] font-bold text-primary-600/80 tracking-wide relative z-10">TOTAL DATA</span>
           </div>
@@ -252,7 +260,7 @@
               <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
-              <span class="text-2xl font-black text-green-700 leading-none">1</span>
+              <span class="text-2xl font-black text-green-700 leading-none">{{ validTampil }}</span>
             </div>
             <span class="text-[11px] font-bold text-green-600/80 tracking-wide relative z-10">DATA VALID</span>
           </div>
@@ -264,7 +272,7 @@
               <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
               </div>
-              <span class="text-2xl font-black text-red-700 leading-none">1</span>
+              <span class="text-2xl font-black text-red-700 leading-none">{{ invalidTampil }}</span>
             </div>
             <span class="text-[11px] font-bold text-red-600/80 tracking-wide relative z-10">DATA INVALID</span>
           </div>
@@ -276,19 +284,23 @@
               <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
               </div>
-              <span class="text-2xl font-black text-slate-700 leading-none">0</span>
+              <span class="text-2xl font-black text-slate-700 leading-none">{{ duplikatTampil }}</span>
             </div>
             <span class="text-[11px] font-bold text-slate-500/80 tracking-wide relative z-10">DUPLIKAT</span>
           </div>
         </div>
 
         <!-- Alert Warnings -->
-        <div class="bg-amber-50 border border-amber-300 rounded-[20px] p-4 mb-4 flex gap-3 shadow-sm">
+        <div v-if="invalidTampil > 0 || duplikatTampil > 0 || (!seminarAsli && tanpaAkunPratinjau > 0)" class="bg-amber-50 border border-amber-300 rounded-[20px] p-4 mb-4 flex gap-3 shadow-sm">
           <svg class="w-6 h-6 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
           <div>
-            <h4 class="text-amber-800 font-bold text-sm mb-1">Ditemukan 1 data invalid dan 0 data duplikat</h4>
-            <p class="text-amber-700 text-xs font-medium leading-relaxed">Perbaiki data tersebut sebelum melanjutkan atau hapus data bermasalah.</p>
+            <h4 class="text-amber-800 font-bold text-sm mb-1">Ditemukan {{ invalidTampil }} data bermasalah dan {{ duplikatTampil }} duplikat<span v-if="!seminarAsli && tanpaAkunPratinjau > 0"> · {{ tanpaAkunPratinjau }} belum punya akun</span></h4>
+            <p class="text-amber-700 text-xs font-medium leading-relaxed">Samakan NIM + nama dengan data SIPENTA sebelum lanjut. Beda-nama wajib dikoreksi di CSV.</p>
           </div>
+        </div>
+        <div v-if="!seminarAsli && galatPratinjau" class="bg-slate-50 border border-slate-200 rounded-[20px] p-4 mb-4 flex gap-3 shadow-sm">
+          <svg class="w-6 h-6 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <p class="text-slate-600 text-xs font-medium leading-relaxed">{{ galatPratinjau }}</p>
         </div>
 
         <!-- Info Box -->
@@ -299,8 +311,92 @@
           </p>
         </div>
 
-        <!-- Data Cards -->
-        <div class="flex flex-col gap-4">
+        <!-- Data Cards: sebelum simpan = isi CSV vs DB; sesudah simpan = kartu seminar -->
+        <div v-if="memuatPratinjau" class="flex flex-col gap-4" aria-busy="true">
+          <div v-for="i in 3" :key="i" class="bg-white rounded-[24px] border border-slate-100 p-5 shadow-sm animate-pulse">
+            <div class="h-4 w-2/3 bg-slate-100 rounded mb-2"></div>
+            <div class="h-3 w-1/3 bg-slate-100 rounded mb-4"></div>
+            <div class="h-3 w-full bg-slate-100 rounded mb-1"></div>
+            <div class="h-3 w-5/6 bg-slate-100 rounded"></div>
+          </div>
+        </div>
+        <div v-else-if="!seminarAsli" class="flex flex-col gap-4">
+          <div v-for="row in pratinjauList" :key="row.nim" class="bg-white rounded-[24px] border border-slate-100 p-5 shadow-sm">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <h3 class="font-extrabold text-slate-800 text-base leading-none mb-1.5">{{ row.namaCsv }}</h3>
+                <p class="text-slate-500 text-xs font-medium">{{ row.nim }} · {{ selectedSeminar === 'sempro' ? 'Sempro' : 'Semhas' }}</p>
+              </div>
+              <span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold"
+                    :class="row.status === 'cocok' ? 'bg-green-100 text-green-700' : row.status === 'baru' ? 'bg-blue-100 text-blue-700' : row.status === 'beda-nama' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'">
+                {{ row.status === 'cocok' ? 'Valid' : row.status === 'baru' ? 'Baru' : row.status === 'beda-nama' ? 'Beda nama' : 'Belum dicek' }}
+              </span>
+            </div>
+            <div class="space-y-1 mb-2">
+              <p v-if="!row.punyaAkun" class="text-xs font-medium text-amber-600">Belum punya akun</p>
+              <p v-if="row.duplikat" class="text-xs font-bold text-slate-500">NIM ganda di CSV</p>
+            </div>
+            <!-- Pembimbing: hanya diisi mahasiswa, admin baca saja -->
+            <div class="mb-2 space-y-1">
+              <p class="text-slate-600 text-xs font-medium">Pembimbing 1 : {{ row.pembimbing1 && row.pembimbing1 !== '-' ? row.pembimbing1 : '-' }}</p>
+              <p class="text-slate-600 text-xs font-medium">Pembimbing 2 : {{ row.pembimbing2 && row.pembimbing2 !== '-' ? row.pembimbing2 : '-' }}</p>
+              <p v-if="!pembimbingLengkap(row)" class="text-amber-600 text-[11px] font-medium">Menunggu input mahasiswa.</p>
+            </div>
+            <p v-if="row.judul" class="text-slate-500 text-[11px] font-medium leading-relaxed break-words mb-3">{{ row.judul }}</p>
+            <!-- Penguji wajib admin -->
+            <div class="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5">Penguji 1</label>
+                <div class="relative">
+                  <div @click="toggleDropdown('pg1-' + row.nim)"
+                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 min-h-[44px] cursor-pointer transition-all"
+                       :class="activeDropdown === 'pg1-' + row.nim ? 'border-primary-500 ring-1 ring-primary-500 bg-white' : 'border-slate-200 bg-white hover:border-slate-300'">
+                    <span class="text-xs font-medium truncate pr-2 text-slate-700">{{ row.penguji1 || 'Pilih Penguji...' }}</span>
+                    <svg class="w-4 h-4 text-slate-400 shrink-0" :class="{'rotate-180': activeDropdown === 'pg1-' + row.nim}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                  <div v-if="activeDropdown === 'pg1-' + row.nim" class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden py-1.5 max-h-48 overflow-y-auto">
+                    <div v-for="dosen in listDosen" :key="dosen" @click="row.penguji1 = dosen; activeDropdown = null"
+                         class="px-3 py-2.5 text-xs font-medium cursor-pointer mx-1.5 rounded-xl"
+                         :class="row.penguji1 === dosen ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:bg-slate-50'">
+                      <span class="truncate">{{ dosen }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1.5">Penguji 2</label>
+                <div class="relative">
+                  <div @click="toggleDropdown('pg2-' + row.nim)"
+                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 min-h-[44px] cursor-pointer transition-all"
+                       :class="activeDropdown === 'pg2-' + row.nim ? 'border-primary-500 ring-1 ring-primary-500 bg-white' : 'border-slate-200 bg-white hover:border-slate-300'">
+                    <span class="text-xs font-medium truncate pr-2 text-slate-700">{{ row.penguji2 || 'Pilih Penguji...' }}</span>
+                    <svg class="w-4 h-4 text-slate-400 shrink-0" :class="{'rotate-180': activeDropdown === 'pg2-' + row.nim}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                  <div v-if="activeDropdown === 'pg2-' + row.nim" class="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-[16px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] overflow-hidden py-1.5 max-h-48 overflow-y-auto">
+                    <div v-for="dosen in listDosen" :key="dosen" @click="row.penguji2 = dosen; activeDropdown = null"
+                         class="px-3 py-2.5 text-xs font-medium cursor-pointer mx-1.5 rounded-xl"
+                         :class="row.penguji2 === dosen ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:bg-slate-50'">
+                      <span class="truncate">{{ dosen }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Toggle daring -->
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 mb-1.5">Daring</label>
+              <div @click="row.isDaring = !row.isDaring"
+                   class="inline-flex items-center w-14 h-7 rounded-full p-1 cursor-pointer transition-colors relative"
+                   :class="row.isDaring ? 'bg-primary-500' : 'bg-primary-900'">
+                <div class="w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300"
+                     :class="row.isDaring ? 'translate-x-7' : 'translate-x-0'"></div>
+                <span class="absolute text-[10px] font-bold text-white" :class="row.isDaring ? 'left-2' : 'right-2'">{{ row.isDaring ? 'ON' : 'OFF' }}</span>
+              </div>
+            </div>
+          </div>
+          <p v-if="!pratinjauList.length" class="text-center text-slate-400 text-xs font-medium py-6">Belum ada pratinjau — unggah CSV lalu masuk Step 2.</p>
+        </div>
+        <div v-if="seminarAsli" class="flex flex-col gap-4">
           <!-- Student Card -->
           <div v-for="student in students" :key="student.id" class="bg-white rounded-[24px] border border-slate-100 p-5 shadow-sm">
             <!-- Header -->
@@ -315,11 +411,14 @@
               </span>
             </div>
 
-            <!-- Detail Pembimbing -->
-            <div class="mb-5 space-y-1">
-              <p class="text-slate-600 text-xs font-medium">Pembimbing 1 : {{ student.pembimbing1 }}</p>
-              <p class="text-slate-600 text-xs font-medium">Pembimbing 2 : {{ student.pembimbing2 }}</p>
+            <!-- Detail Pembimbing: hanya diisi mahasiswa, admin baca saja -->
+            <div class="mb-2 space-y-1">
+              <p class="text-slate-600 text-xs font-medium">Pembimbing 1 : {{ student.pembimbing1 && student.pembimbing1 !== '-' ? student.pembimbing1 : '-' }}</p>
+              <p class="text-slate-600 text-xs font-medium">Pembimbing 2 : {{ student.pembimbing2 && student.pembimbing2 !== '-' ? student.pembimbing2 : '-' }}</p>
+              <p v-if="!pembimbingLengkap(student)" class="text-amber-600 text-[11px] font-medium">Menunggu input mahasiswa.</p>
+              <p v-else-if="!empatDosenBeda(student)" class="text-red-600 text-[11px] font-medium">Keempat dosen harus orang berbeda.</p>
             </div>
+            <p v-if="student.judul" class="text-slate-500 text-[11px] font-medium leading-relaxed break-words mb-4">{{ student.judul }}</p>
 
             <!-- Dropdowns Penguji -->
             <div class="grid grid-cols-2 gap-3 mb-5">
@@ -328,7 +427,7 @@
                 <label class="block text-[10px] font-bold text-slate-400 mb-1.5">Penguji 1</label>
                 <div class="relative">
                   <div @click="toggleDropdown('p1-' + student.id)"
-                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 cursor-pointer transition-all"
+                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 min-h-[44px] cursor-pointer transition-all"
                        :class="activeDropdown === 'p1-' + student.id ? 'border-primary-500 ring-1 ring-primary-500 bg-white' : 'border-slate-200 bg-white hover:border-slate-300'">
                     <span class="text-xs font-medium truncate pr-2 text-slate-700">
                       {{ student.penguji1 || 'Pilih Penguji...' }}
@@ -353,7 +452,7 @@
                 <label class="block text-[10px] font-bold text-slate-400 mb-1.5">Penguji 2</label>
                 <div class="relative">
                   <div @click="toggleDropdown('p2-' + student.id)"
-                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 cursor-pointer transition-all"
+                       class="w-full flex items-center justify-between border rounded-xl px-3 py-2.5 min-h-[44px] cursor-pointer transition-all"
                        :class="activeDropdown === 'p2-' + student.id ? 'border-primary-500 ring-1 ring-primary-500 bg-white' : 'border-slate-200 bg-white hover:border-slate-300'">
                     <span class="text-xs font-medium truncate pr-2 text-slate-700">
                       {{ student.penguji2 || 'Pilih Penguji...' }}
@@ -399,7 +498,11 @@
             Kembali
           </button>
           
-          <button @click="goToStep(3)" class="w-full justify-center bg-primary-500 hover:bg-primary-600 text-white font-bold text-[13px] py-3.5 rounded-[14px] shadow-[0_8px_20px_rgba(33,150,243,0.3)] transition-all active:scale-[0.98] flex items-center gap-2">
+          <button @click="goToStep(3)" :disabled="!bolehLanjutStep2"
+                  :class="bolehLanjutStep2
+                    ? 'bg-primary-500 hover:bg-primary-600 text-white shadow-[0_8px_20px_rgba(33,150,243,0.3)]'
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'"
+                  class="w-full justify-center font-bold text-[13px] py-3.5 rounded-[14px] transition-all active:scale-[0.98] flex items-center gap-2">
             Lanjutkan
             <svg class="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
           </button>
@@ -671,14 +774,16 @@
         <!-- 5. Ruangan -->
         <div class="bg-white rounded-[24px] border border-slate-100 p-5 shadow-sm mb-4">
           <h3 class="font-extrabold text-slate-800 text-sm mb-3">Ruangan</h3>
+          <p v-if="galatRuangan" class="text-red-500 text-[11px] font-semibold mb-2">{{ galatRuangan }}</p>
           <div class="flex flex-wrap gap-2">
-            <button v-for="ruang in ['R101', 'R102', 'R103', 'R104', 'Daring']" :key="ruang" 
-                    @click="toggleRuang(ruang)"
+            <button v-for="ruang in daftarRuangan" :key="ruang.kode"
+                    @click="toggleRuang(ruang.kode)"
                     class="px-4 py-2.5 rounded-xl font-bold text-xs transition-all active:scale-95 border"
-                    :class="config.ruangan.includes(ruang) ? 'bg-primary-900 border-primary-900 text-white shadow-md shadow-primary-900/20' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'">
-              {{ ruang }}
+                    :class="config.ruangan.includes(ruang.kode) ? 'bg-primary-900 border-primary-900 text-white shadow-md shadow-primary-900/20' : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'">
+              {{ ruang.kode === 'ONLINE' ? 'Daring' : ruang.kode }}
             </button>
           </div>
+          <p v-if="!daftarRuangan.length && !galatRuangan" class="text-slate-400 text-[11px] font-medium mt-2">Memuat ruangan…</p>
         </div>
 
         <!-- 6. Ringkasan -->
@@ -732,15 +837,15 @@
           <div class="w-full bg-white rounded-[24px] border border-slate-100 shadow-sm mb-6 overflow-hidden">
             <div class="px-5 py-4 flex justify-between items-center border-b border-slate-50">
               <span class="text-slate-500 text-xs font-medium">Total Seminar</span>
-              <span class="text-slate-800 text-xs font-extrabold">6</span>
+              <span class="text-slate-800 text-xs font-extrabold">{{ uploadedFile?.rows ?? students.length }}</span>
             </div>
             <div class="px-5 py-4 flex justify-between items-center border-b border-slate-50">
               <span class="text-slate-500 text-xs font-medium">Periode</span>
-              <span class="text-slate-800 text-xs font-extrabold text-right">1 – 5 September 2025</span>
+              <span class="text-slate-800 text-xs font-extrabold text-right">{{ config.tanggalMulai && config.tanggalSelesai ? `${formatDate(config.tanggalMulai)} – ${formatDate(config.tanggalSelesai)}` : '-' }}</span>
             </div>
             <div class="px-5 py-4 flex justify-between items-center border-b border-slate-50">
               <span class="text-slate-500 text-xs font-medium">Ruangan</span>
-              <span class="text-slate-800 text-xs font-extrabold text-right">R101, R102, R103</span>
+              <span class="text-slate-800 text-xs font-extrabold text-right">{{ config.ruangan.length ? config.ruangan.map((r) => r === 'ONLINE' ? 'Daring' : r).join(', ') : '-' }}</span>
             </div>
             <div class="px-5 py-4 flex justify-between items-center border-b border-slate-50">
               <span class="text-slate-500 text-xs font-medium">Slot Tersedia</span>
@@ -835,6 +940,8 @@ const activeDropdown = ref(null)
 // Intercept Android hardware back button
 let backHandler = null
 onMounted(() => {
+  muatDosen()
+  muatRuanganAktif()
   backHandler = App.addListener('backButton', () => {
     if (currentStep.value > 1) {
       // Kalau di step wizard selanjutnya → kembali ke step sebelumnya
@@ -864,14 +971,15 @@ const showToast = (message) => {
 // Step 4 State
 const generateState = ref('initial')
 const generateProgress = ref(0)
-const generateError = ref('')
-const generateResult = ref(null)
 
 // gelombangId dari wizard (dibuat saat step 3 -> 4) atau seed demo
 const gelombangId = ref(null)
 
 async function pastikanGelombang() {
-  if (gelombangId.value) return gelombangId.value
+  if (gelombangId.value) {
+    await simpanCsvKeGelombang(gelombangId.value)
+    return gelombangId.value
+  }
   const res = await $fetch('/api/gelombang', {
     method: 'POST',
     body: {
@@ -886,7 +994,67 @@ async function pastikanGelombang() {
     },
   })
   gelombangId.value = res.data.id
+  // CSV hanya di memori sampai sini — simpan dulu baru generate.
+  // Tanpa ini generate selalu 409 "Tidak ada seminar yang dijadwalkan".
+  await simpanCsvKeGelombang(res.data.id)
   return res.data.id
+}
+
+// Kirim CSV mentah ke /api/seminar bulk. Idempoten via upsert.
+// NIM cocok → pakai mahasiswa_id lama → akun lama otomatis lihat seminar ini.
+// Pilihan dosen di pratinjau diikutkan: nama → id via dosenIdByNama.
+async function simpanCsvKeGelombang(id) {
+  if (seminarAsli.value) return
+  const dosenId = (nama) => dosenIdByNama.value[String(nama ?? '').trim()] ?? null
+  const opsiDariPratinjau = (r) => {
+    const p1 = dosenId(r.pembimbing1), p2 = dosenId(r.pembimbing2)
+    const u1 = dosenId(r.penguji1), u2 = dosenId(r.penguji2)
+    // '-' / kosong = belum diisi → null (bulk biarkan null → invalid).
+    const o = { is_online: Boolean(r.isDaring) }
+    if (p1) o.pembimbing_utama_id = p1
+    if (p2) o.pembimbing_pendamping_id = p2
+    if (u1) o.penguji1_id = u1
+    if (u2) o.penguji2_id = u2
+    return o
+  }
+  let body
+  if (uploadedFile.value?.teks && pratinjauList.value.length) {
+    const petaOpsi = new Map(pratinjauList.value.map((r) => [String(r.nim), opsiDariPratinjau(r)]))
+    const rows = parseSeminarCsvKlien(uploadedFile.value.teks).map((r) => ({ ...r, ...(petaOpsi.get(String(r.nim)) ?? {}) }))
+    body = { gelombang_id: id, jenis: selectedSeminar.value, seminar: rows }
+  } else if (uploadedFile.value?.teks) {
+    body = { gelombang_id: id, jenis: selectedSeminar.value, csv: uploadedFile.value.teks }
+  } else {
+    showToast('Unggah CSV dulu sebelum generate.')
+    throw new Error('CSV belum diunggah.')
+  }
+  const res = await $fetch('/api/seminar', { method: 'POST', body })
+  seminarAsli.value = true
+  await muatSeminar()
+  // Laporkan kaitan akun: cocok = NIM sudah ada, butuhAkun = belum punya login.
+  const cocok = res?.cocok ?? 0, baru = res?.baru ?? 0
+  const kurang = res?.butuhAkun ?? []
+  showToast(kurang.length
+    ? `${cocok} cocok, ${baru} baru. ${kurang.length} belum punya akun: ${kurang.slice(0, 3).join(', ')}${kurang.length > 3 ? '…' : ''}`
+    : `${cocok} cocok, ${baru} baru — semua sudah punya akun.`)
+}
+
+// Parse CSV di klien (tanpa judul/validasi berat) — untuk gabung pilihan dosen sebelum bulk.
+function parseSeminarCsvKlien(teks) {
+  const baris = String(teks ?? '').split(/\r?\n/).map((b) => b.trim()).filter(Boolean)
+  if (baris.length < 2) return []
+  const head = baris[0].split(',').map((h) => h.trim().toLowerCase())
+  const iNim = head.indexOf('nim'), iNama = head.indexOf('nama')
+  const iJudul = head.indexOf('judul'), iUrutan = head.indexOf('urutan')
+  if (iNim < 0 || iNama < 0) return []
+  return baris.slice(1).map((b, i) => {
+    const c = b.split(',').map((v) => v.trim())
+    return {
+      nim: c[iNim] ?? '', nama: c[iNama] ?? '',
+      judul: iJudul >= 0 ? c[iJudul] : undefined,
+      urutan_daftar: iUrutan >= 0 ? Number(c[iUrutan]) || i + 1 : i + 1,
+    }
+  }).filter((r) => r.nim && r.nama)
 }
 
 function konversiKe24(v) {
@@ -900,7 +1068,19 @@ function konversiKe24(v) {
 }
 
 const startGenerate = async () => {
-  generateError.value = ''
+  // Pra-bulk (CSV baru): jangan blokir buta — cek gate Step 2 dulu.
+  // Lolos (CSV valid + penguji lengkap) → lanjut bulk otomatis di pastikanGelombang.
+  if (!seminarAsli.value && uploadedFile.value?.teks) {
+    if (!bolehLanjutStep2.value) {
+      const msg = 'Pilih Penguji 1 + Penguji 2 untuk semua mahasiswa dulu.'
+      generateState.value = 'initial'
+      showToast(msg)
+      currentStep.value = 2
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    // Lolos gate → terus ke pastikanGelombang (bulk + generate).
+  }
   generateState.value = 'loading'
   generateProgress.value = 10
   const tick = setInterval(() => {
@@ -908,19 +1088,17 @@ const startGenerate = async () => {
   }, 800)
   try {
     const id = await pastikanGelombang()
-    const res = await $fetch('/api/admin/generate-schedule', {
+    await $fetch('/api/admin/generate-schedule', {
       method: 'POST',
       body: { gelombangId: id },
     })
-    generateResult.value = res.data
     generateProgress.value = 100
     clearInterval(tick)
     setTimeout(() => { generateState.value = 'success' }, 500)
   } catch (e) {
     clearInterval(tick)
     generateState.value = 'initial'
-    generateError.value = e?.data?.statusMessage || e?.message || 'Generate gagal.'
-    showToast(generateError.value)
+    showToast(e?.data?.statusMessage || e?.message || 'Generate gagal.')
   }
 }
 
@@ -1014,21 +1192,78 @@ const confirmTime = (type) => {
   activeCalendar.value = null
 }
 
-const listDosen = ref([
-  'Dr. Budi Santoso',
-  'Dr. Sari Dewi, M.Kor',
-  'Prof. Dr. Ir. H. Ahmad',
-  'Rina Mulyati, M.T.',
-  'Hendra Saputra, Ph.D'
-])
+// Daftar dosen DB-only; kosong bila /api/dosen gagal / belum login.
+const listDosen = ref([])
+// peta nama -> id untuk PATCH seminar (diisi saat API sukses)
+const dosenIdByNama = ref({})
+
+async function muatDosen() {
+  try {
+    const res = await $fetch('/api/dosen')
+    const rows = res?.data ?? []
+    if (!rows.length) return // DB kosong → dropdown penguji kosong
+    listDosen.value = rows.map((d) => d.nama)
+    dosenIdByNama.value = Object.fromEntries(rows.map((d) => [d.nama, Number(d.id)]))
+  } catch {
+    // Gagal / kosong → dropdown penguji kosong; login lalu buka ulang.
+  }
+}
+
+// Daftar ruangan dari DB — tanpa hardcode R101 fiktif.
+const daftarRuangan = ref([])
+const galatRuangan = ref('')
+
+async function muatRuanganAktif() {
+  try {
+    const res = await $fetch('/api/ruangan')
+    daftarRuangan.value = (res?.data ?? []).map((r) => ({ kode: r.kode ?? r.nama, nama: r.nama }))
+  } catch {
+    galatRuangan.value = 'Gagal muat ruangan. Login dulu lalu buka ulang.'
+  }
+}
 
 const toggleDropdown = (id) => {
   activeDropdown.value = activeDropdown.value === id ? null : id
 }
 
+async function simpanPengujiKeServer(student, field, dosenNama) {
+  // Hanya baris asli (punya seminarId). Contoh placeholder cukup lokal.
+  if (!student.seminarId) return
+  const key = field === 'penguji1' ? 'penguji1_id' : 'penguji2_id'
+  const dosenId = dosenIdByNama.value[dosenNama]
+  if (!dosenId) return
+  try {
+    await $fetch(`/api/seminar/${student.seminarId}`, { method: 'PATCH', body: { [key]: dosenId } })
+    // Otomatiskan validasi: 4 dosen terisi + beda → valid, selain itu invalid.
+    const valid = empatDosenBeda(student)
+    student.status = valid ? 'Valid' : 'Invalid'
+    await $fetch(`/api/seminar/${student.seminarId}`, { method: 'PATCH', body: { validasi: valid ? 'valid' : 'invalid' } }).catch(() => {})
+  } catch (e) {
+    showToast(e?.data?.statusMessage || 'Gagal simpan penguji.')
+  }
+}
+
+// Pembimbing diisi mahasiswa; admin hanya lihat. '-' / kosong = pending.
+// Terisi = tampil nama; beda = syarat lanjut (4 dosen wajib beda orang).
+function pembimbingTerisi(s) {
+  const a = String(s?.pembimbing1 ?? '').trim()
+  const b = String(s?.pembimbing2 ?? '').trim()
+  return (a && a !== '-') && (b && b !== '-')
+}
+function pengujiTerisi(s) {
+  return Boolean(String(s?.penguji1 ?? '').trim()) && Boolean(String(s?.penguji2 ?? '').trim())
+}
+function empatDosenBeda(s) {
+  if (!pembimbingTerisi(s) || !pengujiTerisi(s)) return false
+  return new Set([s.pembimbing1, s.pembimbing2, s.penguji1, s.penguji2]).size === 4
+}
+function pembimbingLengkap(s) { return pembimbingTerisi(s) }
+function pengujiLengkap(s) { return pengujiTerisi(s) }
+
 const selectPenguji = (student, field, dosen) => {
   student[field] = dosen
   activeDropdown.value = null
+  simpanPengujiKeServer(student, field, dosen)
 }
 
 const config = ref({
@@ -1067,7 +1302,7 @@ const handleBack = () => {
   }
 }
 
-const goToStep = (step) => {
+const goToStep = async (step) => {
   // Validate Step 1 -> 2
   if (step === 2 && currentStep.value === 1) {
     if (!selectedSeminar.value) {
@@ -1078,8 +1313,48 @@ const goToStep = (step) => {
       showToast('Harap unggah file SPS mahasiswa terlebih dahulu!')
       return
     }
+  }  
+  // Validate Step 2 -> 3: NIM + nama wajib sama dengan DB sebelum lanjut.
+  if (step === 3 && currentStep.value === 2 && !seminarAsli.value) {
+    if (!pratinjauList.value.length) {
+      showToast('Pratinjau belum dimuat — kembali lalu masuk Step 2 ulang.')
+      return
+    }
+    if (bedaNamaPratinjau.value > 0) {
+      showToast(`${bedaNamaPratinjau.value} nama beda dengan DB — koreksi CSV dulu.`)
+      return
+    }
+    if (duplikatPratinjau.value > 0) {
+      showToast(`${duplikatPratinjau.value} NIM ganda di CSV — hapus duplikat dulu.`)
+      return
+    }
+    // Pratinjau awal (CSV baru, baris DB belum ada): kunci = CSV valid + penguji
+    // lengkap. Pembimbing boleh susulan mahasiswa → hanya info, tak blokir.
+    // Baris dengan pembimbing DB terbaca (NIM lama) ikut validasi 4-beda ringan.
+    const kurangUji = pratinjauList.value.filter((s) => !pengujiLengkap(s)).length
+    if (kurangUji > 0) {
+      showToast('Pilih Penguji 1 + Penguji 2 untuk semua mahasiswa dulu.')
+      return
+    }
   }
-  
+  // Sesudah simpan: pembimbing (diisi mahasiswa) + penguji (dipilih admin) wajib lengkap + 4 beda.
+  if (step === 3 && currentStep.value === 2 && seminarAsli.value) {
+    const kurangBimbing = students.value.filter((s) => !pembimbingLengkap(s)).length
+    if (kurangBimbing > 0) {
+      showToast(`${kurangBimbing} mahasiswa belum isi pembimbing — minta mahasiswa lengkapi dulu.`)
+      return
+    }
+    const kurangUji = students.value.filter((s) => !pengujiLengkap(s)).length
+    if (kurangUji > 0) {
+      showToast('Pilih Penguji 1 + Penguji 2 untuk semua mahasiswa dulu.')
+      return
+    }
+    const kembar = students.value.filter((s) => !empatDosenBeda(s)).length
+    if (kembar > 0) {
+      showToast('Keempat dosen harus orang berbeda tiap mahasiswa.')
+      return
+    }
+  }
   // Validate Step 3 -> 4
   if (step === 4 && currentStep.value === 3) {
     if (!config.value.namaJadwal) {
@@ -1105,31 +1380,192 @@ const goToStep = (step) => {
   }
 
   currentStep.value = step
+  if (step === 2) {
+    if (seminarAsli.value) await muatSeminar()
+    else await muatPratinjau()
+  }
   // Scroll to top smoothly
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-const students = ref([
-  { id: 1, name: 'Andi Pratama', nim: '1231099', pembimbing1: 'Dr. Budi Santoso', pembimbing2: 'Dr. Budi Santoso', penguji1: 'Dr. Sari Dewi, M.Kor', penguji2: 'Dr. Sari Dewi, M.Kor', isDaring: false, status: 'Valid' },
-  { id: 2, name: 'Dina Mariana', nim: '1231100', pembimbing1: 'Dr. Andi Pratama', pembimbing2: 'Dr. Andi Pratama', penguji1: 'Dr. Sari Dewi, M.Kor', penguji2: 'Dr. Sari Dewi, M.Kor', isDaring: false, status: 'Valid' }
-])
+// DB-only; tanpa contoh fiktif.
+const students = ref([])
+const seminarAsli = ref(false)
 
-const toggleDaring = (student) => {
-  student.isDaring = !student.isDaring
+// Pratinjau CSV vs DB (read-only, sebelum simpan). Diisi saat masuk Step 2.
+const pratinjauList = ref([])
+const memuatPratinjau = ref(false)
+const galatPratinjau = ref('')
+const totalPratinjau = computed(() => pratinjauList.value.length)
+const cocokPratinjau = computed(() => pratinjauList.value.filter((r) => r.status === 'cocok').length)
+const baruPratinjau = computed(() => pratinjauList.value.filter((r) => r.status === 'baru').length)
+const bedaNamaPratinjau = computed(() => pratinjauList.value.filter((r) => r.status === 'beda-nama').length)
+const duplikatPratinjau = computed(() => pratinjauList.value.filter((r) => r.duplikat).length)
+const tanpaAkunPratinjau = computed(() => pratinjauList.value.filter((r) => !r.punyaAkun).length)
+
+// Angka metrik: sebelum simpan pakai pratinjau CSV vs DB, sesudah simpan pakai kartu seminar.
+const totalTampil = computed(() => (seminarAsli.value ? students.value.length : totalPratinjau.value))
+const validTampil = computed(() => (seminarAsli.value
+  ? students.value.filter((s) => s.status === 'Valid').length
+  : cocokPratinjau.value))
+const invalidTampil = computed(() => (seminarAsli.value
+  ? students.value.filter((s) => s.status === 'Invalid').length
+  : bedaNamaPratinjau.value + baruPratinjau.value))
+const duplikatTampil = computed(() => (seminarAsli.value
+  ? students.value.filter((s) => s.status === 'Duplikat').length
+  : duplikatPratinjau.value))
+
+// Tombol Lanjutkan terkunci (abu-abu + disabled) bila syarat belum penuh.
+// Pra-bulk (CSV baru): CSV valid + penguji lengkap. Pembimbing boleh susulan
+// mahasiswa (CSV tak punya kolom pembimbing; baris DB belum ada) → tampil
+// "Menunggu input mahasiswa", tak blokir. Pasca-bulk: + pembimbing + 4 beda.
+const bolehLanjutStep2 = computed(() => {
+  if (!seminarAsli.value) {
+    if (!pratinjauList.value.length || bedaNamaPratinjau.value > 0 || duplikatPratinjau.value > 0) return false
+    return pratinjauList.value.every((s) => pengujiLengkap(s))
+  }
+  if (!students.value.length) return false
+  return students.value.every((s) => pembimbingLengkap(s) && pengujiLengkap(s) && empatDosenBeda(s))
+})
+
+// Parse lokal darurat — tampilkan isi CSV walau /api/pratinjau gagal (belum login/offline).
+function parseLokal(teks) {
+  const baris = String(teks ?? '').split(/\r?\n/).map((b) => b.trim()).filter(Boolean)
+  if (baris.length < 2) return []
+  const head = baris[0].split(',').map((h) => h.trim().toLowerCase())
+  const iNim = head.indexOf('nim'), iNama = head.indexOf('nama'), iJudul = head.indexOf('judul')
+  if (iNim < 0 || iNama < 0) return []
+  const hitung = {}
+  const rows = baris.slice(1).map((b, i) => {
+    const c = b.split(',').map((v) => v.trim())
+    const nim = c[iNim] ?? '', nama = c[iNama] ?? ''
+    hitung[nim] = (hitung[nim] ?? 0) + 1
+    return { nim, nama, namaCsv: nama, namaDb: null, judul: iJudul >= 0 ? c[iJudul] : '', urutan: i + 1, status: 'belum-dicek', punyaAkun: false, duplikat: false, pembimbing1: '-', pembimbing2: '-', penguji1: '', penguji2: '', isDaring: false }
+  }).filter((r) => r.nim && r.nama)
+  return rows.map((r) => ({ ...r, duplikat: (hitung[r.nim] ?? 0) > 1 }))
 }
 
-const handleUploadMock = () => {
-  uploadedFile.value = {
-    name: 'Kelompok MK Tata Kelola Teknologi Informasi - Gasal 2026_2027.xlsx',
-    rows: 1,
-    size: '7 KB'
+async function muatPratinjau(force = false) {
+  if (!force && pratinjauList.value.length) return // ponytail: refresh paksa bila CSV ganti (tanganFileDipilih reset list)
+  if (!uploadedFile.value?.teks || seminarAsli.value) return
+  memuatPratinjau.value = true
+  galatPratinjau.value = ''
+  try {
+    const res = await $fetch('/api/seminar/pratinjau', { method: 'POST', body: { csv: uploadedFile.value.teks } })
+    pratinjauList.value = (res?.data ?? []).map((r) => ({
+      ...r,
+      pembimbing1: r.pembimbing1 ?? '-', pembimbing2: r.pembimbing2 ?? '-',
+      penguji1: r.penguji1 ?? '', penguji2: r.penguji2 ?? '', isDaring: r.isDaring ?? r.is_online ?? false,
+    }))
+  } catch (e) {
+    // Gagal (belum login/offline) → tetap tampilkan isi CSV lokal tanpa status DB.
+    galatPratinjau.value = e?.data?.statusMessage || 'Gagal cek DB — tampil isi CSV saja.'
+    pratinjauList.value = parseLokal(uploadedFile.value.teks)
+  } finally {
+    memuatPratinjau.value = false
   }
 }
 
+// Refresh manual Step 2: tarik ulang input mahasiswa susulan tanpa ganti CSV.
+async function segarkanStep2() {
+  if (seminarAsli.value) await muatSeminar(true)
+  else await muatPratinjau(true)
+}
+
+function petakanSeminar(row, dosenNama) {
+  return {
+    id: row.id,
+    seminarId: row.id, // penanda baris asli → PATCH ke server
+    name: row.mahasiswa?.nama ?? `Seminar #${row.id}`,
+    nim: row.mahasiswa?.nim ?? '-',
+    pembimbing1: dosenNama[row.pembimbing_utama_id] ?? row.pembimbing_utama_nama ?? '-',
+    pembimbing2: dosenNama[row.pembimbing_pendamping_id] ?? row.pembimbing_pendamping_nama ?? '-',
+    penguji1: dosenNama[row.penguji1_id] ?? row.penguji1_nama ?? '',
+    penguji2: dosenNama[row.penguji2_id] ?? row.penguji2_nama ?? '',
+    judul: row.judul ?? '',
+    isDaring: row.is_online ?? false,
+    status: row.validasi === 'valid' ? 'Valid' : row.validasi === 'duplikat' ? 'Duplikat' : 'Invalid',
+  }
+}
+
+// Dipanggil saat masuk step 2 bila gelombang sudah ada.
+// force=true untuk refresh susulan input mahasiswa (guard default hemat refetch).
+async function muatSeminar(force = false) {
+  if (!force && seminarAsli.value && students.value.length) return // ponytail: force=true bila butuh refresh susulan mahasiswa
+  if (!gelombangId.value && !force) return
+  try {
+    const urlSem = gelombangId.value ? `/api/seminar?gelombang_id=${gelombangId.value}` : '/api/seminar'
+    const [semRes, dosRes] = await Promise.all([
+      $fetch(urlSem),
+      $fetch('/api/dosen').catch(() => null),
+    ])
+    const rows = semRes?.data ?? []
+    if (!rows.length) return
+    const dosenNama = {}
+    for (const d of dosRes?.data ?? []) dosenNama[Number(d.id)] = d.nama
+    students.value = rows.map((r) => petakanSeminar(r, dosenNama))
+    seminarAsli.value = true
+  } catch {
+    // Gagal → biarkan students kosong; empty-state yang bicara.
+  }
+}
+
+async function simpanDaringKeServer(student) {
+  if (!student.seminarId) return
+  try {
+    await $fetch(`/api/seminar/${student.seminarId}`, { method: 'PATCH', body: { is_online: student.isDaring } })
+  } catch (e) {
+    student.isDaring = !student.isDaring
+    showToast(e?.data?.statusMessage || 'Gagal simpan mode daring.')
+  }
+}
+
+const toggleDaring = (student) => {
+  student.isDaring = !student.isDaring
+  simpanDaringKeServer(student)
+}
+
+const tanganFileDipilih = (e) => {
+  const f = e?.target?.files?.[0]
+  if (!f) return
+  if (!/\.csv$/i.test(f.name)) {
+    showToast('Format harus .csv — unduh template dulu.')
+    e.target.value = ''
+    return
+  }
+  if (f.size > 10 * 1024 * 1024) {
+    showToast('File maksimal 10 MB.')
+    e.target.value = ''
+    return
+  }
+  const baca = new FileReader()
+  baca.onload = () => {
+    const teks = String(baca.result ?? '')
+    const baris = teks.split(/\r?\n/).map((b) => b.trim()).filter(Boolean)
+    if (baris.length < 2) {
+      showToast('CSV minimal header + 1 baris data.')
+      return
+    }
+    uploadedFile.value = {
+      name: f.name,
+      rows: baris.length - 1,
+      size: f.size > 1024 ? `${Math.round(f.size / 1024)} KB` : `${f.size} B`,
+      teks, // csv mentah → dikirim ke /api/seminar bulk
+    }
+    pratinjauList.value = [] // CSV ganti → guard muatPratinjau boleh fetch ulang
+  }
+  baca.readAsText(f)
+}
+
 const downloadTemplate = () => {
-  // Dalam implementasi nyata, ini akan men-download file Excel (.xlsx) 
-  // berisi baris header: NIM, Nama Mahasiswa, Judul, Dosen Pembimbing
-  showToast('Template Excel SPS berhasil diunduh!')
+  const csv = 'nim,nama,judul,urutan\n1231099,Andi Pratama,Sistem Informasi Akademik,1\n1231100,Dina Mariana,Aplikasi Penjadwalan Seminar,2\n'
+  const blob = new Blob([csv], { type: 'text/csv' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'template-sps.csv'
+  a.click()
+  URL.revokeObjectURL(a.href)
+  showToast('Template CSV SPS berhasil diunduh!')
   setTimeout(() => {
     toastMessage.value = ''
   }, 2000)

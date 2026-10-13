@@ -7,9 +7,7 @@
       <UiMaskIcon src="/icons/nav-mahasiswa-2.svg" :width="7.46" :height="12.86" class="absolute top-[1.15px] left-[1.15px]" />
       <UiMaskIcon src="/icons/nav-mahasiswa-3.svg" :width="8.65" :height="12.86" class="absolute top-[7.99px] left-[6.67px]" />
     </span>
-    <!-- dosen & ruangan: SVG Figma sudah termasuk latar putih 30×30 → tampil apa adanya.
-         TODO: ganti dengan versi aktif dari frame "Daftar Dosen"/"Ruangan" saat halamannya dibuat. -->
-    <img v-else-if="icon === 'dosen' || icon === 'ruangan'" :src="`/icons/nav-${icon}.svg`" alt="" class="size-7.5" />
+        <img v-else-if="icon === 'dosen'" :src="`/icons/nav-${icon}.svg`" alt="" class="size-7.5" />
     <UiMaskIcon v-else :src="`/icons/nav-${icon}.svg`" :width="SIZE[icon]" />
   </span>
 </template>

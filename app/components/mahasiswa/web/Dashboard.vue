@@ -17,7 +17,7 @@
 
       <div class="relative min-w-0">
         <span class="inline-block rounded-full bg-white/18 px-3 py-1.5 text-xs leading-3 font-bold text-white">
-          {{ JENIS_LABEL[terdekat.jenis] }}
+          {{ JENIS_UI_LABEL[terdekat.jenis] }}
         </span>
         <p class="mt-2.25 text-2xl leading-8 font-extrabold text-white">
           {{ terdekat.status === "terkonfirmasi" ? "Jadwal Anda sudah dikonfirmasi" : "Menunggu konfirmasi dosen" }}
@@ -123,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { JENIS_LABEL } from "~/types/domain";
+import { JENIS_UI_LABEL } from "~/types/domain";
 import { STATUS_SEMINAR_LABEL, type SeminarSaya } from "~/composables/useMahasiswaSaya";
 import {
   formatBulanTahun,

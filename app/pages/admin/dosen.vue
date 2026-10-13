@@ -1,7 +1,8 @@
 <template>
-  <AdminMobileDosenMobile />
+  <AdminMobileDosenMobile v-if="isMobile" />
+  <AdminWebDosen v-else />
 </template>
 
-<script setup>
-// Admin Dosen Page
+<script setup lang="ts">
+const { isMobile } = useLayoutMode()
 </script>

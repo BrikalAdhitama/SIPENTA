@@ -1,11 +1,8 @@
 <template>
-  <RuanganMobile />
+  <AdminMobileRuanganMobile v-if="isMobile" />
+  <AdminWebRuangan v-else />
 </template>
 
-<script setup>
-import RuanganMobile from '~/components/admin/mobile/RuanganMobile.vue'
-
-definePageMeta({
-  layout: false
-})
+<script setup lang="ts">
+const { isMobile } = useLayoutMode()
 </script>

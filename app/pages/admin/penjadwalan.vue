@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-[#f8fafc] min-h-screen">
+  <div v-if="isMobile" class="bg-[#f8fafc] min-h-screen">
     <AdminMobilePenjadwalanMobile />
     <BottomNav />
   </div>
+  <AdminWebPenjadwalan v-else />
 </template>
 
-<script setup>
-import AdminMobilePenjadwalanMobile from '~/components/admin/mobile/PenjadwalanMobile.vue'
-import BottomNav from '~/components/BottomNav.vue'
+<script setup lang="ts">
+const { isMobile } = useLayoutMode()
 </script>

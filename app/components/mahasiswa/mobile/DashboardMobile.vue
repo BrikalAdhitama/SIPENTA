@@ -1,6 +1,6 @@
-﻿<template>
+<template>
   <!-- Dashboard Mobile Mahasiswa — SIPENTA -->
-  <div class="mhs-dashboard min-h-screen bg-[#F5F7FB] font-sans pb-28 mobile-safe-top">
+  <div class="mhs-dashboard min-h-screen bg-white font-sans pb-28 mobile-safe-top">
     <main class="px-5 pb-6 max-w-lg mx-auto">
 
       <!-- TOP HEADER -->
@@ -18,7 +18,8 @@
             <p class="text-[11px] text-slate-400 font-medium mt-0.5">Lihat jadwal seminar dan sidang Anda</p>
           </div>
         </div>
-        <button
+        <NuxtLink
+          to="/mahasiswa/notifications"
           class="relative w-11 h-11 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center text-slate-600 active:scale-90 transition-all duration-200 flex-shrink-0"
           aria-label="Notifikasi"
         >
@@ -27,7 +28,7 @@
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
           <span class="absolute top-1.5 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full" />
-        </button>
+        </NuxtLink>
       </header>
 
       <!-- BANNER SEMINAR TERDEKAT -->
@@ -71,41 +72,138 @@
         </div>
       </section>
 
-      <!-- RINGKASAN -->
+      <!-- RINGKASAN PROGRESS & PEMBIMBING -->
       <section class="mb-6">
-        <h2 class="text-[17px] font-extrabold text-slate-800 mb-3">Ringkasan</h2>
-        <div class="grid grid-cols-3 gap-3">
-          <div class="bg-white rounded-[18px] border border-slate-100 shadow-sm p-3.5 flex flex-col gap-2 active:scale-95 transition-transform cursor-pointer" @click="navigateTo('/mahasiswa/jadwal')">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center" :class="sempro?.status === 'selesai' ? 'bg-emerald-100' : 'bg-blue-100'">
-              <svg v-if="sempro?.status === 'selesai'" class="w-[18px] h-[18px] text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-              <svg v-else class="w-[18px] h-[18px] text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <h2 class="text-[17px] font-extrabold text-slate-800 tracking-tight">Ringkasan</h2>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#E3F2FD] text-[#0D47A1] border border-[#90CAF9]">
+              TA-2026
+            </span>
+          </div>
+        </div>
+
+        <!-- 2 Kolom Milestone: Seminar Proposal & Seminar Hasil -->
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <!-- Card 1: Seminar Proposal -->
+          <div
+            class="group relative overflow-hidden bg-white rounded-[22px] border border-slate-100 p-4 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] transition-all duration-300 hover:border-[#90CAF9] hover:shadow-[0_8px_24px_-4px_rgba(33,150,243,0.12)] flex flex-col justify-between"
+          >
+            <!-- Background accent soft glow -->
+            <div class="pointer-events-none absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[#90CAF9]/20 blur-xl group-hover:bg-[#90CAF9]/35 transition-colors" />
+
             <div>
-              <p class="text-[10px] text-slate-400 font-medium leading-tight mb-0.5">Seminar Proposal</p>
-              <p class="text-[12px] font-extrabold leading-tight" :class="sempro?.status === 'selesai' ? 'text-emerald-600' : 'text-slate-700'">
-                {{ sempro ? STATUS_SEMINAR_LABEL[sempro.status] : 'Belum dijadwalkan' }}
-              </p>
+              <!-- Top Row: Icon & Status Pill -->
+              <div class="flex items-start gap-3 mb-3">
+                <div
+                  class="status-mark group/status w-[84px] h-[76px] rounded-[17px] flex flex-col items-center justify-center gap-2 transition-all duration-300 group-hover/status:scale-[1.04] shrink-0 border"
+                  :class="sempro?.status === 'selesai' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-[0_7px_16px_rgba(16,185,129,0.16)]' : 'bg-[#E3F2FD] text-[#0D47A1] border-[#90CAF9]'"
+                >
+                  <span class="w-9 h-9 rounded-[12px] flex items-center justify-center text-white shadow-sm"
+                    :class="sempro?.status === 'selesai' ? 'bg-emerald-500' : 'bg-[#2196F3]'">
+                    <svg v-if="sempro?.status === 'selesai'" class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+                    <svg v-else class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                  </span>
+                  <span class="text-[9px] font-extrabold leading-[1.15] tracking-[0.01em] text-center whitespace-nowrap">{{ sempro ? STATUS_SEMINAR_LABEL[sempro.status] : 'Belum' }}</span>
+                </div>
+              </div>
+
+              <!-- Progress label -->
+              <div class="mt-1">
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5">Tahap 1</span>
+                <h3 class="text-[13.5px] font-extrabold text-slate-800 leading-snug group-hover:text-[#0D47A1] transition-colors">
+                  Seminar Proposal
+                </h3>
+              </div>
             </div>
           </div>
-          <div class="bg-white rounded-[18px] border border-slate-100 shadow-sm p-3.5 flex flex-col gap-2 active:scale-95 transition-transform cursor-pointer" @click="navigateTo('/mahasiswa/jadwal')">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center" :class="semhas?.status === 'terkonfirmasi' ? 'bg-blue-100' : (semhas?.status === 'selesai' ? 'bg-emerald-100' : 'bg-slate-100')">
-              <svg class="w-[18px] h-[18px]" :class="semhas?.status === 'terkonfirmasi' ? 'text-blue-500' : (semhas?.status === 'selesai' ? 'text-emerald-600' : 'text-slate-400')" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-            </div>
+
+          <!-- Card 2: Seminar Hasil -->
+          <div
+            class="group relative overflow-hidden bg-white rounded-[22px] border border-slate-100 p-4 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] transition-all duration-300 hover:border-[#90CAF9] hover:shadow-[0_8px_24px_-4px_rgba(33,150,243,0.12)] flex flex-col justify-between"
+          >
+            <!-- Background accent soft glow -->
+            <div class="pointer-events-none absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[#90CAF9]/20 blur-xl group-hover:bg-[#90CAF9]/35 transition-colors" />
+
             <div>
-              <p class="text-[10px] text-slate-400 font-medium leading-tight mb-0.5">Seminar Hasil</p>
-              <p class="text-[12px] font-extrabold leading-tight" :class="semhas?.status === 'terkonfirmasi' ? 'text-blue-600' : (semhas?.status === 'selesai' ? 'text-emerald-600' : 'text-slate-400')">
-                {{ semhas ? STATUS_SEMINAR_LABEL[semhas.status] : 'Belum dijadwalkan' }}
-              </p>
+              <!-- Top Row: Icon & Status Pill -->
+              <div class="flex items-start gap-3 mb-3">
+                <div
+                  class="status-mark group/status w-[84px] h-[76px] rounded-[17px] flex flex-col items-center justify-center gap-2 transition-all duration-300 group-hover/status:scale-[1.04] shrink-0 border"
+                  :class="semhas?.status === 'terkonfirmasi' ? 'bg-[#E3F2FD] text-[#0D47A1] border-[#90CAF9] shadow-[0_7px_16px_rgba(33,150,243,0.14)]' : (semhas?.status === 'selesai' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-50 text-slate-500 border-slate-200/80')"
+                >
+                  <span class="w-9 h-9 rounded-[12px] flex items-center justify-center text-white shadow-sm relative"
+                    :class="semhas?.status === 'terkonfirmasi' ? 'bg-[#2196F3]' : 'bg-emerald-500'">
+                    <svg v-if="semhas?.status === 'terkonfirmasi'" class="w-[21px] h-[21px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" stroke-width="2.25" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m8.5 12 2.3 2.3 4.7-4.7" /></svg>
+                    <svg v-else class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+                  </span>
+                  <span class="text-[9px] font-extrabold leading-[1.15] tracking-[0.01em] text-center whitespace-nowrap">{{ semhas ? STATUS_SEMINAR_LABEL[semhas.status] : 'Belum' }}</span>
+                </div>
+              </div>
+
+              <!-- Progress label -->
+              <div class="mt-1">
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5">Tahap 2</span>
+                <h3 class="text-[13.5px] font-extrabold text-slate-800 leading-snug group-hover:text-[#0D47A1] transition-colors">
+                  Seminar Hasil
+                </h3>
+              </div>
             </div>
           </div>
-          <div class="bg-white rounded-[18px] border border-slate-100 shadow-sm p-3.5 flex flex-col gap-2">
-            <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <svg class="w-[18px] h-[18px] text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+        </div>
+
+        <!-- Card 3: Tim Dosen Pembimbing (Wide Card) -->
+        <div
+          class="group relative overflow-hidden bg-white rounded-[22px] border border-slate-100 p-4 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.05)] active:scale-[0.99] transition-all duration-200 cursor-pointer hover:border-[#90CAF9] hover:shadow-[0_8px_24px_-4px_rgba(33,150,243,0.16)]"
+          @click="showDosenSheet = true"
+        >
+          <!-- Background decorative glow -->
+          <div class="pointer-events-none absolute -bottom-8 -right-8 w-28 h-28 rounded-full bg-[#90CAF9]/20 blur-xl group-hover:bg-[#90CAF9]/35 transition-colors" />
+
+          <!-- Header Dosen Pembimbing -->
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-[13px] bg-[#2196F3] flex items-center justify-center text-white shadow-[0_6px_14px_rgba(33,150,243,0.24)]">
+                <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm13 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>
+              </div>
+              <div>
+                <h3 class="text-[13px] font-extrabold text-slate-800 leading-tight">Dosen Pembimbing</h3>
+                <p class="text-[10px] text-slate-400 font-semibold">Bimbingan Tugas Akhir</p>
+              </div>
             </div>
-            <div>
-              <p class="text-[10px] text-slate-400 font-medium leading-tight mb-0.5">Dosen Pembimbing</p>
-              <p class="text-[11px] font-bold text-blue-700 leading-tight">{{ profil.pembimbing1 }}</p>
-              <p class="text-[11px] font-bold text-blue-700 leading-tight mt-0.5">{{ profil.pembimbing2 }}</p>
+
+            <div class="flex items-center gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#E3F2FD] text-[#0D47A1] border border-[#90CAF9]">
+                2 Pembimbing
+              </span>
+              <div class="w-6 h-6 rounded-full bg-[#E3F2FD] flex items-center justify-center text-[#2196F3] group-hover:text-[#0D47A1] group-hover:translate-x-0.5 transition-all">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" /></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 Kolom Pembimbing -->
+          <div class="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-slate-100">
+            <!-- Pembimbing 1 -->
+            <div class="bg-gradient-to-br from-slate-50 to-[#E3F2FD] rounded-[14px] p-2.5 flex items-center gap-2.5 border border-slate-100/80 group-hover:border-[#90CAF9] transition-colors">
+              <div class="w-8 h-8 rounded-xl bg-[#2196F3] text-white font-extrabold text-[11px] flex items-center justify-center shadow-[0_4px_10px_rgba(33,150,243,0.22)] flex-shrink-0">
+                {{ getInisial(profil.pembimbing1) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-[9px] font-extrabold text-[#2196F3] uppercase tracking-wide leading-none mb-1">Utama</p>
+                <p class="text-[11.5px] font-extrabold text-slate-800 truncate leading-tight">{{ profil.pembimbing1 }}</p>
+              </div>
+            </div>
+
+            <!-- Pembimbing 2 -->
+            <div class="bg-gradient-to-br from-slate-50 to-[#E3F2FD] rounded-[14px] p-2.5 flex items-center gap-2.5 border border-slate-100/80 group-hover:border-[#90CAF9] transition-colors">
+              <div class="w-8 h-8 rounded-xl bg-[#0D47A1] text-white font-extrabold text-[11px] flex items-center justify-center shadow-[0_4px_10px_rgba(13,71,161,0.22)] flex-shrink-0">
+                {{ getInisial(profil.pembimbing2) }}
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-[9px] font-extrabold text-[#0D47A1] uppercase tracking-wide leading-none mb-1">Pendamping</p>
+                <p class="text-[11.5px] font-extrabold text-slate-800 truncate leading-tight">{{ profil.pembimbing2 }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -123,16 +221,16 @@
               :class="idx < seminar.length - 1 ? 'border-b border-slate-50' : ''"
               @click="selectedSeminar = s; showDetailSheet = true"
             >
-              <div class="flex-shrink-0 flex flex-col items-center justify-center w-11 rounded-[14px] bg-blue-50 pt-1.5 pb-2">
-                <span class="text-[20px] font-extrabold text-blue-600 leading-none">{{ tanggalKe(s.tanggal) }}</span>
-                <span class="text-[9px] text-blue-400 font-semibold leading-none mt-1">{{ formatBulanTahun(s.tanggal) }}</span>
-                <span class="text-[9px] text-blue-400 font-medium leading-none">{{ jamTitik(s.jamMulai) }}</span>
+              <div class="flex-shrink-0 flex flex-col items-center justify-center w-[62px] min-h-[70px] rounded-[15px] bg-[#E3F2FD] border border-[#90CAF9]/50 py-2">
+                <span class="text-[22px] font-extrabold text-[#0D47A1] leading-none">{{ tanggalKe(s.tanggal) }}</span>
+                <span class="text-[10px] text-[#2196F3] font-bold leading-none mt-1.5">{{ formatBulanTahun(s.tanggal) }}</span>
+                <span class="text-[10px] text-[#0D47A1] font-bold leading-none mt-2">{{ jamTitik(s.jamMulai) }}</span>
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-[13px] font-bold text-slate-800 leading-tight truncate">{{ s.judul }}</p>
-                <p class="text-[11px] text-slate-400 font-medium mt-0.5 truncate">{{ s.keterangan }}</p>
+                <p class="text-[13px] font-bold text-slate-800 leading-[1.25] line-clamp-2">{{ s.judul }}</p>
+                <p class="text-[11px] text-slate-400 font-medium mt-1 line-clamp-2">{{ s.keterangan }}</p>
               </div>
-              <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+              <div class="flex flex-col items-end gap-2 flex-shrink-0 min-w-[76px]">
                 <span class="text-[11px] font-bold text-slate-600">{{ s.ruangan }}</span>
                 <UiStatusSeminarChip :status="s.status" />
               </div>
@@ -142,7 +240,7 @@
             <p class="text-slate-400 text-sm font-medium">Belum ada jadwal seminar.</p>
           </div>
           <div class="border-t border-slate-50 px-5 py-3.5">
-            <NuxtLink to="/mahasiswa/jadwal" class="flex items-center justify-center gap-1.5 text-[13px] font-semibold text-blue-600 active:opacity-70 transition-opacity">
+            <NuxtLink to="/mahasiswa/jadwal" class="flex items-center justify-center gap-1.5 text-[13px] font-semibold text-[#2196F3] active:opacity-70 transition-opacity">
               Lihat semua jadwal
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </NuxtLink>
@@ -247,6 +345,88 @@
       </div>
     </Transition>
 
+    <!-- BOTTOM SHEET DETAIL DOSEN PEMBIMBING -->
+    <Transition name="mhs-overlay">
+      <div v-if="showDosenSheet" class="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/40 backdrop-blur-sm" @click.self="showDosenSheet = false">
+        <Transition name="mhs-sheet">
+          <div v-if="showDosenSheet" class="bg-white w-full max-w-lg rounded-t-[28px] pt-4 pb-10 shadow-2xl">
+            <div class="flex justify-center mb-5"><div class="w-10 h-1 bg-slate-200 rounded-full" /></div>
+            <div class="px-6 flex items-center justify-between mb-5">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-[#E3F2FD] flex items-center justify-center text-[#2196F3]">
+                  <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm13 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>
+                </div>
+                <div>
+                  <h3 class="text-[17px] font-extrabold text-slate-800">Dosen Pembimbing</h3>
+                  <p class="text-[11px] text-slate-400 font-medium">Tim Pembimbing Tugas Akhir</p>
+                </div>
+              </div>
+              <button @click="showDosenSheet = false" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 active:scale-90 transition-transform">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            
+            <div class="px-6 flex flex-col gap-3.5">
+              <!-- Judul TA Singkat -->
+              <div class="bg-[#E3F2FD] border border-[#90CAF9]/70 rounded-[18px] p-3.5">
+                <p class="text-[10px] font-extrabold uppercase tracking-wider text-[#0D47A1] mb-1">Judul Tugas Akhir</p>
+                <p class="text-[13px] font-bold text-slate-800 leading-snug">{{ profil.judulTA }}</p>
+              </div>
+
+              <!-- Pembimbing 1 Card -->
+              <div class="bg-white border border-slate-100 rounded-[18px] p-4 shadow-sm flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-[#2196F3] text-white font-extrabold text-[14px] flex items-center justify-center shadow-[0_5px_12px_rgba(33,150,243,0.22)] flex-shrink-0">
+                  {{ getInisial(profil.pembimbing1) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2 mb-0.5">
+                    <span class="text-[10px] font-extrabold text-[#0D47A1] bg-[#E3F2FD] border border-[#90CAF9]/70 px-2 py-0.5 rounded-full">Pembimbing Utama</span>
+                    <span class="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      Aktif
+                    </span>
+                  </div>
+                  <h4 class="text-[14px] font-extrabold text-slate-800 truncate">{{ profil.pembimbing1 }}</h4>
+                  <p class="text-[11px] text-slate-400 font-medium mt-0.5">Bidang Rekayasa Perangkat Lunak & AI</p>
+                </div>
+              </div>
+
+              <!-- Pembimbing 2 Card -->
+              <div class="bg-white border border-slate-100 rounded-[18px] p-4 shadow-sm flex items-start gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-[#0D47A1] text-white font-extrabold text-[14px] flex items-center justify-center shadow-[0_5px_12px_rgba(13,71,161,0.22)] flex-shrink-0">
+                  {{ getInisial(profil.pembimbing2) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2 mb-0.5">
+                    <span class="text-[10px] font-extrabold text-[#0D47A1] bg-[#E3F2FD] border border-[#90CAF9]/70 px-2 py-0.5 rounded-full">Pembimbing Pendamping</span>
+                    <span class="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      Aktif
+                    </span>
+                  </div>
+                  <h4 class="text-[14px] font-extrabold text-slate-800 truncate">{{ profil.pembimbing2 }}</h4>
+                  <p class="text-[11px] text-slate-400 font-medium mt-0.5">Bidang Data Science & NLP</p>
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-50 rounded-[14px]">
+                <p class="text-[11px] text-slate-500 text-center leading-relaxed">
+                  Konsultasikan perkembangan penulisan dan persiapan seminar secara berkala dengan kedua dosen pembimbing.
+                </p>
+              </div>
+
+              <button
+                @click="showDosenSheet = false"
+                class="w-full mt-1 py-3.5 rounded-[16px] bg-[#0D47A1] text-white font-extrabold text-[13px] shadow-[0_8px_18px_rgba(13,71,161,0.24)] active:scale-[0.98] transition-all hover:bg-[#2196F3]"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
+
     <!-- MAHASISWA BOTTOM NAV -->
     <MahasiswaBottomNav />
   </div>
@@ -274,11 +454,22 @@ const infoSingkat = computed(() => {
 })
 
 const showDetailSheet = ref(false)
+const showDosenSheet = ref(false)
 const selectedSeminar = ref<SeminarSaya | null>(null)
 
-watch(showDetailSheet, (val) => {
+function getInisial(nama?: string): string {
+  if (!nama) return 'DS'
+  const clean = nama.replace(/^(Dr\.|Prof\.|Ir\.|Drs\.|Dra\.)\s*/i, '').trim()
+  const parts = clean.split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return (parts[0]?.[0] ?? 'D').toUpperCase()
+}
+
+watch([showDetailSheet, showDosenSheet], ([v1, v2]) => {
   if (typeof document !== 'undefined') {
-    document.body.style.overflow = val ? 'hidden' : ''
+    document.body.style.overflow = (v1 || v2) ? 'hidden' : ''
   }
 })
 

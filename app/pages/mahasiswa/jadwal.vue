@@ -1,6 +1,5 @@
 <template>
-  <!-- TODO: versi mobile (frame "... - mobile mahasiswa") belum dibuat -->
-  <UiSegeraHadir v-if="isMobile" judul="Jadwal Saya" />
+  <MahasiswaMobileJadwalMobile v-if="isMobile" />
   <MahasiswaWebJadwal v-else />
 </template>
 

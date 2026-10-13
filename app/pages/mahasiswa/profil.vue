@@ -1,6 +1,5 @@
 <template>
-  <!-- TODO: versi mobile (frame "... - mobile mahasiswa") belum dibuat -->
-  <UiSegeraHadir v-if="isMobile" judul="Profil Saya" />
+  <MahasiswaMobileProfilMobile v-if="isMobile" />
   <MahasiswaWebProfil v-else />
 </template>
 

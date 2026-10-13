@@ -63,7 +63,7 @@
     </section>
 
     <!-- Jadwal Terbaru -->
-    <section class="mt-7 min-h-87.25 w-full max-w-2xl rounded-[14px] border border-primary-900 px-4.5 pt-4.5 pb-2.5">
+    <section class="mt-7 min-h-87.25 w-full rounded-[14px] px-4.5 pt-4.5 pb-2.5">
       <div class="flex items-center">
         <h2 class="flex-1 text-base leading-normal tracking-[0.16px]">Jadwal Terbaru</h2>
 
@@ -125,16 +125,14 @@
     <!-- Aksi Cepat -->
     <section class="mt-2.25 ml-1">
       <h2 class="text-[22px] leading-normal font-medium">Aksi Cepat</h2>
-      <div class="mt-3 flex flex-wrap gap-7.5">
+      <div class="mx-auto mt-3 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
         <NuxtLink
           v-for="aksi in AKSI"
           :key="aksi.label"
           :to="aksi.to"
-          class="flex h-9 w-45.75 items-center gap-1.5 rounded-[20px] bg-[linear-gradient(-62.86deg,#2196f3_44.33%,#90caf9_98.56%)] px-2.25 font-mulish text-base font-semibold text-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] transition-transform active:scale-95"
-          :class="{ 'flex-row-reverse pr-5.25': aksi.iconRight }"
+          class="flex h-9 w-full items-center justify-center rounded-lg bg-primary-900 px-4 font-mulish text-base font-semibold text-white transition-colors hover:bg-primary-900/90 active:bg-primary-900/80"
         >
-          <img :src="aksi.icon" alt="" class="size-5 shrink-0" :class="aksi.iconClass" />
-          <span class="flex-1 text-center">{{ aksi.label }}</span>
+          <span class="text-center">{{ aksi.label }}</span>
         </NuxtLink>
       </div>
     </section>
@@ -148,8 +146,8 @@ import { formatJam, formatTanggalPendek } from "~/utils/format";
 const { user } = useCurrentUser();
 const { stats, jadwalTerbaru } = useAdminDashboard();
 
-// kolom tabel
-const GRID = "grid grid-cols-[134px_109px_125px_131px_1fr]";
+// Kolom tabel membagi ruang secara proporsional pada card full-width.
+const GRID = "grid grid-cols-[1.15fr_1.1fr_1fr_1.5fr_0.9fr]";
 
 const cards = computed(() => [
   {
@@ -213,8 +211,8 @@ function pilihFilter(v: Filter) {
 }
 
 const AKSI = [
-  { label: "Buat Penjadwalan", to: "/admin/penjadwalan", icon: "/icons/qa-plus.svg" },
-  { label: "Upload Data SPS", to: "/admin/penjadwalan", icon: "/icons/qa-arrow-up.svg", iconClass: "-rotate-90" },
-  { label: "Lihat Jadwal", to: "/admin/jadwal", icon: "/icons/qa-arrow.svg", iconRight: true },
+  { label: "Buat Penjadwalan", to: "/admin/penjadwalan" },
+  { label: "Upload Data SPS", to: "/admin/penjadwalan" },
+  { label: "Lihat Jadwal", to: "/admin/jadwal" },
 ];
 </script>

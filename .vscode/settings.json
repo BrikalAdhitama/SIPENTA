@@ -9,5 +9,6 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  "CodeGPT.apiKey": "CodeGPT Plus Beta"
+  "CodeGPT.apiKey": "CodeGPT Plus Beta",
+  "python.terminal.useEnvFile": true
 }

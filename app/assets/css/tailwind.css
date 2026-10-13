@@ -61,3 +61,23 @@
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Shared mobile chrome spacing for every role and native/web viewport. */
+@utility mobile-safe-top {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 1.25rem);
+}
+@utility mobile-safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}
+
+@utility mobile-bottom-nav {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+}
+
+@utility admin-dropdown-menu {
+  border: 1px solid #f1f5f9;
+  border-radius: 0.75rem;
+  background-color: #fff;
+  padding-block: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}

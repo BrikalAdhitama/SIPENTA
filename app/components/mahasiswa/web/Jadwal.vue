@@ -1,5 +1,5 @@
 <template>
-  <!-- Figma "Jadwal Mahasiswa - web" (node 165:6934) -->
+  <!-- "Jadwal Mahasiswa - web" (node 165:6934) -->
   <div class="max-w-312.25 pt-9 pr-8 pb-14 pl-8 xl:pr-24">
     <header>
       <h1 class="text-[43px] leading-[50.74px] font-semibold tracking-[-0.6px] text-heading">Jadwal Saya</h1>
@@ -80,7 +80,7 @@
                 {{ tanggalKe(terdekat.tanggal) }}
               </span>
               <div class="text-right">
-                <p class="text-[13px] leading-[19.5px] font-bold text-title">{{ JENIS_LABEL[terdekat.jenis] }}</p>
+                <p class="text-[13px] leading-[19.5px] font-bold text-title">{{ JENIS_UI_LABEL[terdekat.jenis] }}</p>
                 <p class="mt-1 text-xs leading-4.5 text-meta">{{ namaHari(terdekat.tanggal) }}, {{ jamTitik(terdekat.jamMulai) }} WIB</p>
               </div>
             </div>
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { JENIS_LABEL } from "~/types/domain";
+import { JENIS_UI_LABEL } from "~/types/domain";
 import { STATUS_SEMINAR_LABEL, type SeminarSaya } from "~/composables/useMahasiswaSaya";
 import {
   formatTanggalBulan,
@@ -155,7 +155,7 @@ const seminarTampil = computed(() => {
       formatTanggalPendek(s.tanggal),
       namaHari(s.tanggal),
       s.jenis === "sempro" ? "Sempro" : "Semhas",
-      JENIS_LABEL[s.jenis],
+      JENIS_UI_LABEL[s.jenis],
       s.ruangan,
       STATUS_SEMINAR_LABEL[s.status],
     ].some((teks) => teks.toLowerCase().includes(q)),

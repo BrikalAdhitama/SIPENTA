@@ -1,5 +1,5 @@
-import type { JenisSeminar } from "~/types/domain";
-import { hariMenuju } from "~/utils/format";
+import type { JenisSeminarUI } from "~/types/domain";
+import { hariMenuju, tambahHari } from "~/utils/format";
 
 // Data halaman mahasiswa (Dashboard, Jadwal Saya, Profil Saya) — dipakai versi web (dan nanti mobile).
 // SEMENTARA: data tiruan. Nanti diganti query Supabase:
@@ -17,7 +17,7 @@ export const STATUS_SEMINAR_LABEL: Record<StatusSeminar, string> = {
 
 export interface SeminarSaya {
   id: number;
-  jenis: JenisSeminar;
+  jenis: JenisSeminarUI;
   judul: string;
   keterangan: string;
   tanggal: string; // YYYY-MM-DD
@@ -26,6 +26,10 @@ export interface SeminarSaya {
   ruangan: string;
   status: StatusSeminar;
   ketuaPenguji: string;
+  pembimbing1: string;
+  pembimbing2: string;
+  penguji1: string;
+  penguji2: string;
   catatan: string;
 }
 
@@ -75,25 +79,33 @@ export function useMahasiswaSaya() {
       jenis: "semhas",
       judul: "Analisis Sentimen Ulasan E-commerce",
       keterangan: "Seminar Hasil • Pembimbing utama: Dr. Sari Dewi",
-      tanggal: "2026-10-06",
+      tanggal: "2026-10-15",
       jamMulai: "10:00",
       jamSelesai: "11:45",
       ruangan: "B203",
       status: "terkonfirmasi",
       ketuaPenguji: "Dr. Budi Santoso",
+      pembimbing1: "Dr. Sari Dewi",
+      pembimbing2: "Dr. Hendra Wijaya",
+      penguji1: "Dr. Budi Santoso",
+      penguji2: "Dr. Rina Kusuma",
       catatan: "Bawa 3 salinan laporan hasil penelitian dan unggah slide presentasi paling lambat H-1.",
     },
     {
       id: 1,
       jenis: "sempro",
-      judul: "Presentasi Seminar Proposal",
-      keterangan: "Proposal penelitian telah selesai dipresentasikan",
+      judul: "Analisis Sentimen Ulasan E-commerce",
+      keterangan: "Seminar Proposal • Pembimbing utama: Dr. Sari Dewi",
       tanggal: "2026-07-22",
       jamMulai: "09:00",
       jamSelesai: "10:00",
       ruangan: "B201",
       status: "selesai",
       ketuaPenguji: "Dr. Ahmad Fauzi",
+      pembimbing1: "Dr. Sari Dewi",
+      pembimbing2: "Dr. Hendra Wijaya",
+      penguji1: "Dr. Ahmad Fauzi",
+      penguji2: "Dr. Rina Kusuma",
       catatan: "",
     },
   ]);
@@ -107,7 +119,7 @@ export function useMahasiswaSaya() {
   );
 
   /** Seminar terbaru untuk satu jenis (sempro/semhas), atau null kalau belum ada. */
-  function seminarJenis(jenis: JenisSeminar) {
+  function seminarJenis(jenis: JenisSeminarUI) {
     return computed(() => seminar.value.find((s) => s.jenis === jenis) ?? null);
   }
 

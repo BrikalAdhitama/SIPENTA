@@ -8,8 +8,8 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted } from 'vue'
+<script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Capacitor } from '@capacitor/core'
 import { SplashScreen } from '@capacitor/splash-screen'
@@ -18,6 +18,8 @@ import { SplashScreen } from '@capacitor/splash-screen'
 definePageMeta({ layout: false })
 
 const router = useRouter()
+const { akun, dashboardPath } = useAuth()
+let redirectTimer: ReturnType<typeof setTimeout> | undefined
 
 onMounted(async () => {
   // Hide native splash screen if running in Capacitor
@@ -29,9 +31,19 @@ onMounted(async () => {
     }
   }
 
-  // Simulate a delay for the web splash screen, then go to onboarding
-  setTimeout(() => {
-    router.push('/onboarding')
-  }, 2500)
+  redirectTimer = setTimeout(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding') === 'true'
+
+    if (!hasSeenOnboarding) {
+      router.replace('/onboarding')
+      return
+    }
+
+    router.replace(akun.value ? dashboardPath(akun.value.role) : '/login')
+  }, 1400)
+})
+
+onUnmounted(() => {
+  if (redirectTimer) clearTimeout(redirectTimer)
 })
 </script>

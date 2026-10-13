@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-50 font-sans pb-32 pt-[calc(env(safe-area-inset-top)+1rem)]">
+  <div class="min-h-screen bg-white font-sans pb-32 mobile-safe-top">
     <main class="px-6 pb-6 max-w-lg mx-auto">
       
       <!-- Top Header -->
@@ -335,6 +335,7 @@ const selectedFilter = ref('Semua')
 const showProfileSheet = ref(false)
 const showPasswordModal = ref(false)
 const showLogoutModal = ref(false)
+const { logout } = useAuth()
 
 const passForm = ref({ old: '', new: '', confirm: '' })
 
@@ -357,6 +358,7 @@ const handleSavePassword = () => {
 const handleLogout = () => {
   showLogoutModal.value = false
   if (window.$toast) window.$toast({ title: 'Berhasil Keluar', message: 'Anda telah keluar dari sesi saat ini.', type: 'success' })
+  return logout()
 }
 
 

@@ -79,13 +79,13 @@
           </button>
           <div
             v-if="filterOpen"
-            class="absolute right-0 z-10 mt-1 w-32 rounded-xl border border-border bg-white py-1 text-sm shadow-lg"
+            class="absolute right-0 z-10 mt-1 w-32 admin-dropdown-menu"
           >
             <button
               v-for="opt in FILTERS"
               :key="opt.value"
               type="button"
-              class="block w-full px-4 py-2 text-left hover:bg-primary-50"
+              class="block w-full px-4 py-2 text-left text-[12.5px] text-slate-700 transition-colors hover:bg-slate-50"
               :class="{ 'font-medium text-primary-900': filter === opt.value }"
               @click="pilihFilter(opt.value)"
             >
@@ -148,7 +148,7 @@ import { formatJam, formatTanggalPendek } from "~/utils/format";
 const { user } = useCurrentUser();
 const { stats, jadwalTerbaru } = useAdminDashboard();
 
-// kolom tabel — posisi tengah tiap kolom mengikuti Figma
+// kolom tabel
 const GRID = "grid grid-cols-[134px_109px_125px_131px_1fr]";
 
 const cards = computed(() => [

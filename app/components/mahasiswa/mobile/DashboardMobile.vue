@@ -41,7 +41,7 @@
           <div class="relative flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
               <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold text-white tracking-wide mb-2.5" style="background: rgba(255,255,255,0.2);">
-                {{ JENIS_LABEL[terdekat.jenis] }}
+                {{ JENIS_UI_LABEL[terdekat.jenis] }}
               </span>
               <p class="text-white font-extrabold text-[17px] leading-snug mb-2">
                 {{ terdekat.status === 'terkonfirmasi' ? 'Jadwal Anda sudah dikonfirmasi' : 'Menunggu konfirmasi dosen' }}
@@ -195,7 +195,7 @@
             </div>
             <div class="px-6 flex flex-col gap-4">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">{{ JENIS_LABEL[selectedSeminar.jenis] }}</span>
+                <span class="px-3 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-700">{{ JENIS_UI_LABEL[selectedSeminar.jenis] }}</span>
                 <UiStatusSeminarChip :status="selectedSeminar.status" />
               </div>
               <p class="text-[15px] font-bold text-slate-800 leading-snug">{{ selectedSeminar.judul }}</p>
@@ -254,7 +254,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
-import { JENIS_LABEL } from '~/types/domain'
+import { JENIS_UI_LABEL } from '~/types/domain'
 import { STATUS_SEMINAR_LABEL, type SeminarSaya } from '~/composables/useMahasiswaSaya'
 import { formatTanggalPanjang, hariMenuju, jamTitik, tanggalKe, formatBulanTahun } from '~/utils/format'
 

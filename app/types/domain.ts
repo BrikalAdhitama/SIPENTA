@@ -1,11 +1,24 @@
 // Enum & konstanta domain — dipakai lintas layar. Selaras dengan enum Postgres (0001_core_schema.sql).
 
+import type { P } from "vue-router/dist/router-CWoNjPRp.mjs";
+import type { JenisSingkat } from "~/app/types/domain";
+
 // Hanya 3 role. Fungsi "kaprodi" (finalisasi jadwal, laporan) dijalankan akun admin.
 export const ROLES = ["admin", "dosen", "mahasiswa"] as const;
 export type Role = (typeof ROLES)[number];
 
 export const JENIS_SEMINAR = ["seminar_proposal", "seminar_hasil"] as const;
 export type JenisSeminar = (typeof JENIS_SEMINAR)[number];
+
+// Kode jenis seminar di lapisan tampilan (data tiruan & chip). Berbeda dari enum Postgres di atas:
+// 'sempro' = seminar_proposal, 'semhas' = seminar_hasil. Dipakai halaman mahasiswa & dosen.
+export type JenisSeminarUI = "sempro" | "semhas";
+export const JENIS_UI_LABEL: Record<JenisSeminarUI, string> = {
+  sempro: "Seminar Proposal",
+  semhas: "Seminar Hasil",
+};
+export const JENIS_UI_SINGKAT: Record<JenisSeminarUI, string> = { sempro: "Sempro", semhas: "Semhas" };
+export const JENIS_SINGKAT: Partial<Record<JenisSingkat, string>> = { sempro: "sempro", semhas: "semhas" };
 
 export const PERAN = [
   "pembimbing_utama",

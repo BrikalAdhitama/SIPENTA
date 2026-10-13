@@ -1,5 +1,5 @@
-import type { JenisSeminar } from "~/types/domain";
-import { hariMenuju } from "~/utils/format";
+import type { JenisSeminarUI } from "~/types/domain";
+import { hariMenuju, tambahHari } from "~/utils/format";
 
 // Data halaman mahasiswa (Dashboard, Jadwal Saya, Profil Saya) — dipakai versi web (dan nanti mobile).
 // SEMENTARA: data tiruan. Nanti diganti query Supabase:
@@ -17,7 +17,7 @@ export const STATUS_SEMINAR_LABEL: Record<StatusSeminar, string> = {
 
 export interface SeminarSaya {
   id: number;
-  jenis: JenisSeminar;
+  jenis: JenisSeminarUI;
   judul: string;
   keterangan: string;
   tanggal: string; // YYYY-MM-DD
@@ -75,7 +75,7 @@ export function useMahasiswaSaya() {
       jenis: "semhas",
       judul: "Analisis Sentimen Ulasan E-commerce",
       keterangan: "Seminar Hasil • Pembimbing utama: Dr. Sari Dewi",
-      tanggal: "2026-10-06",
+      tanggal: tambahHari(13), // 13 hari lagi (sesuai Figma)
       jamMulai: "10:00",
       jamSelesai: "11:45",
       ruangan: "B203",
@@ -88,7 +88,7 @@ export function useMahasiswaSaya() {
       jenis: "sempro",
       judul: "Presentasi Seminar Proposal",
       keterangan: "Proposal penelitian telah selesai dipresentasikan",
-      tanggal: "2026-07-22",
+      tanggal: tambahHari(-82),
       jamMulai: "09:00",
       jamSelesai: "10:00",
       ruangan: "B201",
@@ -107,7 +107,7 @@ export function useMahasiswaSaya() {
   );
 
   /** Seminar terbaru untuk satu jenis (sempro/semhas), atau null kalau belum ada. */
-  function seminarJenis(jenis: JenisSeminar) {
+  function seminarJenis(jenis: JenisSeminarUI) {
     return computed(() => seminar.value.find((s) => s.jenis === jenis) ?? null);
   }
 

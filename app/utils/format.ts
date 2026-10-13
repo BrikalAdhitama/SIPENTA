@@ -62,3 +62,48 @@ export function formatJam(mulai: string, selesai: string): string {
 export function jamTitik(jam: string): string {
   return jam.replace(":", ".");
 }
+
+/** Tanggal ISO (YYYY-MM-DD, zona waktu lokal) dari objek Date. */
+export function isoDari(d: Date): string {
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+/** Hari ini + `n` hari (negatif = lampau) sebagai ISO. Dipakai data tiruan agar selalu relevan. */
+export function tambahHari(n: number, dari: Date = new Date()): string {
+  const d = new Date(dari.getFullYear(), dari.getMonth(), dari.getDate() + n);
+  return isoDari(d);
+}
+
+/** Senin pada minggu `iso` (minggu Senin–Minggu) sebagai ISO. */
+export function awalMinggu(iso: string): string {
+  const [y, m, d] = pecahTanggal(iso);
+  const dt = new Date(y, m - 1, d);
+  const geser = (dt.getDay() + 6) % 7; // Senin = 0
+  return isoDari(new Date(y, m - 1, d - geser));
+}
+
+/** "2026-09-25" → "Jumat, 25 September 2026" */
+export function formatHariTanggal(iso: string): string {
+  return `${namaHari(iso)}, ${formatTanggalPanjang(iso)}`;
+}
+
+/** `iso` digeser `n` hari (negatif = mundur) sebagai ISO. */
+export function geserTanggal(iso: string, n: number): string {
+  const [y, m, d] = pecahTanggal(iso);
+  return isoDari(new Date(y, m - 1, d + n));
+}
+
+/** Format rentang tanggal, misal "2026-09-25" + "2026-09-27" → "25 Sep 2026 – 27 Sep 2026" */
+export function formatRentangTanggal(mulai: string, selesai: string, pemisah = " – "): string {
+  return `${formatTanggalPendek(mulai)}${pemisah}${formatTanggalPendek(selesai)}`;
+}
+/** Ambil inisial dari nama lengkap. */
+export function inisial(nama: string): string {
+  return nama
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((kata) => kata[0]?.toUpperCase() ?? "")
+    .join("");
+}

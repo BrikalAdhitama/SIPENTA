@@ -1,7 +1,8 @@
 <template>
-  <AdminMobileJadwalMobile />
+  <AdminMobileJadwalMobile v-if="isMobile" />
+  <AdminWebJadwal v-else />
 </template>
 
-<script setup>
-// This page uses the layout defined or defaults to none since it's a mobile layout component
+<script setup lang="ts">
+const { isMobile } = useLayoutMode()
 </script>

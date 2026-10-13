@@ -1,5 +1,5 @@
 <template>
-  <!-- Sidebar web — Figma "Dashboard admin - web" (node 113:2077) -->
+  <!-- Sidebar web — "Dashboard admin - web" (node 113:2077) -->
   <aside class="sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebebeb] bg-white pt-9 pb-13.5 shadow-[1px_0_0_#f8f8f8]">
     <NuxtLink to="/" class="ml-5.5 block w-fit">
       <LayoutAppLogo :height="50" />

@@ -7,7 +7,7 @@
         <h1 class="text-[26px] font-extrabold tracking-tight leading-none" style="color: #0F172A;">Manajemen<br>Ruangan</h1>
         <p class="text-[12px] font-medium leading-snug" style="color: #64748B; max-width: 85%;">Kelola daftar ruangan untuk penjadwalan seminar.</p>
       </div>
-      <button @click="showAddModal = true" class="w-11 h-11 rounded-[16px] flex items-center justify-center shrink-0 transition-transform active:scale-95 shadow-sm" style="background-color: #0F3B8C; color: #ffffff;">
+      <button @click="bukaTambah" class="w-11 h-11 rounded-[16px] flex items-center justify-center shrink-0 transition-transform active:scale-95 shadow-sm" style="background-color: #0F3B8C; color: #ffffff;">
         <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
       </button>
     </div>
@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="flex flex-col gap-0.5 z-10">
-          <h3 class="font-extrabold text-white text-[28px] leading-none tracking-tight">7</h3>
+          <h3 class="font-extrabold text-white text-[28px] leading-none tracking-tight">{{ ruanganList.length }}</h3>
           <p class="font-medium text-[11px] tracking-wide" style="color: rgba(255,255,255,0.75);">Total Ruangan</p>
         </div>
       </div>
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="flex flex-col gap-0.5 z-10">
-          <h3 class="font-extrabold text-white text-[28px] leading-none tracking-tight">5</h3>
+          <h3 class="font-extrabold text-white text-[28px] leading-none tracking-tight">{{ seminarAktif }}</h3>
           <p class="font-medium text-[11px] tracking-wide" style="color: rgba(255,255,255,0.75);">Seminar Aktif</p>
         </div>
       </div>
@@ -48,29 +48,42 @@
     <!-- Ruangan List Header -->
     <div class="px-6 flex justify-between items-end mb-4 mt-2">
       <h2 class="text-[17px] font-extrabold text-slate-800">Daftar Ruangan</h2>
-      <span class="text-[11px] font-extrabold text-[#1976D2] bg-[#F0F6FF] px-2.5 py-1 rounded-lg">7 Ruangan</span>
+      <span class="text-[11px] font-extrabold text-[#1976D2] bg-[#F0F6FF] px-2.5 py-1 rounded-lg">{{ ruanganList.length }} Ruangan</span>
     </div>
 
     <!-- Ruangan List Grid -->
-    <div class="px-6 grid grid-cols-2 gap-4">
-      <div v-for="n in 4" :key="n" class="rounded-[20px] p-4 flex flex-col relative bg-[#F0F6FF] border border-[#D3E3FD] h-[135px]">
+    <p v-if="galatRuangan" class="px-6 mb-3 text-[12px] font-semibold text-red-600">{{ galatRuangan }}</p>
+    <p v-if="!memuatRuangan && !ruanganList.length && !galatRuangan" class="px-6 mb-3 text-[12px] font-medium text-slate-500">Belum ada ruangan.</p>
+    <div v-if="memuatRuangan" class="px-6 grid grid-cols-2 gap-4" aria-busy="true" aria-label="Memuat ruangan">
+      <div v-for="i in 4" :key="i" class="rounded-[20px] p-4 flex flex-col h-[135px] bg-[#F0F6FF] border border-[#D3E3FD] animate-pulse">
+        <div class="flex justify-between items-start mb-3">
+          <div class="w-11 h-11 rounded-[12px] bg-[#BBDEFB]"></div>
+          <div class="w-8 h-8 rounded-full bg-[#BBDEFB]"></div>
+        </div>
+        <div class="h-4 w-3/4 rounded-lg bg-[#BBDEFB] mb-2"></div>
+        <div class="h-3 w-1/2 rounded-lg bg-[#D3E3FD]"></div>
+        <div class="w-full h-[1.5px] mt-auto bg-[#BBDEFB]"></div>
+      </div>
+    </div>
+    <div v-else class="px-6 grid grid-cols-2 gap-4">
+      <div v-for="r in ruanganList" :key="r.id" class="rounded-[20px] p-4 flex flex-col relative bg-[#F0F6FF] border border-[#D3E3FD] h-[135px]">
         <div class="flex justify-between items-start mb-3">
           <div class="w-11 h-11 rounded-[12px] flex items-center justify-center" style="background-color: #0F3B8C; color: #ffffff;">
             <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 21V5a2 2 0 012-2h10a2 2 0 012 2v16M5 21h14M15 11v2"></path></svg>
           </div>
           <!-- Menu Dot Button -->
           <div class="relative dropdown-container">
-            <button @click.stop="toggleMenu(n)" class="w-8 h-8 rounded-full flex items-center justify-center text-[#1976D2] active:bg-blue-100 transition-colors">
+            <button @click.stop="toggleMenu(r.id)" class="w-8 h-8 rounded-full flex items-center justify-center text-[#1976D2] active:bg-blue-100 transition-colors">
               <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
             </button>
             
             <!-- Dropdown Menu -->
-            <div v-if="activeMenu === n" class="absolute top-8 right-0 bg-white rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-slate-100 py-2 w-[110px] z-10 animate-zoom-in">
-              <button @click.stop="openEdit(); activeMenu = null" class="w-full px-4 py-2 text-left flex items-center gap-2.5 text-[12.5px] text-slate-700 hover:bg-slate-50 transition-colors font-semibold">
+            <div v-if="activeMenu === r.id" class="absolute top-8 right-0 bg-white rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] border border-slate-100 py-2 w-[110px] z-10 animate-zoom-in">
+              <button @click.stop="openEdit(r)" class="w-full px-4 py-2 text-left flex items-center gap-2.5 text-[12.5px] text-slate-700 hover:bg-slate-50 transition-colors font-semibold">
                 <svg style="width: 14px; height: 14px; color: #1976D2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 Edit
               </button>
-              <button @click.stop="openDelete(); activeMenu = null" class="w-full px-4 py-2 text-left flex items-center gap-2.5 text-[12.5px] text-slate-700 hover:bg-slate-50 transition-colors font-semibold">
+              <button @click.stop="openDelete(r)" class="w-full px-4 py-2 text-left flex items-center gap-2.5 text-[12.5px] text-slate-700 hover:bg-slate-50 transition-colors font-semibold">
                 <svg style="width: 14px; height: 14px; color: #DC2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 Hapus
               </button>
@@ -79,8 +92,8 @@
         </div>
         
         <div class="flex flex-col gap-1 mb-3">
-          <h3 class="font-extrabold text-[15.5px]" style="color: #0F3B8C;">Ruang F101</h3>
-          <p class="font-medium text-[11px]" style="color: #64748B;">Lantai 1 · Gedung F</p>
+          <h3 class="font-extrabold text-[15.5px]" style="color: #0F3B8C;">{{ r.nama }}</h3>
+          <p class="font-medium text-[11px]" style="color: #64748B;">Lantai {{ r.lantai }} · Gedung {{ r.gedung }}</p>
         </div>
         
         <div class="w-full h-[1.5px] mt-auto" style="background-color: #BBDEFB;"></div>
@@ -109,18 +122,19 @@
         </div>
         
         <div class="flex flex-col gap-4">
+          <p v-if="pesanRuangan" class="text-[12px] font-semibold text-red-600">{{ pesanRuangan }}</p>
           <div>
             <label class="block text-[12px] font-bold text-slate-600 mb-2">Nama Ruangan *</label>
-            <input type="text" :placeholder="showEditModal ? 'Ruang F101' : 'cth. Ruang F101'" :value="showEditModal ? 'Ruang F101' : ''" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+            <input v-model="formRuangan.nama" type="text" placeholder="cth. Ruang F101" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-[12px] font-bold text-slate-600 mb-2">Lantai *</label>
-              <input type="text" :placeholder="showEditModal ? '1' : '1'" :value="showEditModal ? '1' : ''" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+              <input v-model="formRuangan.lantai" type="number" placeholder="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
             </div>
             <div>
               <label class="block text-[12px] font-bold text-slate-600 mb-2">Gedung *</label>
-              <input type="text" :placeholder="showEditModal ? 'F' : 'F'" :value="showEditModal ? 'F' : ''" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
+              <input v-model="formRuangan.gedung" type="text" placeholder="F" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all" />
             </div>
           </div>
         </div>
@@ -129,7 +143,7 @@
           <button @click="closeModals" class="w-1/3 py-3.5 rounded-xl text-[13px] font-extrabold text-slate-600 bg-slate-100 active:scale-95 transition-transform">
             Batal
           </button>
-          <button @click="closeModals" class="flex-1 py-3.5 rounded-xl text-[13px] font-extrabold text-white bg-[#2196F3] shadow-[0_4px_12px_rgba(33,150,243,0.3)] active:scale-95 transition-transform">
+          <button @click="showEditModal ? simpanEdit() : simpanTambah()" class="flex-1 py-3.5 rounded-xl text-[13px] font-extrabold text-white bg-[#2196F3] shadow-[0_4px_12px_rgba(33,150,243,0.3)] active:scale-95 transition-transform">
             {{ showEditModal ? 'Simpan Perubahan' : 'Tambah Ruangan' }}
           </button>
         </div>
@@ -143,14 +157,16 @@
           <svg style="width: 28px; height: 28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
         </div>
         <h2 class="text-[18px] font-extrabold text-slate-800 mb-2">Hapus Ruangan?</h2>
-        <p class="text-[13px] font-medium text-slate-500 mb-7 leading-relaxed">
+        <p class="text-[13px] font-medium text-slate-500 mb-2 leading-relaxed">
           Data ruangan akan dihapus permanent.
         </p>
+        <p v-if="targetRuangan" class="text-[13px] font-bold text-slate-800 mb-5">{{ targetRuangan.nama }}</p>
+        <p v-if="pesanRuangan" class="text-[12px] font-semibold text-red-600 mb-5">{{ pesanRuangan }}</p>
         <div class="flex w-full gap-3">
           <button @click="closeModals" class="flex-1 py-3.5 rounded-xl text-[13px] font-extrabold text-slate-600 bg-slate-50 active:scale-95 transition-transform border border-slate-200">
             Batal
           </button>
-          <button @click="closeModals" class="flex-1 py-3.5 rounded-xl text-[13px] font-extrabold text-white bg-[#EF4444] shadow-[0_4px_12px_rgba(239,68,68,0.25)] active:scale-95 transition-transform">
+          <button @click="hapusRuangan" class="flex-1 py-3.5 rounded-xl text-[13px] font-extrabold text-white bg-[#EF4444] shadow-[0_4px_12px_rgba(239,68,68,0.25)] active:scale-95 transition-transform">
             Hapus
           </button>
         </div>
@@ -168,6 +184,44 @@ import BottomNav from '~/components/BottomNav.vue'
 
 const activeMenu = ref(null)
 
+// Modal states
+const showAddModal = ref(false)
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const formRuangan = ref({ nama: '', lantai: '', gedung: '' })
+const targetRuangan = ref(null)
+const pesanRuangan = ref('')
+
+// Data murni DB — tanpa contoh.
+const ruanganList = ref([])
+const seminarAktif = ref(0)
+const memuatRuangan = ref(true)
+const galatRuangan = ref('')
+
+async function muatRuangan() {
+  memuatRuangan.value = true
+  galatRuangan.value = ''
+  try {
+    const [rg, sem] = await Promise.all([
+      $fetch('/api/ruangan').catch(() => null),
+      $fetch('/api/seminar').catch(() => null),
+    ])
+    const rows = rg?.data ?? []
+    ruanganList.value = rows.filter((r) => !r.isOnline).map((r) => ({
+      id: r.id, nama: r.nama, lantai: r.lantai ?? '-', gedung: r.gedung ?? '-',
+    }))
+    // Seminar Aktif = seminar ikut penjadwalan (dijadwalkan !== false).
+    // Bukan dari schedule_slot: slot baru ada setelah generate/finalisasi.
+    const semRows = sem?.data ?? []
+    seminarAktif.value = semRows.filter((s) => s.dijadwalkan !== false).length
+    if (!rg) galatRuangan.value = 'Gagal muat data. Login dulu lalu muat ulang.'
+  } catch {
+    galatRuangan.value = 'Gagal muat data. Cek koneksi lalu muat ulang.'
+  } finally {
+    memuatRuangan.value = false
+  }
+}
+
 const toggleMenu = (n) => {
   if (activeMenu.value === n) {
     activeMenu.value = null
@@ -176,17 +230,71 @@ const toggleMenu = (n) => {
   }
 }
 
-// Modal states
-const showAddModal = ref(false)
-const showEditModal = ref(false)
-const showDeleteModal = ref(false)
-
-const openEdit = () => {
+const openEdit = (r) => {
+  targetRuangan.value = r
+  formRuangan.value = { nama: r?.nama ?? '', lantai: String(r?.lantai ?? ''), gedung: r?.gedung ?? '' }
+  pesanRuangan.value = ''
   showEditModal.value = true
+  activeMenu.value = null
 }
 
-const openDelete = () => {
+const openDelete = (r) => {
+  targetRuangan.value = r
+  pesanRuangan.value = ''
   showDeleteModal.value = true
+  activeMenu.value = null
+}
+
+function bukaTambah() {
+  formRuangan.value = { nama: '', lantai: '', gedung: '' }
+  pesanRuangan.value = ''
+  showAddModal.value = true
+}
+
+async function simpanTambah() {
+  try {
+    const body = {
+      nama: formRuangan.value.nama.trim(),
+      lantai: formRuangan.value.lantai === '' ? null : Number(formRuangan.value.lantai),
+      gedung: formRuangan.value.gedung.trim() || null,
+    }
+    if (!body.nama) { pesanRuangan.value = 'Nama ruangan wajib diisi.'; return }
+    await $fetch('/api/ruangan', { method: 'POST', body })
+    await muatRuangan()
+    closeModals()
+  } catch (e) {
+    pesanRuangan.value = e?.data?.statusMessage || e?.statusMessage || 'Gagal tambah ruangan.'
+  }
+}
+
+async function simpanEdit() {
+  try {
+    const id = targetRuangan.value?.id
+    if (!id) { closeModals(); return }
+    const body = {
+      nama: formRuangan.value.nama.trim(),
+      lantai: formRuangan.value.lantai === '' ? null : Number(formRuangan.value.lantai),
+      gedung: formRuangan.value.gedung.trim() || null,
+    }
+    if (!body.nama) { pesanRuangan.value = 'Nama ruangan wajib diisi.'; return }
+    await $fetch(`/api/ruangan/${id}`, { method: 'PATCH', body })
+    await muatRuangan()
+    closeModals()
+  } catch (e) {
+    pesanRuangan.value = e?.data?.statusMessage || e?.statusMessage || 'Gagal ubah ruangan.'
+  }
+}
+
+async function hapusRuangan() {
+  try {
+    const id = targetRuangan.value?.id
+    if (!id) { closeModals(); return }
+    await $fetch(`/api/ruangan/${id}`, { method: 'DELETE' })
+    await muatRuangan()
+    closeModals()
+  } catch (e) {
+    pesanRuangan.value = e?.data?.statusMessage || e?.statusMessage || 'Gagal hapus ruangan.'
+  }
 }
 
 const closeModals = () => {
@@ -214,6 +322,7 @@ const closeMenuListener = (e) => {
 }
 
 onMounted(() => {
+  muatRuangan()
   if (typeof document !== 'undefined') {
     document.addEventListener('click', closeMenuListener)
   }

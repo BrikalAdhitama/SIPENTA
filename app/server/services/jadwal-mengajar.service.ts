@@ -3,8 +3,8 @@ import { JadwalMengajarRepository } from "../repositories/jadwal-mengajar.reposi
 export class JadwalMengajarService {
   constructor(private readonly repository = new JadwalMengajarRepository()) {}
 
-  async list(dosenId?: string) {
-    const data = await this.repository.list(dosenId);
+  async list(dosenId?: string, batas = 200) {
+    const data = await this.repository.list(dosenId, batas);
     return { success: true, data };
   }
 

@@ -38,11 +38,11 @@ export class JadwalMengajarRepository {
     });
   }
 
-  async list(dosenId?: string): Promise<JadwalMengajarRecord[]> {
+  async list(dosenId?: string, batas = 200): Promise<JadwalMengajarRecord[]> {
     const client = this.getServiceClient();
     if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
 
-    let query = client.from("jadwal_mengajar").select("*").order("hari").order("jam_mulai");
+    let query = client.from("jadwal_mengajar").select("*").order("hari").order("jam_mulai").limit(batas);
     if (dosenId) query = query.eq("dosen_id", Number(dosenId));
 
     const { data, error } = await query;

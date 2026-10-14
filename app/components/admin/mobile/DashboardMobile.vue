@@ -38,7 +38,7 @@
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
             </div>
             <p class="text-slate-500 text-xs font-medium mb-1">Total Mahasiswa</p>
-            <p class="text-2xl font-extrabold text-slate-800 mb-2">155</p>
+            <p class="text-2xl font-extrabold text-slate-800 mb-2">{{ statMhs }}</p>
             <div class="text-[10px] text-slate-500 mt-auto">
               Semester Ganjil 2025/2026
             </div>
@@ -50,7 +50,7 @@
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
             <p class="text-slate-500 text-xs font-medium mb-1">Seminar Proposal</p>
-            <p class="text-2xl font-extrabold text-slate-800 mb-2">24</p>
+            <p class="text-2xl font-extrabold text-slate-800 mb-2">{{ statSempro }}</p>
             <div class="text-[10px] text-slate-500 mt-auto">
               Mahasiswa
             </div>
@@ -62,7 +62,7 @@
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             <p class="text-slate-500 text-xs font-medium mb-1">Seminar Hasil</p>
-            <p class="text-2xl font-extrabold text-slate-800 mb-2">15</p>
+            <p class="text-2xl font-extrabold text-slate-800 mb-2">{{ statSemhas }}</p>
             <div class="text-[10px] text-slate-500 mt-auto">
               Mahasiswa
             </div>
@@ -74,7 +74,7 @@
               <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
             </div>
             <p class="text-slate-500 text-xs font-medium mb-1">Ruangan Aktif</p>
-            <p class="text-2xl font-extrabold text-slate-800 mb-2">4 <span class="text-sm font-semibold text-slate-400">/10</span></p>
+            <p class="text-2xl font-extrabold text-slate-800 mb-2">{{ statRuangan }} <span class="text-sm font-semibold text-slate-400">/10</span></p>
             <div class="text-[10px] text-slate-500 mt-auto">
               B201-B204
             </div>
@@ -116,18 +116,18 @@
           <!-- List Items -->
           <div class="flex flex-col">
             
-            <!-- Item 1 (Sempro) -->
-            <div v-if="selectedFilter === 'Semua' || selectedFilter === 'Sempro'" class="p-5 border-b border-slate-50 flex items-start gap-4">
+            <!-- Item DB / contoh -->
+            <div v-for="(j, idx) in jadwalTampil" :key="idx" class="p-5 border-b border-slate-50 flex items-start gap-4 last:border-0">
               <!-- Avatar -->
-              <div class="w-12 h-12 shrink-0 bg-primary-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                AP
+              <div class="w-12 h-12 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-lg" :class="j.jenis === 'Sempro' ? 'bg-primary-500' : 'bg-blue-500'">
+                {{ inisial(j.nama) }}
               </div>
-              
+
               <!-- Info -->
               <div class="flex-1 pt-1">
-                <h4 class="font-bold text-slate-800 text-base leading-tight">Andi Pratama</h4>
-                <span class="inline-block mt-1 px-2 py-0.5 bg-pink-50 text-pink-500 text-xs font-semibold rounded-full">
-                  Sempro
+                <h4 class="font-bold text-slate-800 text-base leading-tight">{{ j.nama }}</h4>
+                <span class="inline-block mt-1 px-2 py-0.5 text-xs font-semibold rounded-full" :class="j.jenis === 'Sempro' ? 'bg-pink-50 text-pink-500' : 'bg-blue-50 text-blue-500'">
+                  {{ j.jenis }}
                 </span>
               </div>
 
@@ -135,47 +135,15 @@
               <div class="flex flex-col gap-1.5 text-xs font-bold text-primary-900">
                 <div class="flex items-center gap-2">
                   <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  <span>1 September 2026</span>
+                  <span>{{ j.tanggal }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                  <span>08:00 - 09:00</span>
+                  <span>{{ j.jam }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  <span>B201</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 2 (Semhas) -->
-            <div v-if="selectedFilter === 'Semua' || selectedFilter === 'Semhas'" class="p-5 flex items-start gap-4">
-              <!-- Avatar -->
-              <div class="w-12 h-12 shrink-0 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                BD
-              </div>
-              
-              <!-- Info -->
-              <div class="flex-1 pt-1">
-                <h4 class="font-bold text-slate-800 text-base leading-tight">Budi Darmawan</h4>
-                <span class="inline-block mt-1 px-2 py-0.5 bg-blue-50 text-blue-500 text-xs font-semibold rounded-full">
-                  Semhas
-                </span>
-              </div>
-
-              <!-- Details (Date, Time, Room) -->
-              <div class="flex flex-col gap-1.5 text-xs font-bold text-primary-900">
-                <div class="flex items-center gap-2">
-                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                  <span>2 September 2026</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                  <span>10:00 - 11:30</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  <span>B202</span>
+                  <span>{{ j.ruangan }}</span>
                 </div>
               </div>
             </div>
@@ -328,7 +296,64 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+
+const statMhs = ref(155)
+const statSempro = ref(24)
+const statSemhas = ref(15)
+const statRuangan = ref(4)
+
+// Contoh fallback — diganti /api/runs+slots bila tersedia.
+const CONTOH_JADWAL = [
+  { nama: 'Andi Pratama', jenis: 'Sempro', tanggal: '1 September 2026', jam: '08:00 - 09:00', ruangan: 'B201' },
+  { nama: 'Budi Darmawan', jenis: 'Semhas', tanggal: '2 September 2026', jam: '10:00 - 11:30', ruangan: 'B202' },
+]
+const jadwalTerbaru = ref([])
+const jadwalTampil = computed(() => {
+  const rows = jadwalTerbaru.value.length ? jadwalTerbaru.value : CONTOH_JADWAL
+  if (selectedFilter.value === 'Semua') return rows
+  return rows.filter((j) => j.jenis === selectedFilter.value)
+})
+function inisial(nama) {
+  return String(nama ?? '-').split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+}
+
+async function muatDashboard() {
+  try {
+    const [mhs, sem, rg, runs] = await Promise.all([
+      $fetch('/api/mahasiswa').catch(() => null),
+      $fetch('/api/seminar').catch(() => null),
+      $fetch('/api/ruangan').catch(() => null),
+      $fetch('/api/runs').catch(() => null),
+    ])
+    if (mhs?.data?.length) statMhs.value = mhs.data.length
+    if (sem?.data?.length) {
+      const rows = sem.data
+      const sp = rows.filter((r) => String(r.gelombang?.jenis ?? '').includes('proposal')).length
+      const sh = rows.length - sp
+      if (sp) statSempro.value = sp
+      if (sh) statSemhas.value = sh
+    }
+    if (rg?.data?.length) statRuangan.value = rg.data.length
+    const runId = runs?.data?.[0]?.id
+    const gj = String(runs?.data?.[0]?.gelombang?.jenis ?? '').toLowerCase()
+    if (runId) {
+      const sl = await $fetch(`/api/runs/${runId}/slots`).catch(() => null)
+      const rows = (sl?.data ?? []).slice(0, 5).map((s) => ({
+        nama: s.seminar?.mahasiswa?.nama ?? s.seminar?.judul ?? 'Seminar',
+        jenis: gj.includes('hasil') ? 'Semhas' : 'Sempro',
+        tanggal: s.tanggal ?? '-',
+        jam: `${String(s.jam_mulai ?? '').slice(0, 5)} - ${String(s.jam_selesai ?? '').slice(0, 5)}`,
+        ruangan: s.is_online ? 'Online' : (s.ruangan_kode ?? '-'),
+      }))
+      if (rows.length) jadwalTerbaru.value = rows
+    }
+  } catch {
+    // ponytail: offline / belum login → tetap contoh
+  }
+}
+
+onMounted(() => { muatDashboard() })
 
 const isDropdownOpen = ref(false)
 const selectedFilter = ref('Semua')

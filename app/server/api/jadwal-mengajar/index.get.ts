@@ -8,9 +8,10 @@ export default defineEventHandler(async (event) => {
 
     const query = getQuery(event);
     const dosenId = typeof query.dosen_id === "string" ? query.dosen_id : undefined;
+    const lim = Math.min(Math.max(Number(query.limit) || 200, 1), 500);
 
     const service = new JadwalMengajarService();
-    return await service.list(dosenId);
+    return await service.list(dosenId, lim);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Gagal mengambil jadwal mengajar.";
     throw createError({ statusCode: 500, statusMessage: message });

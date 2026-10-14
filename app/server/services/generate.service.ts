@@ -26,7 +26,12 @@ export class GenerateService {
     if (belum.length > 0) throw new Error("Ada dosen/mahasiswa yang belum melengkapi jadwal.");
 
     const roomsRaw = await this.repo.ruanganAktif(g.ruangan_aktif?.length ? g.ruangan_aktif : undefined);
-    if (!roomsRaw.length) throw new Error("Tidak ada ruangan aktif untuk gelombang ini.");
+    if (!roomsRaw.length) {
+      // ponytail: fallback ke semua aktif bila gelombang lama isi kode fiktif — hapus bila admin wajib pilih eksplisit.
+      const semua = await this.repo.ruanganAktif();
+      const daftar = semua.map((r: any) => r.kode).join(", ") || "-";
+      throw new Error(`Ruangan gelombang tak cocok DB. Aktif: ${daftar}.`);
+    }
 
     const jadwal = await this.repo.jadwalTerkait(dosenIds, mhsIds);
     const nimMap = new Map<number, string>();

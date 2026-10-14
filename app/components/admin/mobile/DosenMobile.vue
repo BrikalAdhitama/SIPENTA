@@ -52,7 +52,7 @@
               <svg style="width: 20px; height: 20px; color: #2196F3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             </div>
             <div class="flex flex-col gap-1 w-full">
-              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">30</h3>
+              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">{{ dosenList.length }}</h3>
               <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Total Dosen</p>
             </div>
           </div>
@@ -62,7 +62,7 @@
               <svg style="width: 20px; height: 20px; color: #2196F3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </div>
             <div class="flex flex-col gap-1 w-full">
-              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">27</h3>
+              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">{{ jumlahAktif }}</h3>
               <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Dosen Aktif</p>
             </div>
           </div>
@@ -72,7 +72,7 @@
               <svg style="width: 20px; height: 20px; color: #2196F3;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             </div>
             <div class="flex flex-col gap-1 w-full">
-              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">15</h3>
+              <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">{{ jumlahJadwalMengajar }}</h3>
               <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Jadwal Mengajar</p>
             </div>
           </div>
@@ -82,7 +82,7 @@
         <main class="px-6">
           <!-- Search -->
           <div class="relative mb-5 mt-2">
-            <input type="text" placeholder="Search ..." class="w-full rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none placeholder-slate-400" style="background-color: #ffffff; border: 1px solid #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.02);" />
+            <input v-model="cariDosen" type="text" placeholder="Search ..." class="w-full rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none placeholder-slate-400" style="background-color: #ffffff; border: 1px solid #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.02);" />
             <button class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center active:scale-95 transition-transform text-white shadow-sm" style="background-color: #2196F3; width: 36px; height: 36px;">
               <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </button>
@@ -192,7 +192,7 @@
             <!-- Left Side -->
             <div class="flex-1 p-4 flex justify-between items-center relative">
               <div class="flex flex-col gap-1">
-                <span class="font-extrabold text-[22px] leading-none" style="color: #0F172A;">15</span>
+                <span class="font-extrabold text-[22px] leading-none" style="color: #0F172A;">{{ dosenList.length }}</span>
                 <span class="text-[11px] font-medium mt-1" style="color: #64748B;">Total Dosen</span>
               </div>
               <div class="w-10 h-10 rounded-[14px] flex items-center justify-center" style="background-color: #F8FAFC; color: #2196F3;">
@@ -205,7 +205,7 @@
             <!-- Right Side -->
             <div class="flex-1 p-4 flex justify-between items-center pl-5">
               <div class="flex flex-col gap-1">
-                <span class="font-extrabold text-[22px] leading-none" style="color: #0F172A;">12</span>
+                <span class="font-extrabold text-[22px] leading-none" style="color: #0F172A;">{{ jumlahTerjadwal }}</span>
                 <span class="text-[11px] font-medium mt-1" style="color: #64748B;">Dosen Terjadwal</span>
               </div>
               <div class="w-10 h-10 rounded-[14px] flex items-center justify-center" style="background-color: #F8FAFC; color: #3B82F6;">
@@ -217,7 +217,7 @@
 
         <!-- Search -->
         <div class="px-6 relative mb-5 mt-2">
-          <input type="text" placeholder="Search ..." class="w-full rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none placeholder-slate-400" style="background-color: #ffffff; border: 1px solid #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.02);" />
+          <input v-model="cariDosen" type="text" placeholder="Search ..." class="w-full rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none placeholder-slate-400" style="background-color: #ffffff; border: 1px solid #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.02);" />
           <button class="absolute right-8 top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center active:scale-95 transition-transform text-white shadow-sm" style="background-color: #2196F3; width: 36px; height: 36px;">
             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </button>
@@ -269,7 +269,7 @@
             <div class="flex justify-between items-center" style="margin-left: 56px;">
               <div class="px-3 py-1.5 rounded-full flex items-center gap-1.5 font-bold text-[10px]" style="background-color: #E3F2FD; color: #1976D2;">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                3 jadwal
+                {{ dosen.jadwalCount ?? 3 }} jadwal
               </div>
               <button @click="selectedDosen = dosen; showDetailModal = true" class="px-4 py-2 rounded-xl text-[10px] font-bold border transition-colors hover:bg-slate-50 flex items-center gap-1 shadow-sm" style="border-color: #1976D2; color: #1976D2;">
                 Lihat Detail
@@ -478,7 +478,7 @@
         </div>
 
         <div class="mb-7 mt-1">
-          <span class="px-3.5 py-1.5 rounded-full text-[11px] font-bold" style="background-color: #F0F6FF; color: #1976D2;">3 jadwal mengajar</span>
+          <span class="px-3.5 py-1.5 rounded-full text-[11px] font-bold" style="background-color: #F0F6FF; color: #1976D2;">{{ daftarJadwalModal.length }} jadwal mengajar</span>
         </div>
 
         <div class="w-full h-[1px] mb-5" style="background-color: #F1F5F9;"></div>
@@ -493,7 +493,7 @@
         <!-- Schedule List -->
         <div class="flex flex-col gap-3 pb-4">
           
-          <div v-for="i in 3" :key="i" class="relative group bg-white rounded-[22px] p-5 flex flex-col gap-4 shadow-[0_8px_20px_rgba(15,23,42,0.03)] overflow-hidden transition-all active:scale-[0.98]" style="border: 1px solid #E8EEF5;">
+          <div v-for="(j, idx) in daftarJadwalModal" :key="j.id ?? idx" class="relative group bg-white rounded-[22px] p-5 flex flex-col gap-4 shadow-[0_8px_20px_rgba(15,23,42,0.03)] overflow-hidden transition-all active:scale-[0.98]" style="border: 1px solid #E8EEF5;">
             
             <!-- Accent Left Border -->
             <div class="absolute left-0 top-0 bottom-0 w-1.5" style="background-color: #2196F3;"></div>
@@ -502,13 +502,13 @@
             <div class="flex justify-between items-start pl-1">
               <div>
                 <div class="flex items-center gap-2 mb-1.5">
-                  <span class="px-2.5 py-0.5 rounded-md text-[9px] font-extrabold tracking-widest uppercase" style="background-color: #F8FAFC; color: #475569; border: 1px solid #E2E8F0;">Kelas A</span>
+                  <span class="px-2.5 py-0.5 rounded-md text-[9px] font-extrabold tracking-widest uppercase" style="background-color: #F8FAFC; color: #475569; border: 1px solid #E2E8F0;">Kelas {{ j.kelas ?? 'A' }}</span>
                   <div class="flex items-center gap-1.5 text-[10px] font-bold" style="color: #2196F3;">
                     <div class="w-1.5 h-1.5 rounded-full bg-current"></div>
-                    Senin
+                    {{ j.hari ?? 'Senin' }}
                   </div>
                 </div>
-                <h4 class="font-extrabold text-[15px] leading-tight" style="color: #0F172A;">Pemrograman Web</h4>
+                <h4 class="font-extrabold text-[15px] leading-tight" style="color: #0F172A;">{{ j.mataKuliah ?? j.mata_kuliah ?? 'Pemrograman Web' }}</h4>
               </div>
               
               <!-- Action Buttons -->
@@ -527,14 +527,14 @@
               <div class="flex items-center gap-3 py-2.5 px-3.5 rounded-[12px]" style="background-color: #F8FAFC; border: 1px dashed #E2E8F0;">
                 <div class="flex items-center gap-1.5" style="color: #475569;">
                   <svg style="width: 14px; height: 14px; color: #94A3B8;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                  <span class="text-[11px] font-bold">07:30 - 10:00</span>
+                  <span class="text-[11px] font-bold">{{ String(j.jamMulai ?? j.jam_mulai ?? '07:30').slice(0, 5) }} - {{ String(j.jamSelesai ?? j.jam_selesai ?? '10:00').slice(0, 5) }}</span>
                 </div>
                 
                 <div class="w-[1px] h-3.5" style="background-color: #CBD5E1;"></div>
                 
                 <div class="flex items-center gap-1.5" style="color: #475569;">
                   <svg style="width: 14px; height: 14px; color: #94A3B8;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  <span class="text-[11px] font-bold">Ruang F104</span>
+                  <span class="text-[11px] font-bold">{{ j.ruangan ?? 'Ruang F104' }}</span>
                 </div>
               </div>
             </div>
@@ -707,7 +707,9 @@ const activeFilter = ref('Semua')
 
 // Intercept Android hardware back button
 let backHandler = null
-onMounted(() => {
+onMounted(async () => {
+  await muatJadwalMengajar()
+  await muatDosen()
   backHandler = App.addListener('backButton', () => {
     if (selectedDosen.value) {
       selectedDosen.value = null
@@ -760,42 +762,129 @@ onUnmounted(() => {
   document.body.style.overflow = ''
 })
 
-// Dummy Data exactly matching the mockup
-const dosenList = ref([
-  { 
-    id: 1, 
-    name: 'Dr. Sari Dewi S.Kom', 
-    initials: 'DS', 
-    nip: '19750301200501001', 
-    email: 'sari.dewi@univ.ac.id', 
-    keahlian: 'Kecerdasan Buatan', 
-    status: 'Aktif' 
+// Dummy fallback — diganti data /api/dosen bila tersedia.
+const CONTOH_DOSEN = [
+  {
+    id: 1,
+    name: 'Dr. Sari Dewi S.Kom',
+    initials: 'DS',
+    nip: '19750301200501001',
+    email: 'sari.dewi@univ.ac.id',
+    keahlian: 'Kecerdasan Buatan',
+    status: 'Aktif',
+    jadwalCount: 3
   },
-  { 
-    id: 2, 
-    name: 'Dr. Ahmad Fauzi S.Kom., M.Kom', 
-    initials: 'DA', 
-    nip: '19750301200501001', 
-    email: 'sari.dewi@univ.ac.id', 
-    keahlian: 'Jaringan Komputer', 
-    status: 'Aktif' 
+  {
+    id: 2,
+    name: 'Dr. Ahmad Fauzi S.Kom., M.Kom',
+    initials: 'DA',
+    nip: '19750301200501001',
+    email: 'sari.dewi@univ.ac.id',
+    keahlian: 'Jaringan Komputer',
+    status: 'Aktif',
+    jadwalCount: 3
   },
-  { 
-    id: 3, 
-    name: 'Dr. Ahmad Fauzi S.Kom., M.Kom', 
-    initials: 'DA', 
-    nip: '19750301200501001', 
-    email: 'sari.dewi@univ.ac.id', 
-    keahlian: 'Jaringan Komputer', 
-    status: 'Aktif' 
+  {
+    id: 3,
+    name: 'Dr. Ahmad Fauzi S.Kom., M.Kom',
+    initials: 'DA',
+    nip: '19750301200501001',
+    email: 'sari.dewi@univ.ac.id',
+    keahlian: 'Jaringan Komputer',
+    status: 'Aktif',
+    jadwalCount: 3
   }
-])
+]
+
+// Dummy Data exactly matching the mockup
+const dosenList = ref(CONTOH_DOSEN.map((d) => ({ ...d })))
+const jadwalMengajarList = ref([])
+const dosenAsli = ref(false)
+const cariDosen = ref('')
+
+function inisial(nama) {
+  return String(nama ?? '').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase() || '-'
+}
+
+function kapitalStatus(s) {
+  return String(s ?? '').toLowerCase() === 'nonaktif' ? 'Tidak Aktif' : 'Aktif'
+}
+
+async function muatDosen() {
+  try {
+    const res = await $fetch('/api/dosen')
+    const rows = res?.data ?? []
+    if (!rows.length) return // ponytail: tetap contoh bila kosong
+    const jadwalMap = new Map((jadwalMengajarList.value ?? []).map((j) => [String(j.dosenId ?? j.dosen_id ?? ''), j]))
+    // hitung jumlah jadwal per dosen dari list jadwal-mengajar
+    const hitung = {}
+    for (const j of jadwalMengajarList.value ?? []) {
+      const k = String(j.dosenId ?? j.dosen_id ?? '')
+      if (k) hitung[k] = (hitung[k] ?? 0) + 1
+    }
+    dosenList.value = rows.map((r) => {
+      const key = String(r.id ?? '')
+      return {
+        id: r.id,
+        name: r.nama,
+        initials: inisial(r.nama),
+        nip: r.nidn ?? r.nip ?? '-',
+        email: r.email || '-',
+        keahlian: r.jabatan || '-',
+        status: kapitalStatus(r.status),
+        jadwalCount: hitung[key] ?? hitung[String(r.nidn ?? '')] ?? 0,
+      }
+    })
+    dosenAsli.value = true
+  } catch {
+    // ponytail: offline / belum login → tetap contoh
+  }
+}
+
+async function muatJadwalMengajar() {
+  try {
+    const res = await $fetch('/api/jadwal-mengajar').catch(() => null)
+    const rows = res?.data ?? []
+    if (!rows.length) return // ponytail: tetap contoh bila kosong
+    jadwalMengajarList.value = rows
+  } catch {
+    // ponytail: offline / belum login → tetap contoh
+  }
+}
+
+const jumlahAktif = computed(() => dosenList.value.filter((d) => d.status === 'Aktif').length)
+// Ringkasan ikut DB bila ada; fallback mock 15/12 agar desain tidak kosong.
+const jumlahJadwalMengajar = computed(() => jadwalMengajarList.value.length || 15)
+const jumlahTerjadwal = computed(() => {
+  if (!jadwalMengajarList.value.length) return 12
+  return new Set(jadwalMengajarList.value.map((j) => String(j.dosenId ?? j.dosen_id ?? ''))).size
+})
+// Isi modal detail: jadwal dosen terpilih; fallback 3 baris contoh bila DB kosong.
+// ponytail: tanpa fetch per-dosen, saring list yang sudah dimuat.
+const daftarJadwalModal = computed(() => {
+  const id = String(selectedDosen.value?.id ?? '')
+  const rows = (jadwalMengajarList.value ?? []).filter((j) => !id || String(j.dosenId ?? j.dosen_id ?? '') === id)
+  if (rows.length) return rows
+  return [
+    { mataKuliah: 'Pemrograman Web', kelas: 'A', hari: 'Senin', jamMulai: '07:30', jamSelesai: '10:00', ruangan: 'Ruang F104' },
+    { mataKuliah: 'Basis Data', kelas: 'B', hari: 'Selasa', jamMulai: '10:00', jamSelesai: '12:30', ruangan: 'Ruang F102' },
+    { mataKuliah: 'Kecerdasan Buatan', kelas: 'A', hari: 'Rabu', jamMulai: '13:00', jamSelesai: '15:30', ruangan: 'Ruang F201' },
+  ]
+})
 
 const filteredDosen = computed(() => {
-  if (activeFilter.value === 'Semua') {
-    return dosenList.value
+  const q = cariDosen.value.trim().toLowerCase()
+  let rows = dosenList.value
+  if (activeTab.value === 'Jadwal Dosen') {
+    if (activeJadwalFilter.value === 'Ada Jadwal') rows = rows.filter((d) => (d.jadwalCount ?? 3) > 0)
+    if (activeJadwalFilter.value === 'Jadwal Kosong') rows = rows.filter((d) => (d.jadwalCount ?? 3) === 0)
+  } else if (activeFilter.value !== 'Semua') {
+    rows = rows.filter(d => d.status === activeFilter.value)
   }
-  return dosenList.value.filter(d => d.status === activeFilter.value)
+  if (q) {
+    rows = rows.filter((d) => `${d.name} ${d.nip} ${d.email}`.toLowerCase().includes(q))
+  }
+  return rows
 })
 </script>
 

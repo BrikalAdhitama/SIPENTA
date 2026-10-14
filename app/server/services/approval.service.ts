@@ -5,12 +5,12 @@ const KEPUTUSAN = ["konfirmasi", "tolak", "menunggu"] as const;
 export class ApprovalService {
   constructor(private readonly repo = new ApprovalRepository()) {}
 
-  async runs(gelombangId?: number) {
-    return { success: true, data: await this.repo.listRuns(gelombangId) };
+  async runs(gelombangId?: number, batas = 20) {
+    return { success: true, data: await this.repo.listRuns(gelombangId, batas) };
   }
 
-  async slots(runId: number) {
-    return { success: true, data: await this.repo.listSlots(runId) };
+  async slots(runId: number, batas = 100) {
+    return { success: true, data: await this.repo.listSlots(runId, batas) };
   }
 
   async milikSaya(caller: { role: string; dosenId: number | null; mahasiswaId: number | null }) {

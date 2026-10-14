@@ -16,21 +16,38 @@ export class ApprovalRepository {
     });
   }
 
-  async listRuns(gelombangId?: number) {
-    let q = this.serviceClient().from("schedule_run").select("*").order("created_at", { ascending: false }).limit(20);
+  async listRuns(gelombangId?: number, batas = 20) {
+    let q = this.serviceClient().from("schedule_run")
+      .select("*, gelombang(nama,jenis)")
+      .order("created_at", { ascending: false }).limit(batas);
     if (gelombangId) q = q.eq("gelombang_id", gelombangId);
     const { data, error } = await q;
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const runs = data ?? [];
+    // hitung slot per run; schedule_run tak punya kolom slot_tersimpan.
+    const ids = runs.map((r: any) => r.id);
+    let hitung: Record<number, number> = {};
+    let tgls: Record<number, string[]> = {};
+    if (ids.length) {
+      const { data: slots } = await this.serviceClient()
+        .from("schedule_slot").select("schedule_run_id,tanggal").in("schedule_run_id", ids);
+      for (const s of (slots ?? [])) {
+        const k = (s as any).schedule_run_id;
+        hitung[k] = (hitung[k] ?? 0) + 1;
+        if ((s as any).tanggal) (tgls[k] ??= []).push(String((s as any).tanggal));
+      }
+    }
+    return runs.map((r: any) => ({ ...r, slot_tersimpan: hitung[r.id] ?? 0, slot_tanggal: tgls[r.id] ?? [] }));
   }
 
-  async listSlots(runId: number) {
+  async listSlots(runId: number, batas = 100) {
     const { data, error } = await this.serviceClient()
       .from("schedule_slot")
       .select("*, seminar(id,judul,mahasiswa(nim,nama)), approval(*, dosen(nama))")
       .eq("schedule_run_id", runId)
       .order("tanggal")
-      .order("jam_mulai");
+      .order("jam_mulai")
+      .limit(batas);
     if (error) throw new Error(error.message);
     return data ?? [];
   }

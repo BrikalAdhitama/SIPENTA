@@ -61,14 +61,14 @@ export class DosenRepository {
     });
   }
 
-  async list(): Promise<DosenRecord[]> {
+  async list(batas = 100): Promise<DosenRecord[]> {
     const client = this.getServiceClient();
 
     if (!client) {
       return fallbackDosen;
     }
 
-    const { data, error } = await client.from("dosen").select("*").order("nama");
+    const { data, error } = await client.from("dosen").select("*").order("nama").limit(batas);
 
     if (error) {
       if (isMissingTableError(error)) {
@@ -127,5 +127,13 @@ export class DosenRepository {
       status: data.status === "nonaktif" ? "nonaktif" : "aktif",
       jabatan: data.bidang ?? "Dosen",
     };
+  }
+
+  async create(row: { nip: string; nama: string; bidang: string }) {
+    const client = this.getServiceClient();
+    if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
+    const { data, error } = await client.from("dosen").insert(row).select("id").single();
+    if (error) throw new Error(error.message);
+    return data;
   }
 }

@@ -2,9 +2,12 @@ import { createError } from "h3";
 
 import { DosenService } from "../../services/dosen.service";
 import { validateDosenId } from "../../validators/dosen.validator";
+import { requireRole } from "../../utils/auth";
 
 export default defineEventHandler(async (event) => {
   try {
+    await requireRole(event, ["admin", "dosen", "mahasiswa"]);
+
     const id = getRouterParam(event, "id");
     const validation = validateDosenId(id);
 

@@ -2,256 +2,146 @@
   <div class="min-h-screen font-sans pb-24 relative" style="background-color: #ffffff;">
     
     <!-- Header -->
-    <div class="mobile-safe-top px-6 pb-5 flex justify-between items-start">
-      <div class="flex flex-col gap-1.5 w-full">
-        <h1 class="text-[26px] font-extrabold tracking-tight leading-none" style="color: #0F172A;">Data Mahasiswa</h1>
-        <p class="text-[12px] font-medium leading-snug" style="color: #64748B; max-width: 85%;">Kelola data mahasiswa dan informasi seminar.</p>
+    <div class="px-6 pt-[calc(env(safe-area-inset-top)+1rem)] pb-5 flex justify-between items-start gap-3">
+      <div class="flex flex-col gap-1">
+        <h1 class="text-[20px] font-extrabold tracking-tight leading-none text-ink">Data Mahasiswa</h1>
+        <p class="text-[11px] font-medium leading-snug text-muted mt-1">Kelola data mahasiswa dan informasi seminar tugas akhir.</p>
       </div>
-      <button @click="showAddModal = true" class="w-11 h-11 rounded-[16px] flex items-center justify-center shrink-0 transition-transform active:scale-95 shadow-sm" style="background-color: #0F3B8C; color: #ffffff;">
-        <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+      <button @click="showAddModal = true" class="shrink-0 min-h-[44px] px-4 rounded-xl flex items-center gap-1.5 text-[13px] font-bold bg-primary-900 text-white active:scale-95 transition-transform">
+        <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+        Tambah
       </button>
     </div>
 
     <!-- Summary Cards Grid -->
-    <div class="grid grid-cols-2 gap-3 px-6 mb-7">
-      
-      <!-- Card 1 -->
-      <div class="rounded-[20px] p-4 flex flex-col items-start justify-center" style="background-color: #F0F6FF; height: 116px; width: 100%;">
-        <div class="rounded-full bg-white flex items-center justify-center mb-3 shadow-sm shrink-0" style="width: 32px; height: 32px;">
-          <svg style="width: 18px; height: 18px; color: #1976D2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+    <div class="grid grid-cols-2 gap-3 px-4 mb-5">
+      <div class="rounded-2xl p-3 flex items-center gap-2.5 bg-primary-100">
+        <div class="rounded-full bg-surface flex items-center justify-center shrink-0 w-10 h-10">
+          <svg class="w-5 h-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         </div>
-        <div class="flex flex-col gap-1 w-full">
-          <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">50</h3>
-          <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Total Mahasiswa</p>
+        <div class="flex flex-col">
+          <h3 class="font-extrabold leading-none text-primary-900 text-[20px]">{{ mahasiswaList.length }}</h3>
+          <p class="font-medium text-muted mt-1 text-[11px] leading-tight">Total Mahasiswa</p>
         </div>
       </div>
-      
-      <!-- Card 2 -->
-      <div class="rounded-[20px] p-4 flex flex-col items-start justify-center" style="background-color: #E8F4FE; height: 116px; width: 100%;">
-        <div class="rounded-full bg-white flex items-center justify-center mb-3 shadow-sm shrink-0" style="width: 32px; height: 32px;">
-          <svg style="width: 18px; height: 18px; color: #1976D2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+      <div class="rounded-2xl p-3 flex items-center gap-2.5 bg-primary-100">
+        <div class="rounded-full bg-surface flex items-center justify-center shrink-0 w-10 h-10">
+          <svg class="w-5 h-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         </div>
-        <div class="flex flex-col gap-1 w-full">
-          <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">25</h3>
-          <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Sem. Proposal</p>
+        <div class="flex flex-col">
+          <h3 class="font-extrabold leading-none text-primary-900 text-[20px]">{{ jumlahSempro }}</h3>
+          <p class="font-medium text-muted mt-1 text-[11px] leading-tight">Seminar Proposal</p>
         </div>
       </div>
-
-      <!-- Card 3 -->
-      <div class="rounded-[20px] p-4 flex flex-col items-start justify-center" style="background-color: #E8F4FE; height: 116px; width: 100%;">
-        <div class="rounded-full bg-white flex items-center justify-center mb-3 shadow-sm shrink-0" style="width: 32px; height: 32px;">
-          <svg style="width: 18px; height: 18px; color: #1976D2;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+      <div class="rounded-2xl p-3 flex items-center gap-2.5 bg-primary-100">
+        <div class="rounded-full bg-surface flex items-center justify-center shrink-0 w-10 h-10">
+          <svg class="w-5 h-5 text-primary-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         </div>
-        <div class="flex flex-col gap-1 w-full">
-          <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">25</h3>
-          <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Seminar Hasil</p>
+        <div class="flex flex-col">
+          <h3 class="font-extrabold leading-none text-primary-900 text-[20px]">{{ jumlahSemhas }}</h3>
+          <p class="font-medium text-muted mt-1 text-[11px] leading-tight">Seminar Hasil</p>
         </div>
       </div>
-      
-      <!-- Card 4 (Red) -->
-      <div class="rounded-[20px] p-4 flex flex-col items-start justify-center" style="background-color: #FEF2F2; height: 116px; width: 100%;">
-        <div class="rounded-full bg-white flex items-center justify-center mb-3 shadow-sm shrink-0" style="width: 32px; height: 32px;">
-          <svg style="width: 18px; height: 18px; color: #DC2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+      <div class="rounded-2xl p-3 flex items-center gap-2.5 bg-primary-100">
+        <div class="rounded-full bg-surface flex items-center justify-center shrink-0 w-10 h-10">
+          <svg class="w-5 h-5 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
         </div>
-        <div class="flex flex-col gap-1 w-full">
-          <h3 class="font-medium leading-none" style="color: #1E293B; font-size: 22px;">3</h3>
-          <p class="font-medium whitespace-nowrap" style="color: #64748B; font-size: 10px;">Belum Lengkap</p>
+        <div class="flex flex-col">
+          <h3 class="font-extrabold leading-none text-danger text-[20px]">{{ jumlahBelumLengkap }}</h3>
+          <p class="font-medium text-muted mt-1 text-[11px] leading-tight">Belum Lengkap</p>
         </div>
       </div>
-
     </div>
 
     <!-- Search Bar -->
-    <div class="px-6 mb-6">
+    <div class="px-4 mb-3">
       <div class="relative">
-        <input type="text" placeholder="Search ..." class="w-full rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none placeholder-slate-400" style="background-color: #ffffff; border: 1px solid #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.02);" />
-        <button class="absolute right-2 top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center active:scale-95 transition-transform text-white shadow-sm" style="background-color: #2196F3; width: 36px; height: 36px;">
-          <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <input v-model="cariMhs" type="text" placeholder="Search ..." aria-label="Cari mahasiswa" class="w-full rounded-full py-3.5 pl-5 pr-14 text-[14px] font-medium focus:outline-none bg-surface border border-border text-ink placeholder:text-muted focus:border-primary-900 shadow-card" />
+        <button aria-label="Cari" class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center active:scale-95 transition-transform text-white bg-primary-500 w-10 h-10 min-w-[44px] min-h-[44px]">
+          <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </button>
       </div>
     </div>
 
     <!-- Filters Row -->
-    <div class="px-6 flex items-center gap-2.5 mb-8">
+    <div class="px-4 flex items-center gap-2 mb-5">
       <div class="relative shrink-0">
-        <button @click="showJenisDropdown = !showJenisDropdown" class="px-3.5 py-2.5 rounded-[14px] text-[12px] font-extrabold flex items-center gap-1.5 border transition-all active:scale-95" style="background-color: #ffffff; border-color: #E2E8F0; color: #334155; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+        <button @click="showJenisDropdown = !showJenisDropdown" class="min-h-[44px] px-5 py-2 rounded-full text-[13px] font-bold flex items-center gap-1.5 bg-surface border border-border text-ink shadow-card active:scale-95 transition-all">
           {{ activeJenisFilter }}
-          <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="showJenisDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+          <svg class="w-4 h-4 transition-transform duration-200" :class="showJenisDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
         </button>
-        <div v-if="showJenisDropdown" class="absolute z-20 w-32 mt-2 bg-white border border-slate-100 rounded-[14px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] py-1.5 animate-zoom-in origin-top">
-          <button @click="activeJenisFilter = 'Jenis'; showJenisDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Jenis</button>
-          <button @click="activeJenisFilter = 'Sempro'; showJenisDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Sempro</button>
-          <button @click="activeJenisFilter = 'Semhas'; showJenisDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Semhas</button>
+        <div v-if="showJenisDropdown" class="absolute z-20 w-32 mt-2 bg-surface border border-border rounded-xl shadow-card py-1.5 animate-zoom-in origin-top">
+          <button @click="activeJenisFilter = 'Jenis'; showJenisDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Jenis</button>
+          <button @click="activeJenisFilter = 'Sempro'; showJenisDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Sempro</button>
+          <button @click="activeJenisFilter = 'Semhas'; showJenisDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Semhas</button>
         </div>
       </div>
 
       <div class="relative shrink-0">
-        <button @click="showStatusDropdown = !showStatusDropdown" class="px-3.5 py-2.5 rounded-[14px] text-[12px] font-extrabold flex items-center gap-1.5 border transition-all active:scale-95" style="background-color: #ffffff; border-color: #E2E8F0; color: #334155; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+        <button @click="showStatusDropdown = !showStatusDropdown" class="min-h-[44px] px-5 py-2 rounded-full text-[13px] font-bold flex items-center gap-1.5 bg-surface border border-border text-ink shadow-card active:scale-95 transition-all">
           {{ activeStatusFilter }}
-          <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="showStatusDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+          <svg class="w-4 h-4 transition-transform duration-200" :class="showStatusDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
         </button>
-        <div v-if="showStatusDropdown" class="absolute z-20 w-36 mt-2 bg-white border border-slate-100 rounded-[14px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] py-1.5 animate-zoom-in origin-top">
-          <button @click="activeStatusFilter = 'Status'; showStatusDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Status</button>
-          <button @click="activeStatusFilter = 'Valid'; showStatusDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Valid</button>
-          <button @click="activeStatusFilter = 'Belum Lengkap'; showStatusDropdown = false" class="w-full text-left px-4 py-2 text-xs font-bold hover:bg-slate-50 transition-colors" style="color: #0F172A;">Belum Lengkap</button>
+        <div v-if="showStatusDropdown" class="absolute z-20 w-36 mt-2 bg-surface border border-border rounded-xl shadow-card py-1.5 animate-zoom-in origin-top">
+          <button @click="activeStatusFilter = 'Status'; showStatusDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Status</button>
+          <button @click="activeStatusFilter = 'Valid'; showStatusDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Valid</button>
+          <button @click="activeStatusFilter = 'Belum Lengkap'; showStatusDropdown = false" class="w-full text-left px-4 py-2.5 min-h-[44px] text-xs font-bold hover:bg-slate-50 transition-colors text-ink">Belum Lengkap</button>
         </div>
       </div>
-      
-      <button @click="showImportModal = true" class="ml-auto shrink-0 px-4 py-2.5 rounded-[14px] text-[12px] font-extrabold flex items-center gap-1.5 transition-transform active:scale-95" style="background-color: #F0F6FF; color: #1976D2;">
-        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-        Import
+
+      <button @click="showImportModal = true" class="ml-auto shrink-0 min-h-[44px] px-4 rounded-full text-[12px] font-bold flex items-center border border-primary-900 text-primary-900 bg-surface active:scale-95 transition-transform">
+        Import Data
       </button>
     </div>
 
-    <!-- Mahasiswa List -->
-    <div class="px-6 flex flex-col gap-4 pb-6">
-      
-
-
-      <!-- Card 1 -->
-      <div class="bg-white rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col gap-4 relative overflow-hidden transition-all active:scale-[0.98]">
-        
-        <!-- Header / Profile -->
-        <div class="flex items-start justify-between">
-          <div class="flex items-center gap-3.5">
-            <!-- Initials Avatar -->
-            <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-sm font-extrabold shadow-sm shrink-0" style="background: linear-gradient(135deg, #1976D2 0%, #0F3B8C 100%); color: #ffffff;">
-              AP
+    <!-- Mahasiswa List — satu template untuk contoh & DB -->
+    <div class="px-4 flex flex-col gap-3 pb-6">
+        <div v-for="m in filteredMahasiswa" :key="m.id" class="bg-surface rounded-xl p-4 border border-border shadow-card flex flex-col gap-3 active:scale-[0.98] transition-all">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex flex-col min-w-0">
+              <h3 class="font-bold text-[14px] leading-tight text-ink truncate">{{ m.nama }}</h3>
+              <span class="text-[11px] font-medium mt-1 text-muted">{{ m.nim }}</span>
             </div>
-            <div class="flex flex-col">
-              <h3 class="font-extrabold text-[15px] leading-tight" style="color: #0F172A;">Andi Pratama</h3>
-              <span class="text-[12px] font-semibold mt-0.5" style="color: #64748B;">11231099</span>
+            <div class="flex gap-1.5 shrink-0">
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold"
+                :class="m.jenis === 'Semhas' ? 'bg-orange-50 text-orange-500' : 'bg-semhas-soft text-semhas'">{{ m.jenis }}</span>
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold"
+                :class="m.status === 'Valid' ? 'bg-emerald-50 text-success' : 'bg-orange-50 text-orange-500'">{{ m.status }}</span>
             </div>
           </div>
-          
-          <!-- Action Menu -->
-          <div class="flex gap-1.5 shrink-0">
-             <button @click="showEditModal = true" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95" style="background-color: #F8FAFC; color: #64748B;">
-                <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-             </button>
-             <button @click="showDeleteModal = true" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95" style="background-color: #FEF2F2; color: #EF4444;">
-                <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-             </button>
-          </div>
-        </div>
-
-        <!-- Badges Row -->
-        <div class="flex gap-2 items-center">
-          <span class="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border" style="background-color: #F0F6FF; color: #1976D2; border-color: #D3E3FD;">Sempro</span>
-          <span class="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border" style="background-color: #ECFDF5; color: #10B981; border-color: #D1FAE5;">Valid</span>
-        </div>
-
-        <!-- Inner Info Box -->
-        <div class="rounded-[16px] p-4 flex flex-col gap-3.5" style="background-color: #F8FAFC; border: 1px dashed #E2E8F0;">
-          
-          <!-- Pembimbing Group -->
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest mb-2 block" style="color: #94A3B8;">Pembimbing</span>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #3B82F6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Sari Dewi</span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #3B82F6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Ahmad Fauzi</span>
-              </div>
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-[11px] font-medium text-muted">Pembimbing 1</span>
+              <span class="text-[11px] font-semibold text-ink text-right truncate max-w-[60%]">{{ m.pem1 }}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-[11px] font-medium text-muted">Pembimbing 2</span>
+              <span class="text-[11px] font-semibold text-ink text-right truncate max-w-[60%]">{{ m.pem2 }}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-[11px] font-medium text-muted">Penguji 1</span>
+              <span class="text-[11px] font-semibold text-ink text-right truncate max-w-[60%]">{{ m.peng1 }}</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-[11px] font-medium text-muted">Penguji 2</span>
+              <span class="text-[11px] font-semibold text-ink text-right truncate max-w-[60%]">{{ m.peng2 }}</span>
             </div>
           </div>
-
-          <!-- Separator -->
-          <div class="w-full h-[1px]" style="background-color: #E2E8F0;"></div>
-
-          <!-- Penguji Group -->
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest mb-2 block" style="color: #94A3B8;">Penguji</span>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #8B5CF6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Prof. Budi Santoso</span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #8B5CF6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Dewi Lestari</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="bg-white rounded-[24px] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col gap-4 relative overflow-hidden transition-all active:scale-[0.98]">
-        
-        <!-- Header / Profile -->
-        <div class="flex items-start justify-between">
-          <div class="flex items-center gap-3.5">
-            <!-- Initials Avatar -->
-            <div class="w-12 h-12 rounded-[16px] flex items-center justify-center text-sm font-extrabold shadow-sm shrink-0" style="background: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%); color: #ffffff;">
-              RM
-            </div>
-            <div class="flex flex-col">
-              <h3 class="font-extrabold text-[15px] leading-tight" style="color: #0F172A;">Rina Melati</h3>
-              <span class="text-[12px] font-semibold mt-0.5" style="color: #64748B;">11231102</span>
-            </div>
-          </div>
-          
-          <!-- Action Menu -->
-          <div class="flex gap-1.5 shrink-0">
-             <button @click="showEditModal = true" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95" style="background-color: #F8FAFC; color: #64748B;">
-                <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-             </button>
-             <button @click="showDeleteModal = true" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors active:scale-95" style="background-color: #FEF2F2; color: #EF4444;">
-                <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-             </button>
+          <div class="flex gap-2">
+            <button @click="showEditModal = true" class="flex-1 min-h-[44px] rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 bg-primary-100 text-primary-900 active:scale-95 transition-transform">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              Edit
+            </button>
+            <button @click="showDeleteModal = true" class="flex-1 min-h-[44px] rounded-xl text-[13px] font-bold flex items-center justify-center gap-1.5 bg-red-50 text-red-500 active:scale-95 transition-transform">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Hapus
+            </button>
           </div>
         </div>
 
-        <!-- Badges Row -->
-        <div class="flex gap-2 items-center">
-          <span class="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border" style="background-color: #FFF7ED; color: #EA580C; border-color: #FFEDD5;">Semhas</span>
-          <span class="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border" style="background-color: #FEF2F2; color: #EF4444; border-color: #FEE2E2;">Revisi</span>
+        <div v-if="!filteredMahasiswa.length" class="text-center py-10 text-muted text-[13px] font-medium">
+          Belum ada mahasiswa{{ cariMhs ? ` untuk “${cariMhs}”` : '' }}.
         </div>
-
-        <!-- Inner Info Box -->
-        <div class="rounded-[16px] p-4 flex flex-col gap-3.5" style="background-color: #F8FAFC; border: 1px dashed #E2E8F0;">
-          
-          <!-- Pembimbing Group -->
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest mb-2 block" style="color: #94A3B8;">Pembimbing</span>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #3B82F6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Iwan Setiawan</span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #3B82F6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Ratna Sari</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Separator -->
-          <div class="w-full h-[1px]" style="background-color: #E2E8F0;"></div>
-
-          <!-- Penguji Group -->
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-widest mb-2 block" style="color: #94A3B8;">Penguji</span>
-            <div class="flex flex-col gap-2">
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #8B5CF6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Prof. Anton Wibowo</span>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <div class="w-1.5 h-1.5 rounded-full" style="background-color: #8B5CF6;"></div>
-                <span class="text-[12px] font-bold" style="color: #334155;">Dr. Fitri Ani</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
     </div>
 
 
@@ -512,14 +402,68 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import BottomNav from '~/components/BottomNav.vue'
 
+const cariMhs = ref('')
 const showJenisDropdown = ref(false)
 const activeJenisFilter = ref('Jenis')
 
 const showStatusDropdown = ref(false)
 const activeStatusFilter = ref('Status')
+
+// Contoh fallback — diganti /api/mahasiswa bila tersedia.
+const CONTOH_MHS = [
+  { id: 'mhs-001', nama: 'Andi Pratama', nim: '11231099', initials: 'AP', jenis: 'Sempro', status: 'Valid', pem1: 'Dr. Sari Dewi', pem2: 'Dr. Ahmad Fauzi', peng1: 'Prof. Budi Santoso', peng2: 'Dr. Dewi Lestari', grad: 'linear-gradient(135deg, #1976D2 0%, #0F3B8C 100%)' },
+  { id: 'mhs-002', nama: 'Rina Melati', nim: '11231102', initials: 'RM', jenis: 'Semhas', status: 'Revisi', pem1: 'Dr. Iwan Setiawan', pem2: 'Dr. Ratna Sari', peng1: 'Prof. Anton Wibowo', peng2: 'Dr. Fitri Ani', grad: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)' },
+]
+const mahasiswaList = ref(CONTOH_MHS.map((m) => ({ ...m })))
+const mahasiswaAsli = ref(false)
+
+function inisialMhs(nama) {
+  return String(nama ?? '').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase() || '-'
+}
+
+async function muatMahasiswa() {
+  try {
+    const res = await $fetch('/api/seminar')
+    const rows = res?.data ?? []
+    if (!rows.length) return // ponytail: tetap contoh bila kosong
+    mahasiswaList.value = rows.map((r) => {
+      const jenisDb = String(r.gelombang?.jenis ?? r.jenis ?? '')
+      return {
+        id: r.id, nama: r.mahasiswa?.nama ?? '-', nim: r.mahasiswa?.nim ?? '-',
+        initials: inisialMhs(r.mahasiswa?.nama),
+        jenis: jenisDb.includes('hasil') ? 'Semhas' : 'Sempro',
+        status: r.validasi === 'valid' ? 'Valid' : (r.validasi === 'duplikat' ? 'Duplikat' : 'Revisi'),
+        pem1: r.pembimbing_utama_nama ?? '-', pem2: r.pembimbing_pendamping_nama ?? '-',
+        peng1: r.penguji1_nama ?? '-', peng2: r.penguji2_nama ?? '-',
+        grad: 'linear-gradient(135deg, #1976D2 0%, #0F3B8C 100%)',
+      }
+    })
+    mahasiswaAsli.value = true
+  } catch {
+    // ponytail: offline / belum login → tetap contoh
+  }
+}
+
+onMounted(() => {
+  muatMahasiswa()
+})
+
+const filteredMahasiswa = computed(() => {
+  const q = cariMhs.value.trim().toLowerCase()
+  let rows = mahasiswaList.value
+  if (activeJenisFilter.value !== 'Jenis') rows = rows.filter((m) => m.jenis === activeJenisFilter.value)
+  if (activeStatusFilter.value !== 'Status') rows = rows.filter((m) => m.status === activeStatusFilter.value)
+  if (q) rows = rows.filter((m) => `${m.nama} ${m.nim}`.toLowerCase().includes(q))
+  return rows
+})
+
+// Ringkasan ikut data asli bila ada; contoh fallback tetap tampil bila DB kosong.
+const jumlahSempro = computed(() => mahasiswaList.value.filter((m) => m.jenis === 'Sempro').length)
+const jumlahSemhas = computed(() => mahasiswaList.value.filter((m) => m.jenis === 'Semhas').length)
+const jumlahBelumLengkap = computed(() => mahasiswaList.value.filter((m) => m.status !== 'Valid').length)
 
 // Modal states
 const showAddModal = ref(false)

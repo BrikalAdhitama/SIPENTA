@@ -110,13 +110,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-// Data Notifikasi (Hanya Sempro dan Semhas sesuai instruksi)
-const notifications = ref([
+// Contoh fallback — diganti /api/notifikasi bila login.
+const CONTOH_NOTIF = [
   {
     id: 1,
     title: 'Jadwal Sempro Disetujui',
@@ -169,7 +169,31 @@ const notifications = ref([
     dateGroup: 'Kemarin',
     isRead: true
   }
-])
+]
+const notifications = ref(CONTOH_NOTIF.map((n) => ({ ...n })))
+
+async function muatNotifikasi() {
+  try {
+    const res = await $fetch('/api/notifikasi')
+    const rows = res?.data ?? []
+    if (!rows.length) return // ponytail: tetap contoh bila kosong
+    notifications.value = rows.map((r) => ({
+      id: r.id,
+      title: r.judul ?? 'Notifikasi',
+      description: r.pesan ?? '',
+      time: r.created_at ? String(r.created_at).slice(0, 16).replace('T', ' ') : '',
+      tag: String(r.tipe ?? '').includes('hasil') ? 'Semhas' : 'Sempro',
+      tagBg: '#E8F5E9', tagColor: '#2E7D32',
+      icon: String(r.judul ?? 'N').slice(0, 2).toUpperCase(),
+      iconBg: '#4CAF50',
+      dateGroup: 'Hari Ini',
+      isRead: Boolean(r.dibaca),
+    }))
+  } catch {
+    // ponytail: belum login → tetap contoh
+  }
+}
+onMounted(() => { muatNotifikasi() })
 
 const unreadCount = computed(() => {
   return notifications.value.filter(n => !n.isRead).length

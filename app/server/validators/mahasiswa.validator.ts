@@ -9,3 +9,12 @@ export function validateMahasiswaId(id: string | undefined) {
 
   return { ok: true };
 }
+
+export function validateMahasiswaBody(body: any) {
+  if (!body || typeof body !== "object") return { ok: false as const, message: "Body tidak valid." };
+  const nim = String(body.nim ?? "").trim();
+  const nama = String(body.nama ?? body.name ?? "").trim();
+  if (!nim) return { ok: false as const, message: "NIM wajib diisi." };
+  if (!nama) return { ok: false as const, message: "Nama mahasiswa wajib diisi." };
+  return { ok: true as const };
+}

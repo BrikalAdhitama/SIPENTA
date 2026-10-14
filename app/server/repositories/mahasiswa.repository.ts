@@ -64,14 +64,14 @@ export class MahasiswaRepository {
     });
   }
 
-  async list(): Promise<MahasiswaRecord[]> {
+  async list(batas = 100): Promise<MahasiswaRecord[]> {
     const client = this.getServiceClient();
 
     if (!client) {
       return fallbackMahasiswa;
     }
 
-    const { data, error } = await client.from("mahasiswa").select("*").order("nama");
+    const { data, error } = await client.from("mahasiswa").select("*").order("nama").limit(batas);
 
     if (error) {
       if (isMissingTableError(error)) {
@@ -132,5 +132,13 @@ export class MahasiswaRepository {
       programStudi: data.program_studi ?? data.programStudi ?? "",
       status: data.status === "nonaktif" ? "nonaktif" : "aktif",
     };
+  }
+
+  async create(row: { nim: string; nama: string; angkatan?: string }) {
+    const client = this.getServiceClient();
+    if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
+    const { data, error } = await client.from("mahasiswa").insert(row).select("id").single();
+    if (error) throw new Error(error.message);
+    return data;
   }
 }

@@ -3,6 +3,7 @@ import { useRuntimeConfig } from "#imports";
 
 export type RuanganRecord = {
   id: string;
+  kode: string;
   nama: string;
   lantai: number;
   gedung: string;
@@ -14,6 +15,7 @@ export type RuanganRecord = {
 const fallbackRuangan: RuanganRecord[] = [
   {
     id: "rg-001",
+    kode: "R201",
     nama: "R.201",
     lantai: 2,
     gedung: "F",
@@ -23,6 +25,7 @@ const fallbackRuangan: RuanganRecord[] = [
   },
   {
     id: "rg-002",
+    kode: "LAB-MULTI",
     nama: "Lab Multimedia",
     lantai: 3,
     gedung: "F",
@@ -32,6 +35,7 @@ const fallbackRuangan: RuanganRecord[] = [
   },
   {
     id: "rg-003",
+    kode: "AUDITORIUM",
     nama: "Auditorium",
     lantai: 1,
     gedung: "A",
@@ -41,6 +45,7 @@ const fallbackRuangan: RuanganRecord[] = [
   },
   {
     id: "rg-online",
+    kode: "ONLINE",
     nama: "Seminar Online",
     lantai: 0,
     gedung: "",
@@ -65,6 +70,7 @@ function isMissingTableError(error: { code?: string; message?: string } | null) 
 
 function mapRuangan(row: {
   id: number;
+  kode: string;
   nama: string;
   lantai: number | null;
   gedung: string | null;
@@ -73,6 +79,7 @@ function mapRuangan(row: {
 }): RuanganRecord {
   return {
     id: String(row.id),
+    kode: row.kode,
     nama: row.nama,
     lantai: Number(row.lantai ?? 0),
     gedung: row.gedung ?? "",
@@ -105,14 +112,14 @@ export class RuanganRepository {
     });
   }
 
-  async list(): Promise<RuanganRecord[]> {
+  async list(batas = 100): Promise<RuanganRecord[]> {
     const client = this.getServiceClient();
 
     if (!client) {
       return fallbackRuangan;
     }
 
-    const { data, error } = await client.from("ruangan").select("*").order("nama");
+    const { data, error } = await client.from("ruangan").select("*").order("nama").limit(batas);
 
     if (error) {
       if (isMissingTableError(error)) {
@@ -157,5 +164,37 @@ export class RuanganRepository {
     }
 
     return mapRuangan(data);
+  }
+
+  async create(row: { kode: string; nama: string; lantai?: number | null; gedung?: string | null; is_online?: boolean }) {
+    const client = this.getServiceClient();
+    if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
+    const { data, error } = await client.from("ruangan").insert(row).select("id").single();
+    if (error) {
+      if ((error as any).code === "23505") throw new Error(`Kode ${row.kode} sudah dipakai.`);
+      throw new Error(error.message);
+    }
+    return data;
+  }
+
+  async update(id: string, patch: { kode?: string; nama?: string; lantai?: number | null; gedung?: string | null; is_online?: boolean; status?: "aktif" | "nonaktif" }) {
+    const client = this.getServiceClient();
+    if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
+    const isId = !Number.isNaN(Number(id));
+    const q = client.from("ruangan").update(patch).eq(isId ? "id" : "kode", isId ? Number(id) : id);
+    const { data, error } = await q.select("id");
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) throw new Error("Ruangan tidak ditemukan.");
+    return data[0];
+  }
+
+  async remove(id: string) {
+    const client = this.getServiceClient();
+    if (!client) throw new Error("Konfigurasi Supabase belum lengkap.");
+    const isId = !Number.isNaN(Number(id));
+    const q = client.from("ruangan").delete().eq(isId ? "id" : "kode", isId ? Number(id) : id);
+    const { data, error } = await q.select("id");
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) throw new Error("Ruangan tidak ditemukan.");
   }
 }

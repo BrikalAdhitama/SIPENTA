@@ -8,7 +8,8 @@ export default defineEventHandler(async (event) => {
     await requireRole(event, ["admin", "dosen", "mahasiswa"]);
 
     const service = new RuanganService();
-    return await service.list();
+    const lim = Math.min(Math.max(Number(getQuery(event).limit) || 100, 1), 200);
+    return await service.list(lim);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Gagal mengambil data ruangan.";
 

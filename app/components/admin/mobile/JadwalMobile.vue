@@ -11,74 +11,57 @@
 
       <main class="px-6 pt-4">
         <!-- Search Bar -->
-        <div class="relative mb-6">
-          <input type="text" placeholder="Search ..." class="w-full border rounded-full py-3.5 pl-5 pr-14 text-sm font-medium focus:outline-none transition-all" style="background-color: #ffffff; border-color: #F1F5F9; color: #0F172A; box-shadow: 0 4px 20px rgba(0,0,0,0.03);" />
-          <button class="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-95 shadow-sm bg-primary-500 text-white">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <div class="relative mb-5">
+          <input v-model="cariJadwal" type="text" placeholder="Search ..." class="w-full rounded-full py-4 pl-6 pr-16 text-[15px] font-medium focus:outline-none transition-all bg-slate-50 text-ink placeholder:text-slate-400 focus:ring-2 focus:ring-primary-100" />
+          <button class="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full flex items-center justify-center transition-transform active:scale-95 bg-primary-500 text-white">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </button>
         </div>
 
         <!-- Filter Pills -->
         <div class="flex gap-2.5 mb-6 overflow-x-auto custom-scrollbar pb-1">
-          <button @click="activeFilter = 'Semua'" class="px-5 py-2.5 rounded-[14px] font-bold text-[13px] transition-all whitespace-nowrap border" :class="activeFilter === 'Semua' ? 'bg-primary-900 border-primary-900 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500'">Semua</button>
-          <button @click="activeFilter = 'Sempro'" class="px-5 py-2.5 rounded-[14px] font-bold text-[13px] transition-all whitespace-nowrap border" :class="activeFilter === 'Sempro' ? 'bg-primary-900 border-primary-900 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500'">Sempro</button>
-          <button @click="activeFilter = 'Semhas'" class="px-5 py-2.5 rounded-[14px] font-bold text-[13px] transition-all whitespace-nowrap border" :class="activeFilter === 'Semhas' ? 'bg-primary-900 border-primary-900 text-white shadow-md' : 'bg-white border-slate-200 text-slate-500'">Semhas</button>
+          <button @click="activeFilter = 'Semua'" class="px-6 py-2.5 min-h-[44px] rounded-full font-semibold text-[14px] transition-all whitespace-nowrap border" :class="activeFilter === 'Semua' ? 'bg-primary-900 border-primary-900 text-white' : 'bg-surface border-border text-muted'">Semua</button>
+          <button @click="activeFilter = 'Sempro'" class="px-6 py-2.5 min-h-[44px] rounded-full font-semibold text-[14px] transition-all whitespace-nowrap border" :class="activeFilter === 'Sempro' ? 'bg-primary-900 border-primary-900 text-white' : 'bg-surface border-border text-muted'">Sempro</button>
+          <button @click="activeFilter = 'Semhas'" class="px-6 py-2.5 min-h-[44px] rounded-full font-semibold text-[14px] transition-all whitespace-nowrap border" :class="activeFilter === 'Semhas' ? 'bg-primary-900 border-primary-900 text-white' : 'bg-surface border-border text-muted'">Semhas</button>
         </div>
 
         <!-- Cards List -->
-        <div class="flex flex-col gap-3">
-          <div v-for="jadwal in filteredJadwals" :key="jadwal.id" 
-               @click="openDetail(jadwal)"
-               class="bg-white rounded-[22px] p-4 flex flex-col gap-1 active:scale-[0.98] transition-all duration-200 cursor-pointer group border border-slate-100/80 shadow-[0_8px_30px_-4px_rgba(15,23,42,0.04)]">
-            
-            <!-- Row 1: Header -->
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <div class="flex items-center gap-3.5">
-                <!-- Icon Box -->
-                <div class="w-12 h-12 rounded-[16px] flex items-center justify-center shrink-0 shadow-sm" 
-                     :class="jadwal.type === 'Sempro' ? 'bg-pink-50 text-pink-500' : 'bg-blue-50 text-blue-600'">
-                  <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                  </svg>
-                </div>
-                <!-- Title & Date -->
-                <div class="flex flex-col justify-center">
-                  <h3 class="font-extrabold text-[15px] text-slate-800 leading-tight mb-1 group-hover:text-primary-600 transition-colors">{{ jadwal.title }}</h3>
-                  <div class="flex items-center gap-1.5 text-slate-500">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span class="text-[11.5px] font-medium">{{ jadwal.date }}</span>
-                  </div>
-                </div>
-              </div>
-              <!-- Right Chevron -->
-              <div class="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 group-hover:bg-slate-50 group-hover:text-primary-500 transition-colors shrink-0 mt-1">
-                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
-              </div>
+        <div class="flex flex-col gap-4">
+          <div v-for="jadwal in filteredJadwals" :key="jadwal.id"
+                @click="openDetail(jadwal)"
+                class="bg-surface rounded-[20px] p-4 flex gap-3.5 active:scale-[0.98] transition-all duration-200 cursor-pointer group border border-primary-900 shadow-card">
+
+            <!-- Icon Box -->
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 bg-primary-100 text-primary-900">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6M9 15h4"></path>
+              </svg>
             </div>
 
-            <!-- Row 2: Status & Progress -->
-            <div class="flex items-center justify-between pt-3 border-t border-slate-50/80">
-              <!-- Type Badge -->
-              <span class="px-3 py-1.5 rounded-full text-[10.5px] font-extrabold tracking-wide uppercase"
-                    :class="jadwal.type === 'Sempro' ? 'bg-pink-50 text-pink-600' : 'bg-blue-50 text-blue-600'">
-                {{ jadwal.type }}
-              </span>
+            <!-- Content -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="font-bold text-[15px] text-ink leading-snug group-hover:text-primary-900 transition-colors">{{ jadwal.title }}</h3>
+                <svg class="w-5 h-5 shrink-0 text-slate-300 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+              </div>
+              <p class="text-[13px] font-medium text-primary-900 mt-0.5">{{ jadwal.date }}</p>
 
-              <!-- Progress Indicator -->
-              <div class="flex flex-col items-end gap-1.5">
-                <div class="flex items-baseline gap-1">
-                  <span class="font-black text-[13.5px] text-slate-800 leading-none">{{ jadwal.scheduled }}</span>
-                  <span class="text-[11px] font-semibold text-slate-400 leading-none">/ {{ jadwal.total }} Terjadwal</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-24 h-[5px] rounded-full bg-slate-100 overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-1000 ease-out"
-                       :class="jadwal.scheduled === jadwal.total ? 'bg-emerald-500' : (jadwal.type === 'Sempro' ? 'bg-pink-500' : 'bg-blue-500')"
-                       :style="{ width: `${(jadwal.scheduled / jadwal.total) * 100}%` }">
-                  </div>
+              <div class="flex items-end justify-between mt-2.5">
+                <span class="px-3.5 py-1 rounded-full text-[12px] font-medium"
+                      :class="jadwal.type === 'Sempro' ? 'bg-sempro-soft text-sempro' : 'bg-semhas-soft text-semhas'">
+                  {{ jadwal.type }}
+                </span>
+                <div class="text-right leading-none">
+                  <span class="font-extrabold text-[20px] text-ink">{{ jadwal.scheduled }}/{{ jadwal.total }}</span>
+                  <p class="text-[11px] font-medium text-muted mt-1">Terjadwal</p>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div v-if="!filteredJadwals.length" class="text-center py-10 text-muted text-[13px] font-medium">
+            Belum ada jadwal{{ cariJadwal ? ` untuk “${cariJadwal}”` : '' }}.
           </div>
         </div>
 
@@ -96,9 +79,9 @@
           <svg class="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
           Semua Jadwal
         </button>
-        <h1 class="text-[22px] font-extrabold tracking-tight leading-snug mb-1" style="color: #0F172A;">{{ selectedJadwal.title.split(' Gel.')[0] }} — Sep 2026</h1>
+        <h1 class="text-[22px] font-extrabold tracking-tight leading-snug mb-1" style="color: #0F172A;">{{ selectedJadwal.title.split(' Gel.')[0] }} — {{ selectedJadwal.details?.period || '-' }}</h1>
         <p class="text-[12px] font-medium" style="color: #64748B;">
-          Periode {{ selectedJadwal.details?.period || 'Sep 2025' }} &middot; Dibuat {{ selectedJadwal.details?.created || '31 Agu 2026' }} &middot;
+          Periode {{ selectedJadwal.details?.period || '-' }} &middot; Dibuat {{ selectedJadwal.details?.created || selectedJadwal.dibuat || '-' }} &middot;
         </p>
       </header>
 
@@ -310,12 +293,107 @@ import BottomNav from '~/components/BottomNav.vue'
 import { App } from '@capacitor/app'
 
 const activeFilter = ref('Semua')
+const cariJadwal = ref('')
 const selectedJadwal = ref(null)
 const selectedStudent = ref(null)
 
 // Intercept Android hardware back button
 let backHandler = null
+function fmtTgl(iso) {
+  const d = new Date(String(iso ?? ''))
+  if (Number.isNaN(d.getTime())) return String(iso ?? '-')
+  return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(d)
+}
+function fmtRentang(tgls) {
+  const bersih = [...tgls].filter(Boolean).sort()
+  if (!bersih.length) return '-'
+  if (bersih.length === 1) return fmtTgl(bersih[0])
+  const a = new Date(bersih[0]); const b = new Date(bersih[bersih.length - 1])
+  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime())) return `${bersih[0]} – ${bersih[bersih.length - 1]}`
+  if (a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear()) {
+    return `${a.getDate()} – ${fmtTgl(b)}`
+  }
+  return `${fmtTgl(a)} – ${fmtTgl(b)}`
+}
+function fmtBulanTahun(iso) {
+  const d = new Date(String(iso ?? ''))
+  if (Number.isNaN(d.getTime())) return String(iso ?? '-')
+  return new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(d)
+}
+function fmtPeriode(tgls) {
+  const bersih = [...tgls].filter(Boolean).sort()
+  if (!bersih.length) return '-'
+  const a = fmtBulanTahun(bersih[0]); const b = fmtBulanTahun(bersih[bersih.length - 1])
+  return a === b ? a : `${a} – ${b}`
+}
+async function muatJadwal() {
+  try {
+    const res = await $fetch('/api/runs')
+    const rows = res?.data ?? []
+    if (!rows.length) return // ponytail: tetap contoh bila kosong
+    jadwals.value = rows.slice(0, 10).map((r) => {
+      const j = String(r.gelombang?.jenis ?? '').toLowerCase()
+      const type = j.includes('hasil') || j === 'semhas' ? 'Semhas' : 'Sempro'
+      const dibuat = r.created_at ? fmtTgl(String(r.created_at).slice(0, 10)) : '-'
+      const tgls = Array.isArray(r.slot_tanggal) ? r.slot_tanggal : []
+      return {
+        id: r.id,
+        runId: r.id,
+        title: r.nama ?? `Jadwal ${r.gelombang?.nama ?? (r.gelombang_id ? `Gel. ${r.gelombang_id}` : `#${r.id}`)}`,
+        date: tgls.length ? fmtRentang(tgls) : dibuat,
+        dibuat,
+        type,
+        scheduled: r.slot_tersimpan ?? 0,
+        total: r.slot_tersimpan ?? 0,
+        details: null, // dimuat saat openDetail via /api/runs/[id]/slots
+      }
+    })
+  } catch {
+    // ponytail: offline / belum login → tetap contoh
+  }
+}
+
+async function muatDetail(jadwal) {
+  try {
+    const res = await $fetch(`/api/runs/${jadwal.runId ?? jadwal.id}/slots`)
+    const slots = res?.data ?? []
+    if (!slots.length) return
+    const seminars = slots.map((s) => {
+      const ap = s.approval ?? []
+      const ok = ap.filter((a) => a.status === 'konfirmasi').length
+      const tot = ap.length || 4
+      return {
+        name: s.seminar?.mahasiswa?.nama ?? s.seminar?.judul ?? 'Seminar',
+        type: jadwal.type,
+        date: s.tanggal ?? '-', time: `${String(s.jam_mulai ?? '').slice(0, 5)} – ${String(s.jam_selesai ?? '').slice(0, 5)}`,
+        room: s.is_online ? 'Online' : (s.ruangan_kode ?? '-'),
+        lecturer: ap[0]?.dosen?.nama ?? '-',
+        progressText: `${ok} dari ${tot} dosen`, progressValue: ok, progressMax: tot,
+        status: ok === tot ? 'Semua Disetujui' : `${ok}/${tot} Disetujui`,
+        statusStyle: ok === tot ? 'background-color: #E8F5E9; color: #2E7D32;' : 'background-color: #FFF8E1; color: #F57F17;',
+        dosens: ap.map((a) => ({
+          role: String(a.peran ?? '').replace('_', ' ').toUpperCase(),
+          name: a.dosen?.nama ?? '-', status: a.status === 'konfirmasi' ? 'Disetujui' : (a.status === 'tolak' ? 'Ditolak' : 'Menunggu'),
+          error: a.status === 'tolak' ? (a.alasan ?? 'Ditolak') : null,
+          theme: a.status === 'konfirmasi' ? 'green' : (a.status === 'tolak' ? 'red' : 'yellow'),
+        })),
+      }
+    })
+    const disetujui = seminars.filter((x) => x.progressValue === x.progressMax).length
+    const daftarTgl = slots.map((s) => String(s.tanggal ?? ''))
+    const rentang = fmtRentang(daftarTgl)
+    jadwal.date = rentang // ponytail: list ikut tanggal slot asli
+    jadwal.details = {
+      period: fmtPeriode(daftarTgl), created: jadwal.dibuat ?? jadwal.date,
+      totalSeminar: seminars.length, disetujui, menunggu: seminars.length - disetujui,
+      seminars,
+    }
+  } catch {
+    // ponytail: gagal muat detail → tetap mockSeminars
+  }
+}
 onMounted(() => {
+  muatJadwal()
   backHandler = App.addListener('backButton', () => {
     if (selectedStudent.value) {
       // Kalau modal student buka → tutup dulu
@@ -444,13 +522,16 @@ const jadwals = ref([
 ])
 
 const filteredJadwals = computed(() => {
-  if (activeFilter.value === 'Semua') return jadwals.value
-  return jadwals.value.filter(j => j.type === activeFilter.value)
+  const q = cariJadwal.value.trim().toLowerCase()
+  const rows = activeFilter.value === 'Semua' ? jadwals.value : jadwals.value.filter(j => j.type === activeFilter.value)
+  if (!q) return rows
+  return rows.filter(j => `${j.title} ${j.date} ${j.type}`.toLowerCase().includes(q))
 })
 
-const openDetail = (jadwal) => {
+const openDetail = async (jadwal) => {
   selectedJadwal.value = jadwal
   window.scrollTo({ top: 0, behavior: 'smooth' })
+  if (!jadwal.details && (jadwal.runId ?? jadwal.id)) await muatDetail(jadwal)
 }
 </script>
 

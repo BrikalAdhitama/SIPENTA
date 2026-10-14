@@ -7,18 +7,17 @@ import type { JenisSingkat } from "~/app/types/domain";
 export const ROLES = ["admin", "dosen", "mahasiswa"] as const;
 export type Role = (typeof ROLES)[number];
 
-export const JENIS_SEMINAR = ["seminar_proposal", "seminar_hasil"] as const;
+export const JENIS_SEMINAR = ["seminar_proposal", "seminar_hasil", "sempro", "semhas"] as const;
 export type JenisSeminar = (typeof JENIS_SEMINAR)[number];
 
-// Kode jenis seminar di lapisan tampilan (data tiruan & chip). Berbeda dari enum Postgres di atas:
-// 'sempro' = seminar_proposal, 'semhas' = seminar_hasil. Dipakai halaman mahasiswa & dosen.
+// ponytail: FE lama pakai sempro/semhas, DB pakai seminar_*. Normalisasi di service, hapus alias bila FE seragam.
+// Kode jenis seminar di lapisan tampilan (data tiruan & chip). Dipakai halaman mahasiswa & dosen.
 export type JenisSeminarUI = "sempro" | "semhas";
 export const JENIS_UI_LABEL: Record<JenisSeminarUI, string> = {
   sempro: "Seminar Proposal",
   semhas: "Seminar Hasil",
 };
 export const JENIS_UI_SINGKAT: Record<JenisSeminarUI, string> = { sempro: "Sempro", semhas: "Semhas" };
-export const JENIS_SINGKAT: Partial<Record<JenisSingkat, string>> = { sempro: "sempro", semhas: "semhas" };
 
 export const PERAN = [
   "pembimbing_utama",
@@ -35,11 +34,13 @@ export type StatusRun = (typeof STATUS_RUN)[number];
 export const STATUS_APPROVAL = ["menunggu", "konfirmasi", "tolak"] as const;
 export type StatusApproval = (typeof STATUS_APPROVAL)[number];
 
-export const DURASI_MENIT: Record<JenisSeminar, number> = { seminar_proposal: 60, seminar_hasil: 105 };
+export const DURASI_MENIT: Record<string, number> = { seminar_proposal: 60, seminar_hasil: 105, sempro: 60, semhas: 105 };
 
-export const JENIS_LABEL: Record<JenisSeminar, string> = {
+export const JENIS_LABEL: Record<string, string> = {
   seminar_proposal: "Seminar Proposal",
   seminar_hasil: "Seminar Hasil",
+  sempro: "Seminar Proposal",
+  semhas: "Seminar Hasil",
 };
 
 export const PERAN_LABEL: Record<Peran, string> = {
